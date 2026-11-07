@@ -17,4 +17,5 @@ VERSION="${PYSIGMA_VERSION:-2.0.0}"
 
 pip install --quiet --disable-pip-version-check "pysigma==${VERSION}" >/dev/null 2>&1
 
-exec python3 /src/check.py
+python3 /src/check.py
+exec python3 /detections/tests/sigma_match/runtime_check.py

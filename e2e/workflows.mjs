@@ -1,6 +1,11 @@
 import { LOCALES, namespaceMessages } from "./locale-resources.mjs";
 
 const messages = namespaceMessages("workflows");
+const operations = namespaceMessages("operations");
+
+async function openScheduledPrompts(page, locale) {
+  await page.getByRole("tab", { name: operations[locale].scheduledPrompts, exact: true }).click();
+}
 
 // Exercise real workflow CRUD against the disposable smoke database. No agent
 // is run: selecting, saving, editing, or deleting must not contact a model.
@@ -17,6 +22,7 @@ export async function runWorkflowChecks({ base, token, step, check, openPage, ou
       });
       try {
         await page.goto(`${base}/function/workflows`);
+        await openScheduledPrompts(page, locale);
         await page.getByRole("heading", { name: t.title, exact: true }).waitFor();
         await page.getByText(t.loading, { exact: true }).waitFor({ state: "hidden" });
         check(await page.locator("[data-workflow-template]").count() === 12, `${locale}: missing starter workflows`);
@@ -46,6 +52,7 @@ export async function runWorkflowChecks({ base, token, step, check, openPage, ou
           createdIDs.push(workflow.id);
           check(workflow.enabled === false && workflow.schedule_kind === "manual" && !workflow.last_fire, "saving a template activated it");
           await page.reload();
+          await openScheduledPrompts(page, locale);
           await page.getByRole("button").filter({ has: page.getByText(workflow.name, { exact: true }) }).click();
           check(await page.locator("#wf-prompt").inputValue() === workflow.prompt, "reload changed saved instructions");
           const edited = `${workflow.prompt}\n\nOperator note: preserve this edit.`;
@@ -65,6 +72,7 @@ export async function runWorkflowChecks({ base, token, step, check, openPage, ou
           check(deleted.ok(), "fixture cleanup failed");
           createdIDs.pop();
           await page.reload();
+          await openScheduledPrompts(page, locale);
           await page.locator("[data-workflow-template]").first().waitFor();
         }
       } finally {

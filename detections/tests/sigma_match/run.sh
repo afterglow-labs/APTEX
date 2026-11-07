@@ -47,6 +47,7 @@ PYSIGMA_VERSION="${PYSIGMA_VERSION:-2.0.0}"
 # runs check.py, which asserts the three properties and exits non-zero on any
 # failure. The rule tree and this directory are mounted read-only.
 docker run --rm \
+  -v "$REPO/detections:/detections:ro" \
   -v "$SIGMA_DIR:/sigma:ro" \
   -v "$HERE:/src:ro" \
   -e PYSIGMA_VERSION="$PYSIGMA_VERSION" \

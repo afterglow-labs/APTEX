@@ -3,9 +3,13 @@ package agent
 import (
 	"context"
 	"encoding/json"
+	"net"
+	"strconv"
 	"strings"
+	"time"
 
 	actool "github.com/Autumn-27/norma/tool"
+	"github.com/afterglow-labs/afterglow-cybersecurity/db"
 )
 
 func validPlanMethod(method string, allowed ...string) bool {
@@ -18,21 +22,105 @@ func validPlanMethod(method string, allowed ...string) bool {
 }
 
 func (t *ToolSet) lateralScan() actool.CoreTool {
-	return readTool("lateral_scan", "Prepare a scoped host and service inventory. No network scan is run by this tool.",
-		obj(map[string]any{"target": str("host or IP in this task's declared scope")}, "target"),
-		func(_ context.Context, input json.RawMessage) (actool.Result, error) {
+	return writeTool("lateral_scan", "Run a bounded TCP connect inventory of a host in operator-entered task scope. Returns observed open ports; it does not attempt authentication or remote commands.",
+		obj(map[string]any{"target": str("host or IP in operator-entered task scope"), "ports": map[string]any{"type": "array", "items": map[string]any{"type": "integer", "minimum": 1, "maximum": 65535}, "maxItems": 12}}, "target"),
+		func(ctx context.Context, input json.RawMessage) (actool.Result, error) {
 			var a struct {
 				Target string `json:"target"`
+				Ports  []int  `json:"ports"`
 			}
 			if json.Unmarshal(input, &a) != nil {
 				return actool.Errorf("invalid input"), nil
 			}
-			target, ok := t.targetInDeclaredScope(a.Target)
+			target, ok := t.targetInOperatorScope(a.Target)
 			if !ok {
-				return actool.Errorf("target is outside this task's declared scope"), nil
+				return actool.Errorf("target is outside operator-entered task scope"), nil
 			}
-			return jsonResult(map[string]any{"target": target, "checks": []string{"Review known task assets and open services", "Validate reachable management ports within the approved test window", "Record observed shares, directory services, and access boundaries", "Report only measured results"}, "status": "plan_only"})
+			resolved := target
+			if net.ParseIP(target) == nil {
+				lookupCtx, cancel := context.WithTimeout(ctx, 2*time.Second)
+				addresses, err := net.DefaultResolver.LookupIPAddr(lookupCtx, target)
+				cancel()
+				if err != nil || len(addresses) == 0 || len(addresses) > 16 {
+					return actool.Errorf("target DNS resolution failed or returned too many addresses"), nil
+				}
+				// Pin one address for the whole inventory. A second resolution at
+				// dial time could move an approved hostname to a blocked address.
+				resolved = addresses[0].IP.String()
+				ip := addresses[0].IP
+				if ip.IsUnspecified() || ip.IsMulticast() {
+					return actool.Errorf("target DNS resolved to an unusable address"), nil
+				}
+				if (ip.IsPrivate() || ip.IsLoopback() || ip.IsLinkLocalUnicast() || ip.IsLinkLocalMulticast()) && !t.operatorIPInScope(ip) {
+					return actool.Errorf("private or local resolved address requires its own operator-entered IP scope"), nil
+				}
+			}
+			global, err := t.as.ListAssetInterceptRules()
+			if err != nil {
+				return actool.Errorf("interception rules unavailable"), nil
+			}
+			blocked, allowed, err := t.as.TaskInterceptRulesSplit(t.taskID)
+			if err != nil {
+				return actool.Errorf("task interception rules unavailable"), nil
+			}
+			var domains []string
+			if net.ParseIP(target) == nil {
+				domains = []string{target}
+			}
+			if !db.EvaluateAssetGate(append(global, blocked...), allowed, domains, []string{resolved}, nil).Allowed {
+				return actool.Errorf("target is blocked by interception rules"), nil
+			}
+			ports := a.Ports
+			if len(ports) == 0 {
+				ports = []int{22, 135, 139, 389, 445, 636, 3389, 5985, 5986}
+			}
+			if len(ports) > 12 {
+				return actool.Errorf("at most 12 ports per scan"), nil
+			}
+			seen := map[int]bool{}
+			results := make([]map[string]any, 0, len(ports))
+			for _, port := range ports {
+				if port < 1 || port > 65535 || seen[port] {
+					return actool.Errorf("ports must be unique integers from 1 to 65535"), nil
+				}
+				seen[port] = true
+			}
+			for _, port := range ports {
+				probeCtx, cancel := context.WithTimeout(ctx, 750*time.Millisecond)
+				conn, err := (&net.Dialer{}).DialContext(probeCtx, "tcp", net.JoinHostPort(resolved, strconv.Itoa(port)))
+				cancel()
+				state := "not_open"
+				if err == nil {
+					state = "open"
+					_ = conn.Close()
+				}
+				results = append(results, map[string]any{"port": port, "state": state})
+				if ctx.Err() != nil {
+					return actool.Errorf("scan cancelled"), nil
+				}
+			}
+			return jsonResult(map[string]any{"target": target, "resolved_ip": resolved, "method": "tcp_connect", "ports": results, "observed_at": time.Now().UTC().Format(time.RFC3339), "authentication_attempted": false, "remote_command_attempted": false})
 		})
+}
+
+func (t *ToolSet) operatorIPInScope(ip net.IP) bool {
+	if t.as == nil || t.taskID <= 0 {
+		return false
+	}
+	rows, err := t.as.ListTaskScopeWithSources(t.taskID)
+	if err != nil {
+		return false
+	}
+	for _, scope := range rows {
+		if scope.Source != "manual" || (scope.Kind != "ip" && scope.Kind != "cidr") {
+			continue
+		}
+		_, network, err := net.ParseCIDR(scope.Net)
+		if err == nil && network.Contains(ip) {
+			return true
+		}
+	}
+	return false
 }
 
 func (t *ToolSet) harvestCredentials() actool.CoreTool {

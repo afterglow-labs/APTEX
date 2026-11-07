@@ -1231,10 +1231,13 @@ export interface AssessmentBlueprint {
   title: string;
   summary: string;
   skills: string[];
+  procedure: string[];
+  prerequisites: string[];
   network: boolean;
   sources: string[];
   missing_skills: string[];
   unbound_skills: string[];
+  execution_notes: string[];
   phases: AssessmentPhase[];
 }
 

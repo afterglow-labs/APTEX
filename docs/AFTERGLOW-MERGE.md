@@ -16,7 +16,7 @@ This record covers the original checkout and the expanded integration. ScopeWeav
 - Browser profiles live outside browsable task workspaces. The browser traffic extension sends its token only to HTTPS or loopback HTTP addresses, and the ingest endpoint is authenticated and size-limited.
 - Workflow schedules and graph size are bounded and validate their agent and timezone. The source fork's hardcoded public connector was removed.
 - Follow-up waves are opt-in, delayed, time-boxed, and capped at three per root task. Cross-task hints use confirmed findings from the same scoped surface. Proposed attack chains require confirmed finding references; a separate verification task records a verified or rejected result. The hunt-class board is opt-in because many task types do not fit a full web vulnerability checklist. Open classes and untested campaign branches hold task completion once recorded.
-- Proxy nodes are operator-defined; a failed validation does not fall back to direct target traffic. C2 handoff requires a manual task scope entry and an operator acknowledgement; it does not copy, deliver, or execute a binary. `exfil_data` indexes actual files in the task workspace with hashes and no outbound transfer. Cloud and lateral tools return scoped plans or inspect local evidence and never report unperformed actions as successful.
+- Proxy nodes are operator-defined; a failed validation does not fall back to direct target traffic. C2 handoff requires a manual task scope entry and an operator acknowledgement; it does not copy, deliver, or execute a binary. `exfil_data` indexes actual files in the task workspace with hashes and no outbound transfer. Cloud tools and the credential, movement, escalation, EDR, and cleanup lateral tools return scoped plans or inspect local evidence. `lateral_scan` now performs bounded TCP-connect measurements only for a host in operator-entered task scope, with interception-rule checks. No tool reports an unperformed action as successful.
 - The optional Telegram plugin runs as a manually connected stdio MCP server. API credentials come from the environment, session files stay private, and `TELEGRAM_ALLOWED_CHATS` gates sending. The source's embedded API credential and unauthenticated HTTP wizard are absent.
 - Native race, identity, and inflight request replay requires an operator-entered target scope, a passing asset interception gate, and an active recording proxy. The guard sends each replay call through interception, asking the operator by default and denying on timeout. Every distinct destination is checked before a batch starts, so scope checks do not stagger a race burst. Batches have request, body, and time limits; redirects are not followed, and missing capture fails closed. Guest identity replay strips credential headers, and candidate IDs are escaped inside URL, JSON, and form values.
 - The capture proxy now verifies upstream target TLS certificates by default. An isolated lab can explicitly set `ARTEX_TRAFFIC_INSECURE_UPSTREAM=true` for a self-signed target. The imported origin, race, SSRF, and chaining playbooks were rewritten to use scoped evidence and bounded tools instead of direct raw-socket bursts, origin-range scans, or metadata-token retrieval.
@@ -110,3 +110,63 @@ The server migration was merged and deployed before the client implementation
 resumed. The existing Go engine, local Qwen installation, provider accounts and
 patched Norma replacement remain intact. See the [client guide](../clients/ios/README.md)
 and its verification record for native and real-backend checks.
+
+## Restored red and purple workflow integration, 2026-11-07
+
+The browser-chat fork's five workflow-management tools (`list_workflows`,
+`create_workflow`, `update_workflow`, `delete_workflow`, `run_workflow`) are wired
+to the same PostgreSQL handlers as the UI. Running a saved prompt now returns an
+error if its conversation agent is unavailable, instead of reporting a false
+success and updating its last-run timestamp. Availability resolves the selected
+agent's own local or hosted profile even when no global profile is active.
+
+**Run workflows** is a separate task-backed catalog with 29 red, purple, and
+blue entries and 40 bundled skill references. Each entry has a specific
+procedure, source revision, prerequisites, and five persisted phases. Admission
+stores the operator's exact scope and phase goals in the same transaction as
+the task before workers can run. A retry with the same request ID reuses that
+task; a changed payload with that ID is rejected. Phase progress comes from the
+task graph and requires a distinct linked confirmed fact or finding for each
+phase in order. The
+old twelve prompt starters remain under **Scheduled prompts**.
+
+Installed imported skills are bound once to Worker and Pentest, with the
+`agent-manager` skill bound to Auto. A migration marker per agent and skill
+preserves later operator visibility changes. No model-format filter was added:
+an existing local Ollama profile can be selected for the task, and existing
+agent-specific routing keeps its precedence. This is application wiring; it
+does not establish that every model will use every tool reliably.
+
+The KSIR WAF and chaining skills now carry the source technique and chain
+inventories with concrete baseline, variant, and verification steps. The
+`lateral_scan` tool now makes actual bounded TCP-connect observations of
+operator-scoped management ports; the remaining Windows movement tools still
+require an external lab executor for live action. The UI reports BBOT, REA MCP,
+Windows lab, and C2 handoff prerequisites when those paths are selected.
+The defensive image includes the bundled detection files, pinned pySigma 2.0.0,
+and a JSONL matcher that evaluates one atomic or correlation rule against
+supplied events. It reports matched line numbers or a correlation result plus
+the input hash, without echoing raw events. The source fixture suite exercises
+both positive and negative cases. This reference matcher does not claim a
+production SIEM collected or mapped those events.
+The REA MCP is not bundled, BBOT is not installed by this Dockerfile, and a
+Windows execution connector is not configured by the repository. A playbook
+being installed does not mean those paths executed.
+
+Verification used disposable PostgreSQL databases: the full root Go test suite,
+Go build and vet, the patched Norma module tests, 101 frontend tests, TypeScript
+checking, and the static frontend build passed. The eight Docker detection suites
+passed, including positive and negative matcher cases. Browser smoke covered
+catalog admission, retries, five-phase persistence, reload selection, and six
+locales using a binary built with `-tags embedui`. An isolated task using the
+installed `qwen3:32b` model made real planner and worker tool calls, including a
+recorded fact; the 220-second observation window ended before task completion,
+so that check does not establish end-to-end workflow completion or model speed.
+
+The source KSIR `deploy_payload`, `establish_persistence`, `lateral_move`, and
+`exfiltrate` handlers returned success text without carrying out those actions;
+their names are not evidence of functionality. The archived PHP shells,
+credential loaders, and automatic WAF rotation lists remain available as
+source material outside the runtime image. The active runbooks use an exact
+test target rather than the original race playbook's hardcoded public host,
+and report actual evidence rather than treating a status code as proof.

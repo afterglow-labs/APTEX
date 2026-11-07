@@ -75,7 +75,7 @@ export function BrowserSessions() {
 
   return (
     <>
-      <Button
+      {(sessions.length > 0 || error) && <Button
         variant={waiting ? "default" : "outline"}
         className="fixed right-4 bottom-4 z-40 shadow-md"
         onClick={() => setOpen(true)}
@@ -84,7 +84,7 @@ export function BrowserSessions() {
         <MonitorIcon className="size-4" />
         {tf("browserSessions")}
         {waiting > 0 && <Badge variant="secondary">{waiting}</Badge>}
-      </Button>
+      </Button>}
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-6xl">
           <DialogHeader>

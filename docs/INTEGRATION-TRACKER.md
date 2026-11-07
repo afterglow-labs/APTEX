@@ -8,14 +8,15 @@ The product goal is one application with the useful capabilities from ScopeWeave
 | ChatGPT OAuth, account storage, refresh/recheck/quota, Responses adapter, profile routing, model catalog, UI | Integrated | End-to-end login, refresh, replay, quota, and blocked-plan cases need a real account and full build. |
 | Persistent browser sessions, operator control, screenshots and image compaction | Integrated | Browser tests need Playwright and an executable app. |
 | Authenticated browser traffic extension | Integrated in `634e705` | Full browser capture test remains. |
-| Workflow canvas, manual/interval/daily schedules | Integrated | Database and scheduler tests need PostgreSQL. |
+| Workflow canvas, manual/interval/daily schedules and five agent workflow tools | Integrated | The saved-prompt runner reports unavailable agents instead of a false success. |
+| Task-backed red, purple, and blue workflows | 29 authored procedures, persisted task phases and scope, 40 bundled playbooks | Live execution requires a configured model and applicable target/tool dependencies. BBOT, REA MCP, and Windows lab execution are external prerequisites. |
 | Operator questions, encrypted test accounts, task outcomes, lessons, skill gaps | Integrated | End-to-end task tests need the full app. |
 | Deep Hunter follow-up waves, cross-task hints, campaign branches, hunt board, business map, attack chains and verification, stall watchdog | Integrated | Database and lifecycle tests need PostgreSQL. Chain composition is operator-started and verification is a separate task. |
 | Native race, identity, and inflight request replay | Integrated with scope, capture, and approval controls | Full worker and proxy integration tests need PostgreSQL and a running capture proxy. |
-| Defensive rules, ATT&CK layer, indicators, host triage | Integrated in `634e705` | Docker detection suite remains. |
-| Proxy graph, artifact index, C2 handoff, cloud and lateral planning | Integrated with operator and scope controls | C2 is a handoff record; cloud/lateral tools do not claim to execute external actions. |
+| Defensive rules, ATT&CK layer, indicators, host triage, bundled JSONL reference matcher | Integrated | Docker detection suite covers atomic and correlation positives and negatives; production SIEM field mappings need separate verification. |
+| Proxy graph, artifact index, C2 handoff, cloud planning, lateral management-path inventory | Integrated with operator and scope controls | `lateral_scan` measures scoped TCP ports; credential, movement, escalation, EDR, and cleanup tools remain evidence/planning paths without a Windows lab executor. C2 is a handoff record. |
 | Optional Telegram MCP helper | Integrated as stdio plugin | Operator must install Python dependencies, supply credentials and destination allowlist, and connect it manually. No HTTP wizard. |
-| Additional source playbooks | 29 imported; embedded credentials removed and seven risky playbooks rewritten | Runtime playbooks remain opt-in. Executable source payloads and WAF mutation lists live only in the archived source-assets directory. |
+| Additional source playbooks | 40 bundled; WAF and chaining techniques expanded into testable runbooks | Installed playbooks are bound once to Worker/Pentest; operator opt-outs persist. Source payloads and automatic rotation lists remain archived outside the runtime image. |
 | KSIR mocked offensive success tools | Not enabled as execution | Their source implementations returned success without performing the claimed action. Handoff, plans, and local artifact indexing replace those claims. |
 
 ## ChatGPT account path

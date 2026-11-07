@@ -44,6 +44,7 @@ COPY detections/ /app/detections/
 COPY scripts/browser-mcp.cjs scripts/browser-session.cjs scripts/browser-runtime.cjs /app/scripts/
 COPY plugins/telegram-mcp/ /app/plugins/telegram-mcp/
 RUN pip install --no-cache-dir -r /app/plugins/telegram-mcp/requirements.txt
+RUN pip install --no-cache-dir "pysigma==2.0.0"
 COPY LICENSE /app/LICENSE
 COPY THIRD_PARTY_NOTICES.txt /app/THIRD_PARTY_NOTICES.txt
 VOLUME ["/app/data"]

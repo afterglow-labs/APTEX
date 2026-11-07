@@ -3629,4 +3629,7 @@ export const operations: Record<keyof typeof operationsSource, string> = {
   "invalidModel": "請選擇有效的已設定模型。",
   "invalidInputs": "請提供目標或證據參照，並將背景資訊限制在 16000 位元組以內。",
   "progressUnavailable": "連線中斷，顯示的進度可能不是最新狀態。工作流程由伺服器管理。",
+  "procedure": "此工作流程的執行步驟",
+  "prerequisites": "所需設定",
+  "executionNotes": "伺服器設定說明",
 };

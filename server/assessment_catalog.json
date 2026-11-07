@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "bundled_skills": [
     "agent-manager",
     "api-recon",
@@ -62,7 +62,14 @@
         "artex-browser-chat@13fabbb",
         "artex-deep-hunter@abbe8e4",
         "KSIR-ARTEX@240ae7c"
-      ]
+      ],
+      "procedure": [
+        "Map routes, inputs, authentication gates, and exposed assets with api-recon; save a route and role inventory.",
+        "Use designated accounts to test API ownership and privilege boundaries; replay each baseline and changed request.",
+        "Test only applicable browser and server-side input contexts; capture request, response, and browser or server proof for each result.",
+        "Correlate confirmed tests with supplied defender events, then produce findings with exact retest requests."
+      ],
+      "prerequisites": []
     },
     {
       "id": "recon",
@@ -82,6 +89,15 @@
         "artex-browser-chat@13fabbb",
         "artex-deep-hunter@abbe8e4",
         "KSIR-ARTEX@240ae7c"
+      ],
+      "procedure": [
+        "Identify the allowed domain and request budget, then run passive DNS, certificate, archive, and public-source discovery.",
+        "If BBOT is installed and active probing is permitted, run its selected modules only against the declared scope.",
+        "Probe selected discovered hosts and API routes with the available native or installed tools; separate live assets from passive leads.",
+        "Save discovered assets, source timestamps, and coverage gaps for follow-up testing."
+      ],
+      "prerequisites": [
+        "BBOT CLI for the BBOT step; passive and native discovery can run without it."
       ]
     },
     {
@@ -98,7 +114,14 @@
         "artex-browser-chat@13fabbb",
         "artex-deep-hunter@abbe8e4",
         "KSIR-ARTEX@240ae7c"
-      ]
+      ],
+      "procedure": [
+        "Create a matrix of designated users, roles, objects, and expected permissions.",
+        "Capture a normal request for each object and action, then replay with one changed identity, object ID, or privilege at a time.",
+        "Verify the returned data or committed action against a second owned account; reject status-code-only conclusions.",
+        "Record reproducible request pairs and the smallest server-side policy fix."
+      ],
+      "prerequisites": []
     },
     {
       "id": "xss",
@@ -116,7 +139,14 @@
         "artex-browser-chat@13fabbb",
         "artex-deep-hunter@abbe8e4",
         "KSIR-ARTEX@240ae7c"
-      ]
+      ],
+      "procedure": [
+        "Inventory reflected, stored, and DOM sinks, including HTML, attribute, URL, and script contexts.",
+        "Select context-specific test strings and send bounded requests through the recorded path.",
+        "Verify execution in the browser with an owned test account and capture DOM state and request evidence.",
+        "Distinguish encoding, harmless reflection, and actual script execution; document the affected sink."
+      ],
+      "prerequisites": []
     },
     {
       "id": "rce",
@@ -132,7 +162,14 @@
       "sources": [
         "artex-deep-hunter@abbe8e4",
         "KSIR-ARTEX@240ae7c"
-      ]
+      ],
+      "procedure": [
+        "Trace input to command, template, or deserialization sinks and identify reachable prerequisites.",
+        "Test one bounded execution hypothesis in the approved environment, retaining the normal response and error path.",
+        "Use a harmless unique marker to verify server-side execution; record output or callback evidence and a negative control.",
+        "Report the exact source or request path, affected privileges, and remediation."
+      ],
+      "prerequisites": []
     },
     {
       "id": "sqli",
@@ -145,7 +182,14 @@
       "network": true,
       "sources": [
         "KSIR-ARTEX@240ae7c"
-      ]
+      ],
+      "procedure": [
+        "Identify parameter and query contexts and capture a normal request for each.",
+        "Test syntax and timing or differential behavior with bounded probes; verify against a control input.",
+        "Determine only the database privilege and data access necessary to prove impact in the test environment.",
+        "Save a replayable request and distinguish confirmed injection from WAF or application errors."
+      ],
+      "prerequisites": []
     },
     {
       "id": "race",
@@ -158,7 +202,14 @@
       "network": true,
       "sources": [
         "KSIR-ARTEX@240ae7c"
-      ]
+      ],
+      "procedure": [
+        "Choose a single-use invariant and read its committed state before testing.",
+        "Use race_probe with a bounded burst against disposable test data and record each response.",
+        "Read committed state after the burst and repeat once with fresh data to confirm or reject double execution.",
+        "Report the broken invariant, request IDs, timing, and transaction or idempotency fix."
+      ],
+      "prerequisites": []
     },
     {
       "id": "smuggling",
@@ -171,7 +222,14 @@
       "network": true,
       "sources": [
         "KSIR-ARTEX@240ae7c"
-      ]
+      ],
+      "procedure": [
+        "Map the front-end and back-end HTTP versions, connection reuse, and normalization behavior.",
+        "Send the source playbook’s low-volume parser-differential probes through an approved isolated path.",
+        "Verify any desynchronization with correlated front-end and back-end logs, a normal request, and a negative control.",
+        "Stop on unstable connection behavior and document exact framing and remediation."
+      ],
+      "prerequisites": []
     },
     {
       "id": "ssrf",
@@ -184,7 +242,14 @@
       "network": true,
       "sources": [
         "KSIR-ARTEX@240ae7c"
-      ]
+      ],
+      "procedure": [
+        "Identify server-side fetch sinks and expected URL validation behavior.",
+        "Use an operator-owned callback or canary endpoint to confirm server-side requests and capture redirects.",
+        "Test only explicitly scoped internal or metadata destinations if provided by the operator; separate reachability, file read, and execution claims.",
+        "Record the observed trust boundary, blocked paths, and allowlist or egress remediation."
+      ],
+      "prerequisites": []
     },
     {
       "id": "uploads",
@@ -199,7 +264,14 @@
       "sources": [
         "artex-browser-chat@13fabbb",
         "KSIR-ARTEX@240ae7c"
-      ]
+      ],
+      "procedure": [
+        "Map accepted file types, validators, storage paths, retrieval routes, and content-type handling.",
+        "Upload inert marker files with one controlled variation at a time and record server-assigned names and responses.",
+        "Verify retrieval, inclusion, or execution separately in an isolated environment using harmless markers.",
+        "Report the exact boundary crossed and storage, parser, or execution controls that failed."
+      ],
+      "prerequisites": []
     },
     {
       "id": "deserialization",
@@ -212,7 +284,14 @@
       "network": true,
       "sources": [
         "KSIR-ARTEX@240ae7c"
-      ]
+      ],
+      "procedure": [
+        "Identify reachable serialized inputs and confirm the language, parser, and object types.",
+        "Compare normal and malformed inputs to establish that the parser processes attacker-controlled fields.",
+        "Run a bounded harmless proof only when a concrete gadget and affected version are established.",
+        "Record parser behavior, prerequisites, and a safe format or allowlist remediation."
+      ],
+      "prerequisites": []
     },
     {
       "id": "prototype",
@@ -225,7 +304,14 @@
       "network": true,
       "sources": [
         "KSIR-ARTEX@240ae7c"
-      ]
+      ],
+      "procedure": [
+        "Find object merge or path-assignment inputs in the scoped JavaScript application.",
+        "Test a harmless unique property in a disposable object and compare behavior with a clean baseline.",
+        "Trace whether the property crosses into a reachable security decision or server-side sink.",
+        "Record the affected library or path and a reproducible negative control."
+      ],
+      "prerequisites": []
     },
     {
       "id": "cache",
@@ -238,7 +324,14 @@
       "network": true,
       "sources": [
         "KSIR-ARTEX@240ae7c"
-      ]
+      ],
+      "procedure": [
+        "Map cache headers, keys, Vary behavior, and user-specific responses.",
+        "Compare two designated accounts or harmless marker inputs with cache misses and hits.",
+        "Verify whether a shared response reaches the wrong identity using request and cache identifiers.",
+        "Document key normalization, poisoning prerequisites, and cache configuration fixes."
+      ],
+      "prerequisites": []
     },
     {
       "id": "identity",
@@ -254,7 +347,14 @@
       "sources": [
         "artex-deep-hunter@abbe8e4",
         "KSIR-ARTEX@240ae7c"
-      ]
+      ],
+      "procedure": [
+        "Map OAuth redirect, state, nonce, token audience, session renewal, and logout behavior.",
+        "Use designated test identities to compare expected account and resource access.",
+        "Test one boundary at a time with replayable requests; avoid using third-party or stolen credentials.",
+        "Verify actual session or data exposure and preserve both successful and rejected controls."
+      ],
+      "prerequisites": []
     },
     {
       "id": "cloud",
@@ -268,7 +368,14 @@
       "network": true,
       "sources": [
         "KSIR-ARTEX@240ae7c"
-      ]
+      ],
+      "procedure": [
+        "Inventory supplied cloud identity, workload, OIDC, and RBAC configuration.",
+        "Check issuer, audience, subject, role assignment, and resource scope with an operator-controlled account.",
+        "If a scoped cloud execution context is provided, verify the minimum read-only access needed to prove a hypothesis.",
+        "Record exact principal, permission, and trust-policy evidence without printing secret values."
+      ],
+      "prerequisites": []
     },
     {
       "id": "pipeline",
@@ -281,7 +388,14 @@
       "network": false,
       "sources": [
         "KSIR-ARTEX@240ae7c"
-      ]
+      ],
+      "procedure": [
+        "Map repository events, workflow triggers, runners, artifacts, dependencies, and available token permissions.",
+        "Trace untrusted pull-request or artifact data into privileged steps and identify the exact trust boundary.",
+        "Use a disposable branch or supplied logs to verify a safe marker path; do not modify production pipeline secrets.",
+        "Record the affected workflow revision and a least-privilege or trigger isolation fix."
+      ],
+      "prerequisites": []
     },
     {
       "id": "waf",
@@ -295,7 +409,14 @@
       "network": true,
       "sources": [
         "KSIR-ARTEX@240ae7c"
-      ]
+      ],
+      "procedure": [
+        "Capture a normal request, control identifier, edge response, and origin behavior for the scoped endpoint.",
+        "Compare a small authorized set of semantically equivalent encodings, methods, or content types with one variable per request.",
+        "Verify application action and defender telemetry; a 200 response alone is not a bypass.",
+        "Report the observed policy mismatch and normalizing or origin access control fix."
+      ],
+      "prerequisites": []
     },
     {
       "id": "chains",
@@ -308,7 +429,14 @@
       "network": true,
       "sources": [
         "KSIR-ARTEX@240ae7c"
-      ]
+      ],
+      "procedure": [
+        "Load confirmed findings and draw each prerequisite, output, affected asset, and trust boundary.",
+        "Reject links lacking a demonstrated prerequisite or a shared test identity and scope.",
+        "Verify each transition with harmless markers and evidence from the same authorized environment.",
+        "Report end-to-end impact only if all links were observed; otherwise save a bounded hypothesis."
+      ],
+      "prerequisites": []
     },
     {
       "id": "code",
@@ -322,7 +450,14 @@
       "sources": [
         "artex-browser-chat@13fabbb",
         "KSIR-ARTEX@240ae7c"
-      ]
+      ],
+      "procedure": [
+        "Select the source revision and enumerate entry points, parsers, and privileged sinks.",
+        "Trace attacker-controlled data through validation and authorization to a reachable sink.",
+        "Create a minimal local regression or harmless proof for each candidate.",
+        "Cite exact file and revision and distinguish reachable defects from pattern matches."
+      ],
+      "prerequisites": []
     },
     {
       "id": "patch",
@@ -337,7 +472,14 @@
       "sources": [
         "artex-browser-chat@13fabbb",
         "KSIR-ARTEX@240ae7c"
-      ]
+      ],
+      "procedure": [
+        "Identify exact deployed version and obtain a trusted advisory or source patch.",
+        "Diff affected and fixed paths, then map changed behavior to reachable application inputs.",
+        "Run a bounded regression against the scoped version or supplied fixture.",
+        "Record fixed-version evidence, uncertainty, and retest criteria."
+      ],
+      "prerequisites": []
     },
     {
       "id": "reverse",
@@ -351,6 +493,15 @@
       "sources": [
         "artex-browser-chat@13fabbb",
         "KSIR-ARTEX@240ae7c"
+      ],
+      "procedure": [
+        "Confirm the REA MCP is connected and the authorized binary is visible on the host-side shared mount.",
+        "Open the file, record its hash and provider, then inspect relevant strings, imports, procedures, or graphs.",
+        "Save evidence IDs and limitations for each observation; do not treat strings as executed behavior.",
+        "Close the binary session and report the exact build and findings."
+      ],
+      "prerequisites": [
+        "REA MCP server connected and host-visible shared file path."
       ]
     },
     {
@@ -364,7 +515,14 @@
       "network": true,
       "sources": [
         "KSIR-ARTEX@240ae7c"
-      ]
+      ],
+      "procedure": [
+        "Map the AI application’s retrieval, prompt, tool, file, and output trust boundaries.",
+        "Send controlled test content through one lower-trust surface at a time.",
+        "Verify whether the assistant actually crossed a tool or data boundary; compare with an ordinary control.",
+        "Report the affected boundary, observed tool trace, and data-handling fix."
+      ],
+      "prerequisites": []
     },
     {
       "id": "purple-web",
@@ -385,7 +543,14 @@
         "artex-browser-chat@13fabbb",
         "artex-deep-hunter@abbe8e4",
         "KSIR-ARTEX@240ae7c"
-      ]
+      ],
+      "procedure": [
+        "Establish a normal application request and a timestamped defender telemetry baseline.",
+        "Run a scoped API authorization or browser-input test with a unique harmless marker and record request IDs.",
+        "Verify the application effect and compare the same timestamp, identity, path, and marker in proxy, WAF, app, and SIEM events.",
+        "Classify prevention, detection, and gaps from actual events; create a detection or rule change and a repeatable retest."
+      ],
+      "prerequisites": []
     },
     {
       "id": "purple-endpoint",
@@ -399,6 +564,15 @@
       "sources": [
         "artex-browser-chat@13fabbb",
         "KSIR-ARTEX@240ae7c"
+      ],
+      "procedure": [
+        "Select an isolated Windows lab host and the exact endpoint behavior to measure.",
+        "Capture baseline service, process, and sensor telemetry before a designated lab simulation.",
+        "Run the simulation only through an operator-configured Windows lab connector and correlate its time and marker to observed events.",
+        "Record blocked, detected, or unobserved outcomes per sensor; report setup gaps when the connector or telemetry is absent."
+      ],
+      "prerequisites": [
+        "Isolated Windows lab connector and endpoint sensor telemetry for live simulation."
       ]
     },
     {
@@ -409,8 +583,16 @@
       "skills": [],
       "network": false,
       "sources": [
-        "artex-deep-hunter@abbe8e4",
-        "artex-browser-chat@13fabbb"
+        "artex-deep-hunter@abbe8e4"
+      ],
+      "procedure": [
+        "Select a bundled rule and inventory its required fields and event source.",
+        "Run python3 /app/detections/match_events.py --list, then match an operator-supplied JSONL event file with --rule <stem> --events <path> (add --correlation for a correlation rule). Save the JSON result and SHA-256, keeping synthetic fixtures labeled.",
+        "Inspect matched clauses, false positives, and unsupported Sigma features rather than assuming every rule was evaluated.",
+        "Report rule coverage, fixture results, and exact telemetry requirements."
+      ],
+      "prerequisites": [
+        "Operator-supplied JSONL events with the selected rule’s required fields; the image bundles pySigma 2.0.0 and the reference matcher."
       ]
     },
     {
@@ -421,9 +603,16 @@
       "skills": [],
       "network": false,
       "sources": [
-        "artex-deep-hunter@abbe8e4",
-        "artex-browser-chat@13fabbb"
-      ]
+        "scopeweaver@a89795a",
+        "artex-deep-hunter@abbe8e4"
+      ],
+      "procedure": [
+        "Ingest supplied alerts, host logs, requests, and artifact hashes with their source and time zone.",
+        "Build a timestamped timeline and link related identities, hosts, and processes.",
+        "Test incident hypotheses against corroborating and contradictory evidence.",
+        "Recommend containment and recovery actions separately from actions actually performed."
+      ],
+      "prerequisites": []
     },
     {
       "id": "report",
@@ -433,9 +622,16 @@
       "skills": [],
       "network": false,
       "sources": [
-        "artex-deep-hunter@abbe8e4",
+        "scopeweaver@a89795a",
         "artex-browser-chat@13fabbb"
-      ]
+      ],
+      "procedure": [
+        "Collect linked findings, task evidence, affected assets, and source revisions.",
+        "Deduplicate overlapping claims and verify each finding’s proof and exposure.",
+        "Prioritize by demonstrated impact and affected scope, then write remediation owners and retest steps.",
+        "Mark unsupported or incomplete claims clearly and preserve source evidence links."
+      ],
+      "prerequisites": []
     },
     {
       "id": "lateral",
@@ -448,6 +644,15 @@
       "network": true,
       "sources": [
         "KSIR-ARTEX@240ae7c"
+      ],
+      "procedure": [
+        "Identify the operator-selected hosts, accounts, management protocols, and approved Windows lab connector.",
+        "Inventory reachable management paths and supplied host evidence without inferring credentials from a plan-only tool response.",
+        "Validate a designated lab identity and one intended movement path only when a real connector is configured.",
+        "Correlate host and network events, then report confirmed access and detection gaps."
+      ],
+      "prerequisites": [
+        "Isolated Windows lab connector and designated test identities for live movement."
       ]
     },
     {
@@ -461,6 +666,15 @@
       "network": true,
       "sources": [
         "KSIR-ARTEX@240ae7c"
+      ],
+      "procedure": [
+        "Confirm the C2 handoff flag, local binary path, hash, target scope, and operator-controlled delivery route.",
+        "Use c2_stage_implant to record the configured binary metadata and review the intended handoff.",
+        "Use c2_deliver_implant only when enabled and record the resulting handoff reference; it does not transmit the binary.",
+        "Correlate any separately observed delivery or callback evidence and report unperformed steps as pending."
+      ],
+      "prerequisites": [
+        "ARTEX_ENABLE_C2_HANDOFF and a configured local binary for handoff; actual delivery remains separate."
       ]
     }
   ]

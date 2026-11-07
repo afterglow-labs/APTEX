@@ -3491,4 +3491,7 @@ export const operations: Record<keyof typeof operationsSource, string> = {
   "invalidModel": "Elige un perfil de modelo configurado válido.",
   "invalidInputs": "Indica objetivos o referencias de pruebas y limita el contexto a 16000 bytes.",
   "progressUnavailable": "La conexión se interrumpió; el progreso mostrado puede estar desactualizado. El servidor gestiona el flujo.",
+  "procedure": "Pasos de este flujo",
+  "prerequisites": "Configuración necesaria",
+  "executionNotes": "Estado de configuración del servidor",
 };

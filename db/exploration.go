@@ -303,6 +303,20 @@ AND (evidence.exploration_id=$2 OR evidence.exploration_id IN (
 		if !confirmed {
 			return fmt.Errorf("workflow phase requires confirmed evidence from this assessment or a linked source task")
 		}
+		// A single confirmed fact cannot advance every phase of an assessment.
+		// Each phase needs its own recorded outcome, including an explicit
+		// unavailable-telemetry result when defensive correlation was blocked.
+		var reused bool
+		if err := tx.QueryRow(`SELECT EXISTS(SELECT 1 FROM exploration_edges proof
+JOIN exploration_nodes goal ON goal.id=proof.dst_id AND goal.exploration_id=$1
+WHERE proof.exploration_id=$1 AND proof.src_id=$2 AND proof.rel=$3
+AND goal.kind='goal' AND goal.payload ? 'workflow_phase' AND goal.id<>$4)`,
+			s.expID, evidenceID, RelProves, goalID).Scan(&reused); err != nil {
+			return err
+		}
+		if reused {
+			return fmt.Errorf("workflow phase requires evidence distinct from earlier phases")
+		}
 	}
 	if _, err := tx.Exec(`
 INSERT INTO exploration_edges(exploration_id, src_id, rel, dst_id) VALUES ($1,$2,$3,$4)

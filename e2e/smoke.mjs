@@ -9,6 +9,7 @@ import { chromium, request } from "playwright";
 import { runChatPasteChecks } from "./chat-paste.mjs";
 import { runOllamaProfileChecks } from "./ollama-profiles.mjs";
 import { runWorkflowChecks } from "./workflows.mjs";
+import { runAssessmentChecks } from "./assessment-workflows.mjs";
 import { LOCALES, intlLocale, namespaceMessages } from "./locale-resources.mjs";
 
 const base = process.env.SCOPEWEAVER_URL || "http://127.0.0.1:8787";
@@ -300,6 +301,7 @@ for (const locale of LOCALES) {
 await runOllamaProfileChecks({ base, token, step, check, openPage, out });
 
 await runWorkflowChecks({ base, token, step, check, openPage, out });
+await runAssessmentChecks({ base, token, step, check, openPage, out });
 
 await runChatPasteChecks({ base, token, step, check, openPage });
 

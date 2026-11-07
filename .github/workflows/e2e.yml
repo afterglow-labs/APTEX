@@ -29,6 +29,7 @@ jobs:
           --health-interval 5s --health-timeout 3s --health-retries 10
     env:
       ARTEX_PG_DSN: postgres://scopeweaver_test:test_only_password@localhost:5432/scopeweaver_test_e2e?sslmode=disable
+      ARTEX_SKILL_DIR: ${{ github.workspace }}/skills
       SCOPEWEAVER_URL: http://127.0.0.1:8787
     steps:
       - uses: actions/checkout@v7

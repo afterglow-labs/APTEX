@@ -582,9 +582,9 @@ func (s *Server) readTriggerBehavior(agentKey string) triggerBehavior {
 // agent's policy decides concurrency + merge: serial → run one at a time (optionally
 // merging by task / all / none); parallel → run each fire in its own concurrent
 // conversation up to trigger_max_parallel. Distinct agents always run concurrently.
-func (s *Server) StartTriggeredRun(agentKey, title, message string, taskID int64, mergeable bool, taskDesc, taskGoal string, langs ...locale.Lang) {
-	if s.m.pg == nil || s.chatAgentRef() == nil {
-		return
+func (s *Server) StartTriggeredRun(agentKey, title, message string, taskID int64, mergeable bool, taskDesc, taskGoal string, langs ...locale.Lang) bool {
+	if !s.triggerAgentAvailable(agentKey) {
+		return false
 	}
 	lang := locale.First(langs)
 	if len(langs) == 0 && taskID > 0 {
@@ -596,6 +596,14 @@ func (s *Server) StartTriggeredRun(agentKey, title, message string, taskID int64
 	s.triggerQ[agentKey] = append(s.triggerQ[agentKey], triggeredRun{language: lang, agentKey: agentKey, title: title, message: message, taskID: taskID, taskDesc: taskDesc, taskGoal: taskGoal, mergeable: mergeable})
 	s.pumpLocked(agentKey)
 	s.queueMu.Unlock()
+	return true
+}
+
+// A conversation agent can have its own profile even when no global profile is
+// active. Use the same resolution path as the actual run before admitting it.
+func (s *Server) triggerAgentAvailable(agentKey string) bool {
+	return s.m != nil && s.m.pg != nil && s.ctx.Err() == nil &&
+		s.resolveChatAgent(&db.Conversation{AgentKey: agentKey}) != nil
 }
 
 // pumpLocked launches queued fires for one agent up to its concurrency limit, then

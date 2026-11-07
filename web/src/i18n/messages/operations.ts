@@ -53,6 +53,9 @@ export const en = {
   "invalidModel": "Choose a valid configured model profile.",
   "invalidInputs": "Provide targets or evidence references and keep the context within 16000 bytes.",
   "progressUnavailable": "Connection interrupted; displayed progress may be stale. The workflow is managed by the server.",
+  "procedure": "What this workflow does",
+  "prerequisites": "Required setup",
+  "executionNotes": "Server setup notes",
 } as const;
 
 export const ko: Record<keyof typeof en, string> = {
@@ -110,4 +113,7 @@ export const ko: Record<keyof typeof en, string> = {
   "invalidModel": "올바르게 설정된 모델 프로필을 선택하세요.",
   "invalidInputs": "대상 또는 증거 참조를 입력하고 배경 정보는 16000바이트 이내로 유지하세요.",
   "progressUnavailable": "연결이 끊겨 표시된 진행 상황이 오래된 정보일 수 있습니다. 워크플로는 서버에서 관리합니다.",
+  "procedure": "이 워크플로의 실행 단계",
+  "prerequisites": "필요한 설정",
+  "executionNotes": "서버 설정 안내",
 };

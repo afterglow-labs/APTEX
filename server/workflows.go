@@ -352,7 +352,10 @@ func (s *Server) pgRunWorkflow(w http.ResponseWriter, r *http.Request) {
 		writeErr(w, 404, "workflow not found")
 		return
 	}
-	s.fireWorkflow(item, true)
+	if !s.fireWorkflow(item, true) {
+		writeErr(w, 503, "workflow agent is unavailable; configure a model and try again")
+		return
+	}
 	writeJSON(w, 200, map[string]any{"ok": true, "id": id})
 }
 
@@ -386,9 +389,9 @@ func normalizeGraphJSON(raw json.RawMessage) string {
 	return ""
 }
 
-func (s *Server) fireWorkflow(w *db.Workflow, manual bool) {
+func (s *Server) fireWorkflow(w *db.Workflow, manual bool) bool {
 	if w == nil || s.m.pg == nil {
-		return
+		return false
 	}
 	msg := strings.TrimSpace(w.Prompt)
 	if msg == "" {
@@ -400,8 +403,11 @@ func (s *Server) fireWorkflow(w *db.Workflow, manual bool) {
 	}
 	full := header + "\n\n" + msg
 	title := "Workflow: " + w.Name
-	s.StartTriggeredRun(w.AgentKey, title, full, 0, false, "", "")
+	if !s.StartTriggeredRun(w.AgentKey, title, full, 0, false, "", "") {
+		return false
+	}
 	_ = s.m.pg.TouchWorkflowFire(w.ID)
+	return true
 }
 
 func (s *Server) fireDueWorkflows() {
@@ -415,6 +421,9 @@ func (s *Server) fireDueWorkflows() {
 	}
 	now := time.Now()
 	for _, w := range items {
+		if s.ctx.Err() != nil {
+			return
+		}
 		loc, err := time.LoadLocation(w.Timezone)
 		if err != nil {
 			continue
@@ -438,6 +447,9 @@ func (s *Server) fireDueWorkflows() {
 		}
 		if !due {
 			continue
+		}
+		if !s.triggerAgentAvailable(w.AgentKey) {
+			continue // Do not claim the schedule until this agent's model is ready.
 		}
 		claimed, err := pg.ClaimWorkflowFire(w.ID, now, threshold)
 		if err != nil {

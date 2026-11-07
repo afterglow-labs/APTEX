@@ -51,6 +51,9 @@ export default function AssessmentWorkflows() {
     try {
       const [next, models, history] = await Promise.all([api.assessmentWorkflows(), api.llmProfiles(), api.assessmentWorkflowRuns()]);
       setCatalog(next); setProfiles(models); setRuns(history); setProgressError(false);
+      if (history[0] && next.workflows.some((item) => item.id === history[0].workflow.key)) {
+        setSelectedID((current) => current === "full-web" ? history[0].workflow.key : current);
+      }
     } catch (error) { setLoadError((error as Error).message); }
     finally { setLoading(false); }
   }, []);
@@ -154,6 +157,9 @@ export default function AssessmentWorkflows() {
         <div className="grid gap-2"><p className="text-sm font-medium">{t("operations.connectedPlaybooks")}</p><div className="flex flex-wrap gap-1">{selected.skills.map((skill) => <Badge key={skill} variant="outline">{skill}</Badge>)}</div>
           {!configured && <p role="status" className="text-sm text-destructive">{t("operations.needsSetup")}: {[...new Set([...selected.missing_skills, ...selected.unbound_skills])].join(", ")} <Link className="underline" href="/system/agents">{t("operations.configureAgents")}</Link></p>}
         </div>
+        {selected.prerequisites.length > 0 && <div className="grid gap-1 text-sm"><p className="font-medium">{t("operations.prerequisites")}</p><ul className="list-disc space-y-1 pl-5 text-muted-foreground">{selected.prerequisites.map((text) => <li key={text}>{text}</li>)}</ul></div>}
+        {selected.execution_notes.length > 0 && <div role="status" className="grid gap-1 rounded-md border border-amber-500/40 bg-amber-500/5 p-3 text-sm"><p className="font-medium">{t("operations.executionNotes")}</p><ul className="list-disc space-y-1 pl-5">{selected.execution_notes.map((text) => <li key={text}>{text}</li>)}</ul></div>}
+        <div className="grid gap-2"><p className="text-sm font-medium">{t("operations.procedure")}</p><ol className="list-decimal space-y-2 pl-5 text-sm text-muted-foreground">{selected.procedure.map((text, index) => <li key={index}>{text}</li>)}</ol></div>
         <ol className="grid gap-2" aria-label={t("operations.executionPlan")}>{selected.phases.map((phase, index) => <li key={phase.id} className="flex items-center gap-2 rounded-md border px-3 py-2 text-sm"><Badge variant="outline">{index + 1}</Badge>{t(`operations.phase_${phase.id}` as MessageKey)}</li>)}</ol>
         <Button disabled={loading || busy || uploading || !configured || (!targets.trim() && (selected.network || !attachments.length)) || timeoutMinutes < 1 || timeoutMinutes > 1440} onClick={() => void start()}>{busy ? t("operations.starting") : t("operations.start")}</Button>
       </CardContent></Card>}

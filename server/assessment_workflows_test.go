@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"strconv"
+	"strings"
 	"sync"
 	"testing"
 
@@ -48,7 +49,7 @@ func TestAssessmentCatalogSourceCoverage(t *testing.T) {
 	skills := filepath.Join(filepath.Dir(file), "..", "skills")
 	seen := map[string]bool{}
 	for _, item := range assessmentCatalog.Workflows {
-		if seen[item.ID] || item.Title == "" || len(item.Sources) == 0 {
+		if seen[item.ID] || item.Title == "" || len(item.Sources) == 0 || len(item.Procedure) < 3 {
 			t.Fatalf("invalid blueprint: %+v", item)
 		}
 		seen[item.ID] = true
@@ -232,19 +233,123 @@ func TestAssessmentPhaseOrderAndEvidence(t *testing.T) {
 	if err := task.Store.ProveGoal(run.GoalIDs[0], foreign); err == nil {
 		t.Fatal("unrelated task proved a phase")
 	}
-	for _, goal := range run.GoalIDs[:4] {
-		if err := task.Store.ProveGoal(goal, proof); err != nil {
+	if err := task.Store.ProveGoal(run.GoalIDs[0], proof); err != nil {
+		t.Fatal(err)
+	}
+	if err := task.Store.ProveGoal(run.GoalIDs[1], proof); err == nil {
+		t.Fatal("one fact proved two workflow phases")
+	}
+	for i, goal := range run.GoalIDs[1:4] {
+		phaseProof, err := task.Store.AddNode(db.KindFact, map[string]any{"text": fmt.Sprintf("Distinct synthetic phase %d outcome", i+1)}, 0, "confirmed", "test", nil)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if err := task.Store.ProveGoal(goal, phaseProof); err != nil {
 			t.Fatal(err)
 		}
 	}
 	if ready, err := task.Store.AssessmentWorkflowComplete(); err != nil || ready {
 		t.Fatal("incomplete workflow reported complete", ready, err)
 	}
+	finalProof, err := task.Store.AddNode(db.KindFact, map[string]any{"text": "Distinct synthetic report outcome"}, 0, "confirmed", "test", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := task.Store.ProveGoal(run.GoalIDs[4], finalProof); err != nil {
+		t.Fatal(err)
+	}
+	if ready, err := task.Store.AssessmentWorkflowComplete(); err != nil || !ready {
+		t.Fatal("all five distinct phases did not complete", ready, err)
+	}
 	if err := task.Store.DeleteGoal(run.GoalIDs[4]); err != nil {
 		t.Fatal(err)
 	}
 	if ready, err := task.Store.AssessmentWorkflowComplete(); err != nil || ready {
 		t.Fatal("deleted phase reported complete", ready, err)
+	}
+}
+
+func TestRestoredWorkflowToolsCRUDAndUnavailableRun(t *testing.T) {
+	s, _ := assessmentHTTPFixture(t)
+	tools := names(s.workflowTools())
+	call := func(key string, input map[string]any) (string, bool) {
+		t.Helper()
+		raw, _ := json.Marshal(input)
+		result, err := tools[key].Call(context.Background(), raw, nil)
+		if err != nil {
+			t.Fatal(err)
+		}
+		return result.Flatten(), result.IsError
+	}
+	if len(tools) != 5 {
+		t.Fatalf("restored %d workflow tools, want 5", len(tools))
+	}
+	name := "fixture workflow " + assessmentTestUUID(t)
+	createdText, failed := call("create_workflow", map[string]any{
+		"name": name, "prompt": "Review owned fixture evidence", "enabled": false, "schedule_kind": "manual", "agent_key": "auto",
+	})
+	if failed {
+		t.Fatal(createdText)
+	}
+	var created db.Workflow
+	if err := json.Unmarshal([]byte(createdText), &created); err != nil || created.ID <= 0 {
+		t.Fatal("create_workflow returned no stored workflow", err, createdText)
+	}
+	t.Cleanup(func() { _ = s.m.pg.DeleteWorkflow(created.ID) })
+	if created.Name != name || created.Enabled || created.ScheduleKind != "manual" {
+		t.Fatalf("unexpected workflow defaults: %+v", created)
+	}
+	listed, failed := call("list_workflows", map[string]any{})
+	if failed || !strings.Contains(listed, name) {
+		t.Fatal("list_workflows omitted the created item", listed)
+	}
+	updated, failed := call("update_workflow", map[string]any{"id": created.ID, "prompt": "Preserve this edit"})
+	if failed || !strings.Contains(updated, "Preserve this edit") {
+		t.Fatal("update_workflow did not persist edit", updated)
+	}
+	if run, failed := call("run_workflow", map[string]any{"id": created.ID}); !failed || !strings.Contains(run, "unavailable") {
+		t.Fatal("run_workflow reported success without an available agent", run)
+	}
+	stored, err := s.m.pg.GetWorkflow(created.ID)
+	if err != nil || stored.LastFire != nil {
+		t.Fatal("unavailable workflow was marked fired", err, stored)
+	}
+	if _, failed := call("update_workflow", map[string]any{"id": created.ID, "schedule_kind": "invalid"}); !failed {
+		t.Fatal("update_workflow bypassed schedule validation")
+	}
+	if deleted, failed := call("delete_workflow", map[string]any{"id": created.ID}); failed || !strings.Contains(deleted, "deleted") {
+		t.Fatal("delete_workflow failed", deleted)
+	}
+	if _, err := s.m.pg.GetWorkflow(created.ID); err == nil {
+		t.Fatal("deleted workflow remained in the database")
+	}
+}
+
+func TestWorkflowAgentProfileWithoutGlobalModel(t *testing.T) {
+	t.Setenv("SCOPEWEAVER_LLM_PROVIDER", "")
+	t.Setenv("ARTEX_LLM_PROVIDER", "")
+	m := backportTestManager(t)
+	_, file, _, _ := runtime.Caller(0)
+	s := New(t.Context(), m, filepath.Join(filepath.Dir(file), "..", "skills"), t.TempDir(), t.TempDir())
+	if s.chatAgentRef() != nil {
+		t.Fatal("fixture unexpectedly configured a global model")
+	}
+	if s.triggerAgentAvailable("auto") {
+		t.Fatal("agent without a model was admitted")
+	}
+	id, err := m.pg.SaveProfile(&db.LLMProfile{Name: "workflow-bound-fixture-" + assessmentTestUUID(t), Format: "ollama", Model: "fixture:latest", BaseURL: "http://127.0.0.1:1", ContextWindowK: 16})
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() {
+		_ = m.pg.SetAgentLLMProfile("auto", nil)
+		_ = m.pg.DeleteProfile(id)
+	})
+	if err := m.pg.SetAgentLLMProfile("auto", &id); err != nil {
+		t.Fatal(err)
+	}
+	if !s.triggerAgentAvailable("auto") {
+		t.Fatal("agent-bound local model was rejected without a global model")
 	}
 }
 

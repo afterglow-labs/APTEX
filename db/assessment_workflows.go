@@ -10,15 +10,17 @@ import (
 // AssessmentWorkflowInput is a creation-time snapshot. Later catalog edits do
 // not change the phases, provenance, or targets of an existing assessment.
 type AssessmentWorkflowInput struct {
-	RequestID   string            `json:"request_id,omitempty"`
-	RequestHash string            `json:"-"`
-	Key         string            `json:"key"`
-	Title       string            `json:"title"`
-	Team        string            `json:"team"`
-	Skills      []string          `json:"skills"`
-	Sources     []string          `json:"sources"`
-	Phases      []AssessmentPhase `json:"phases"`
-	Targets     []string          `json:"targets"`
+	RequestID     string            `json:"request_id,omitempty"`
+	RequestHash   string            `json:"-"`
+	Key           string            `json:"key"`
+	Title         string            `json:"title"`
+	Team          string            `json:"team"`
+	Skills        []string          `json:"skills"`
+	Sources       []string          `json:"sources"`
+	Procedure     []string          `json:"procedure"`
+	Prerequisites []string          `json:"prerequisites"`
+	Phases        []AssessmentPhase `json:"phases"`
+	Targets       []string          `json:"targets"`
 }
 
 type AssessmentPhase struct {

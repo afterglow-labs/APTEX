@@ -3735,4 +3735,7 @@ export const operations: Record<keyof typeof operationsSource, string> = {
   "invalidModel": "有効な設定済みモデルプロファイルを選択してください。",
   "invalidInputs": "対象または証拠の参照を指定し、背景情報を16000バイト以内にしてください。",
   "progressUnavailable": "接続が中断され、表示中の進行状況が古い可能性があります。ワークフローはサーバーが管理しています。",
+  "procedure": "このワークフローの実行手順",
+  "prerequisites": "必要な設定",
+  "executionNotes": "サーバーの設定状況",
 };
