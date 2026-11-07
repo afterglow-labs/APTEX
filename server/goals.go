@@ -380,6 +380,26 @@ func (s *Server) createGoals(ctx context.Context, t *Task, emit func(db.Activity
 	if t == nil {
 		return nil
 	}
+	if taskID, err := strconv.ParseInt(t.ID, 10, 64); err == nil && s.m != nil && s.m.pg != nil {
+		run, err := s.m.pg.GetAssessmentWorkflowRun(taskID)
+		if err != nil {
+			log.Printf("[workflow] loading phase goals for task %s: %v", t.ID, err)
+			return nil
+		}
+		if run != nil {
+			// Workflow phases were committed with the task. Reuse those exact goals
+			// on first launch and recovery instead of asking a model to replace them.
+			specs := make([]goalSpec, 0, len(run.Definition.Phases))
+			origin, _ := t.Store.OriginFactID()
+			for i, phase := range run.Definition.Phases {
+				specs = append(specs, goalSpec{Text: phase.Title + ": " + phase.Goal})
+				if origin > 0 && i < len(run.GoalIDs) {
+					_ = t.Store.Link(origin, db.RelSpawns, run.GoalIDs[i])
+				}
+			}
+			return specs
+		}
+	}
 	// Use the SAME LLM the task runs on (its pinned profile, else the active profile),
 	// NOT agent.FromEnv() — the LLM is configured via the UI (DB profile), not env vars,
 	// so FromEnv returned empty and every task silently fell back to the crude rule

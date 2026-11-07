@@ -8,6 +8,7 @@ import * as app from "./messages/app.ts";
 import * as common from "./messages/common.ts";
 import * as chatgpt from "./messages/chatgpt.ts";
 import * as workflows from "./messages/workflows.ts";
+import * as operations from "./messages/operations.ts";
 import * as proxygraph from "./messages/proxygraph.ts";
 import * as taskintel from "./messages/taskintel.ts";
 import * as browser from "./messages/browser.ts";
@@ -24,6 +25,7 @@ import * as zhHant from "./messages/zh-hant.ts";
 const namespaces = {
   chatgpt,
   workflows,
+  operations,
   proxygraph,
   taskintel,
   browser,

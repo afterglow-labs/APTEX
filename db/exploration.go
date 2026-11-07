@@ -276,6 +276,34 @@ func (s *ExplorationStore) ProveGoal(goalID, evidenceID int64) error {
 		return err
 	}
 	defer tx.Rollback()
+	var phase, previous sql.NullString
+	if err := tx.QueryRow(`SELECT payload->>'workflow_phase', payload->>'workflow_previous_goal_id'
+FROM exploration_nodes WHERE id=$1 AND exploration_id=$2 AND kind='goal' FOR UPDATE`, goalID, s.expID).Scan(&phase, &previous); err != nil {
+		return err
+	}
+	if phase.Valid {
+		if previous.Valid {
+			var state string
+			if err := tx.QueryRow(`SELECT state FROM exploration_nodes WHERE id=$1 AND exploration_id=$2 AND kind='goal' FOR SHARE`, previous.String, s.expID).Scan(&state); err != nil {
+				return err
+			}
+			if state != "met" {
+				return fmt.Errorf("complete the previous workflow phase before proving this phase")
+			}
+		}
+		var confirmed bool
+		if err := tx.QueryRow(`SELECT EXISTS(SELECT 1 FROM exploration_nodes evidence
+WHERE evidence.id=$1 AND evidence.kind IN ('fact','finding') AND evidence.state='confirmed'
+AND (evidence.exploration_id=$2 OR evidence.exploration_id IN (
+ SELECT source.exploration_id FROM tasks owner JOIN task_relations relation ON relation.task_id=owner.id
+ JOIN tasks source ON source.id=relation.source_task_id AND source.deleted_at IS NULL
+ WHERE owner.exploration_id=$2 AND owner.deleted_at IS NULL)))`, evidenceID, s.expID).Scan(&confirmed); err != nil {
+			return err
+		}
+		if !confirmed {
+			return fmt.Errorf("workflow phase requires confirmed evidence from this assessment or a linked source task")
+		}
+	}
 	if _, err := tx.Exec(`
 INSERT INTO exploration_edges(exploration_id, src_id, rel, dst_id) VALUES ($1,$2,$3,$4)
 ON CONFLICT (exploration_id, src_id, rel, dst_id) DO NOTHING`, s.expID, evidenceID, RelProves, goalID); err != nil {
@@ -309,7 +337,8 @@ func (s *ExplorationStore) UpdateGoalPayload(id int64, text, vulnclass string) e
 		payload["vulnclass"] = vulnclass
 	}
 	raw, _ := json.Marshal(payload)
-	res, err := s.db.Exec(`UPDATE exploration_nodes SET payload=$1 WHERE id=$2 AND exploration_id=$3 AND kind='goal'`, string(raw), id, s.expID)
+	res, err := s.db.Exec(`UPDATE exploration_nodes SET payload=CASE WHEN payload ? 'workflow_phase'
+THEN (payload - 'text' - 'vulnclass') || $1::jsonb ELSE $1::jsonb END WHERE id=$2 AND exploration_id=$3 AND kind='goal'`, string(raw), id, s.expID)
 	if err != nil {
 		return err
 	}

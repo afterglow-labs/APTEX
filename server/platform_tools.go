@@ -9,15 +9,15 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
 	actool "github.com/Autumn-27/norma/tool"
+	"github.com/afterglow-labs/afterglow-cybersecurity/db"
 )
 
 // Platform host tools for the built-in Auto agent: create/edit skills, custom tools, and MCP servers.
 // Seeded into tools, bound to auto by default, and injected through hostTools; reuse existing DB/filesystem logic.
 
 func (s *Server) platformTools(langs ...locale.Lang) []actool.CoreTool {
-	return []actool.CoreTool{
+	return append([]actool.CoreTool{
 		s.toolCreateSkill(langs...),
 		s.toolUpdateSkillFile(langs...),
 		s.toolCreateCustomTool(langs...),
@@ -25,7 +25,7 @@ func (s *Server) platformTools(langs ...locale.Lang) []actool.CoreTool {
 		s.toolCreateMCP(langs...),
 		s.toolUpdateMCP(langs...),
 		s.toolDeleteAssetsByHost(langs...),
-	}
+	}, s.workflowTools(langs...)...)
 }
 
 // platformToolKeys are the tool keys the Auto agent gets bound by default.
@@ -34,6 +34,7 @@ var platformToolKeys = []string{
 	"create_custom_tool", "update_custom_tool",
 	"create_mcp", "update_mcp",
 	"delete_assets_by_host",
+	"list_workflows", "create_workflow", "update_workflow", "delete_workflow", "run_workflow",
 }
 
 // ---- assets ----

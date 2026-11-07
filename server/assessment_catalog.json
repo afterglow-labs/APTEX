@@ -1,0 +1,467 @@
+{
+  "version": 1,
+  "bundled_skills": [
+    "agent-manager",
+    "api-recon",
+    "api-security",
+    "authz-hunter",
+    "azure-identity-chain",
+    "bbot-recon",
+    "browser-skill",
+    "browser-use",
+    "c2-handoff",
+    "cicd-injection",
+    "cloudflare-origin-reveal",
+    "codeaudit",
+    "cve-live",
+    "deserialize-chain",
+    "edr-bypass-re",
+    "file-upload-weaponize",
+    "google-dorking",
+    "http-smuggling",
+    "lateral-movement",
+    "llm-pentest",
+    "oauth-attack",
+    "oidc-trust-abuse",
+    "osint-identity",
+    "passive-recon",
+    "patch-diff",
+    "php2shell",
+    "playwright-cli",
+    "proto-pollution-rce",
+    "race-condition",
+    "rce-direct",
+    "rce-hunter",
+    "rea",
+    "scopesentry",
+    "sqli-to-rce",
+    "ssrf-to-rce",
+    "ssti-rce",
+    "vuln-chaining",
+    "waf-bypass",
+    "web-cache-poison",
+    "xss-hunter"
+  ],
+  "workflows": [
+    {
+      "id": "full-web",
+      "team": "red",
+      "title": "Full web assessment",
+      "summary": "Map the application, run targeted vulnerability checks, verify impact, and produce evidence-backed findings.",
+      "skills": [
+        "api-recon",
+        "api-security",
+        "authz-hunter",
+        "xss-hunter",
+        "rce-hunter"
+      ],
+      "network": true,
+      "sources": [
+        "scopeweaver@a89795a",
+        "Artex-on-ChatGPT@afcd6ca",
+        "artex-browser-chat@13fabbb",
+        "artex-deep-hunter@abbe8e4",
+        "KSIR-ARTEX@240ae7c"
+      ]
+    },
+    {
+      "id": "recon",
+      "team": "red",
+      "title": "Reconnaissance and attack surface",
+      "summary": "Discover scoped hosts, services, applications, routes, and inputs before selecting test hypotheses.",
+      "skills": [
+        "bbot-recon",
+        "passive-recon",
+        "google-dorking",
+        "api-recon"
+      ],
+      "network": true,
+      "sources": [
+        "scopeweaver@a89795a",
+        "Artex-on-ChatGPT@afcd6ca",
+        "artex-browser-chat@13fabbb",
+        "artex-deep-hunter@abbe8e4",
+        "KSIR-ARTEX@240ae7c"
+      ]
+    },
+    {
+      "id": "api-authz",
+      "team": "red",
+      "title": "API authorization and IDOR",
+      "summary": "Build a role/object matrix and test ownership and privilege boundaries with designated accounts.",
+      "skills": [
+        "api-security",
+        "authz-hunter"
+      ],
+      "network": true,
+      "sources": [
+        "artex-browser-chat@13fabbb",
+        "artex-deep-hunter@abbe8e4",
+        "KSIR-ARTEX@240ae7c"
+      ]
+    },
+    {
+      "id": "xss",
+      "team": "red",
+      "title": "Cross-site scripting",
+      "summary": "Trace reflected, stored, and DOM input contexts and verify browser impact with reproducible evidence.",
+      "skills": [
+        "xss-hunter",
+        "playwright-cli"
+      ],
+      "network": true,
+      "sources": [
+        "scopeweaver@a89795a",
+        "Artex-on-ChatGPT@afcd6ca",
+        "artex-browser-chat@13fabbb",
+        "artex-deep-hunter@abbe8e4",
+        "KSIR-ARTEX@240ae7c"
+      ]
+    },
+    {
+      "id": "rce",
+      "team": "red",
+      "title": "Command and template injection",
+      "summary": "Trace command and template injection paths, test specific hypotheses, and verify execution impact.",
+      "skills": [
+        "rce-hunter",
+        "ssti-rce",
+        "rce-direct"
+      ],
+      "network": true,
+      "sources": [
+        "artex-deep-hunter@abbe8e4",
+        "KSIR-ARTEX@240ae7c"
+      ]
+    },
+    {
+      "id": "sqli",
+      "team": "red",
+      "title": "SQL injection",
+      "summary": "Test scoped injection paths, establish database behavior and privileges, and document demonstrated impact.",
+      "skills": [
+        "sqli-to-rce"
+      ],
+      "network": true,
+      "sources": [
+        "KSIR-ARTEX@240ae7c"
+      ]
+    },
+    {
+      "id": "race",
+      "team": "red",
+      "title": "Race conditions and business logic",
+      "summary": "Compare concurrent requests and committed state using the native race and request-tampering tools.",
+      "skills": [
+        "race-condition"
+      ],
+      "network": true,
+      "sources": [
+        "KSIR-ARTEX@240ae7c"
+      ]
+    },
+    {
+      "id": "smuggling",
+      "team": "red",
+      "title": "HTTP request smuggling",
+      "summary": "Check parser disagreements and connection behavior using the source request-smuggling playbook.",
+      "skills": [
+        "http-smuggling"
+      ],
+      "network": true,
+      "sources": [
+        "KSIR-ARTEX@240ae7c"
+      ]
+    },
+    {
+      "id": "ssrf",
+      "team": "red",
+      "title": "Server-side request forgery",
+      "summary": "Trace server-side fetches and verify reachable trust boundaries using evidence from approved endpoints.",
+      "skills": [
+        "ssrf-to-rce"
+      ],
+      "network": true,
+      "sources": [
+        "KSIR-ARTEX@240ae7c"
+      ]
+    },
+    {
+      "id": "uploads",
+      "team": "red",
+      "title": "File upload and inclusion",
+      "summary": "Assess validation, storage, inclusion paths, and their execution boundaries.",
+      "skills": [
+        "file-upload-weaponize",
+        "php2shell"
+      ],
+      "network": true,
+      "sources": [
+        "artex-browser-chat@13fabbb",
+        "KSIR-ARTEX@240ae7c"
+      ]
+    },
+    {
+      "id": "deserialization",
+      "team": "red",
+      "title": "Deserialization",
+      "summary": "Map reachable serialization inputs, frameworks, prerequisites, and reproducible trust-boundary failures.",
+      "skills": [
+        "deserialize-chain"
+      ],
+      "network": true,
+      "sources": [
+        "KSIR-ARTEX@240ae7c"
+      ]
+    },
+    {
+      "id": "prototype",
+      "team": "red",
+      "title": "Prototype pollution",
+      "summary": "Trace JavaScript object merge inputs to reachable application behavior and verify the affected path.",
+      "skills": [
+        "proto-pollution-rce"
+      ],
+      "network": true,
+      "sources": [
+        "KSIR-ARTEX@240ae7c"
+      ]
+    },
+    {
+      "id": "cache",
+      "team": "red",
+      "title": "Cache poisoning and deception",
+      "summary": "Compare cache keys, shared responses, normalization, and cross-user exposure on the scoped surface.",
+      "skills": [
+        "web-cache-poison"
+      ],
+      "network": true,
+      "sources": [
+        "KSIR-ARTEX@240ae7c"
+      ]
+    },
+    {
+      "id": "identity",
+      "team": "red",
+      "title": "Sessions, OAuth, and identity",
+      "summary": "Test session boundaries, OAuth/JWT flow assumptions, and designated test-account access.",
+      "skills": [
+        "oauth-attack",
+        "osint-identity",
+        "authz-hunter"
+      ],
+      "network": true,
+      "sources": [
+        "artex-deep-hunter@abbe8e4",
+        "KSIR-ARTEX@240ae7c"
+      ]
+    },
+    {
+      "id": "cloud",
+      "team": "red",
+      "title": "Cloud and OIDC trust",
+      "summary": "Review cloud identity and metadata trust boundaries and verify findings with available account evidence.",
+      "skills": [
+        "azure-identity-chain",
+        "oidc-trust-abuse"
+      ],
+      "network": true,
+      "sources": [
+        "KSIR-ARTEX@240ae7c"
+      ]
+    },
+    {
+      "id": "pipeline",
+      "team": "red",
+      "title": "CI/CD security",
+      "summary": "Trace repository, workflow, runner, artifact, and token trust boundaries using the supplied pipeline context.",
+      "skills": [
+        "cicd-injection"
+      ],
+      "network": false,
+      "sources": [
+        "KSIR-ARTEX@240ae7c"
+      ]
+    },
+    {
+      "id": "waf",
+      "team": "red",
+      "title": "Origin and WAF assessment",
+      "summary": "Compare permitted edge and origin behavior and verify observed filtering and normalization differences.",
+      "skills": [
+        "waf-bypass",
+        "cloudflare-origin-reveal"
+      ],
+      "network": true,
+      "sources": [
+        "KSIR-ARTEX@240ae7c"
+      ]
+    },
+    {
+      "id": "chains",
+      "team": "red",
+      "title": "Attack-chain verification",
+      "summary": "Join confirmed findings into impact hypotheses and launch explicit verification work for each link.",
+      "skills": [
+        "vuln-chaining"
+      ],
+      "network": true,
+      "sources": [
+        "KSIR-ARTEX@240ae7c"
+      ]
+    },
+    {
+      "id": "code",
+      "team": "red",
+      "title": "Source code assessment",
+      "summary": "Follow input-to-sink data flows, test reachable hypotheses, and cite the exact source revision.",
+      "skills": [
+        "codeaudit"
+      ],
+      "network": false,
+      "sources": [
+        "artex-browser-chat@13fabbb",
+        "KSIR-ARTEX@240ae7c"
+      ]
+    },
+    {
+      "id": "patch",
+      "team": "red",
+      "title": "Patch and CVE analysis",
+      "summary": "Compare fixes and affected paths, verify authoritative advisory evidence, and test the scoped version.",
+      "skills": [
+        "patch-diff",
+        "cve-live"
+      ],
+      "network": false,
+      "sources": [
+        "artex-browser-chat@13fabbb",
+        "KSIR-ARTEX@240ae7c"
+      ]
+    },
+    {
+      "id": "reverse",
+      "team": "red",
+      "title": "Reverse engineering",
+      "summary": "Analyze supplied binaries or application packages through the configured REA integration.",
+      "skills": [
+        "rea"
+      ],
+      "network": false,
+      "sources": [
+        "artex-browser-chat@13fabbb",
+        "KSIR-ARTEX@240ae7c"
+      ]
+    },
+    {
+      "id": "ai",
+      "team": "red",
+      "title": "AI application assessment",
+      "summary": "Test retrieval, instruction, data, and tool trust boundaries in the scoped AI application.",
+      "skills": [
+        "llm-pentest"
+      ],
+      "network": true,
+      "sources": [
+        "KSIR-ARTEX@240ae7c"
+      ]
+    },
+    {
+      "id": "purple-web",
+      "team": "purple",
+      "title": "Web attack and defense validation",
+      "summary": "Run scoped application tests, preserve request evidence, and correlate defender telemetry with the actual test.",
+      "skills": [
+        "api-recon",
+        "api-security",
+        "authz-hunter",
+        "xss-hunter",
+        "vuln-chaining"
+      ],
+      "network": true,
+      "sources": [
+        "scopeweaver@a89795a",
+        "Artex-on-ChatGPT@afcd6ca",
+        "artex-browser-chat@13fabbb",
+        "artex-deep-hunter@abbe8e4",
+        "KSIR-ARTEX@240ae7c"
+      ]
+    },
+    {
+      "id": "purple-endpoint",
+      "team": "purple",
+      "title": "Endpoint telemetry validation",
+      "summary": "Evaluate endpoint control coverage against an explicitly selected simulation and supplied sensor evidence.",
+      "skills": [
+        "edr-bypass-re"
+      ],
+      "network": false,
+      "sources": [
+        "artex-browser-chat@13fabbb",
+        "KSIR-ARTEX@240ae7c"
+      ]
+    },
+    {
+      "id": "detections",
+      "team": "blue",
+      "title": "Detection engineering",
+      "summary": "Review the bundled Sigma, Suricata, ATT&CK, and indicator content against provided positive and negative events.",
+      "skills": [],
+      "network": false,
+      "sources": [
+        "artex-deep-hunter@abbe8e4",
+        "artex-browser-chat@13fabbb"
+      ]
+    },
+    {
+      "id": "incident",
+      "team": "blue",
+      "title": "Incident investigation",
+      "summary": "Build a timeline, test incident hypotheses, and produce evidence-linked investigation and containment recommendations.",
+      "skills": [],
+      "network": false,
+      "sources": [
+        "artex-deep-hunter@abbe8e4",
+        "artex-browser-chat@13fabbb"
+      ]
+    },
+    {
+      "id": "report",
+      "team": "blue",
+      "title": "Evidence and remediation report",
+      "summary": "Consolidate existing task evidence, prioritize findings, and produce remediation and retest criteria.",
+      "skills": [],
+      "network": false,
+      "sources": [
+        "artex-deep-hunter@abbe8e4",
+        "artex-browser-chat@13fabbb"
+      ]
+    },
+    {
+      "id": "lateral",
+      "team": "red",
+      "title": "Host and lateral assessment",
+      "summary": "Review the selected host, identity, and management-path evidence using the imported host assessment tools.",
+      "skills": [
+        "lateral-movement"
+      ],
+      "network": true,
+      "sources": [
+        "KSIR-ARTEX@240ae7c"
+      ]
+    },
+    {
+      "id": "c2",
+      "team": "red",
+      "title": "Operator C2 handoff",
+      "summary": "Prepare and track the configured operator-controlled C2 handoff for a scoped task. This records a handoff, not automatic delivery.",
+      "skills": [
+        "c2-handoff"
+      ],
+      "network": true,
+      "sources": [
+        "KSIR-ARTEX@240ae7c"
+      ]
+    }
+  ]
+}

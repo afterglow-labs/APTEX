@@ -40,6 +40,7 @@ COPY --from=backend /scopeweaver /app/scopeweaver
 COPY start.sh /app/start.sh
 RUN chmod +x /app/scopeweaver /app/start.sh
 COPY skills/ /app/skills/
+COPY detections/ /app/detections/
 COPY scripts/browser-mcp.cjs scripts/browser-session.cjs scripts/browser-runtime.cjs /app/scripts/
 COPY plugins/telegram-mcp/ /app/plugins/telegram-mcp/
 RUN pip install --no-cache-dir -r /app/plugins/telegram-mcp/requirements.txt

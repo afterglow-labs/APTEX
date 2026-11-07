@@ -1217,6 +1217,40 @@ export interface Workflow {
   updated_at: string;
 }
 
+export interface AssessmentPhase {
+  id: string;
+  title: string;
+  goal?: string;
+  goal_id?: number;
+  state?: string;
+}
+
+export interface AssessmentBlueprint {
+  id: string;
+  team: "red" | "purple" | "blue";
+  title: string;
+  summary: string;
+  skills: string[];
+  network: boolean;
+  sources: string[];
+  missing_skills: string[];
+  unbound_skills: string[];
+  phases: AssessmentPhase[];
+}
+
+export interface AssessmentWorkflowRun {
+  task: Task;
+  workflow: { key: string; title: string; team: string; targets: string[]; skills: string[]; sources: string[] };
+  phases: AssessmentPhase[];
+  created_at: string;
+}
+
+export interface AssessmentWorkflowCatalog {
+  version: number;
+  workflows: AssessmentBlueprint[];
+  bundled_skills: string[];
+}
+
 export interface LLMProfile {
   auth_mode?: "api_key" | "chatgpt_plan";
   chatgpt_account_id?: string;

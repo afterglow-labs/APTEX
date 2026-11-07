@@ -9,9 +9,9 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
 	acperm "github.com/Autumn-27/norma/permission"
 	actool "github.com/Autumn-27/norma/tool"
+	"github.com/afterglow-labs/afterglow-cybersecurity/db"
 )
 
 // compactIntents distills intents to {id, summary, state, asset_ids, parents,
@@ -1265,6 +1265,13 @@ func (t *ToolSet) proveGoal() actool.CoreTool {
 					}
 				}
 				if allMet {
+					ready, err := t.ts.AssessmentWorkflowComplete()
+					if err != nil {
+						return actool.Errorf(locale.ErrorMessage(locale.FromContext(ctx), err)), nil
+					}
+					if !ready {
+						return actool.Text(fmt.Sprintf("goal %d marked met; workflow phases remain incomplete", goal)), nil
+					}
 					t.markGoalMet(fmt.Sprintf(locale.Text(locale.FromContext(ctx), "All %d goals are met (last triggered by goal %d)"), len(goals), goal))
 					t.markTerminalProof(toolUseIDOf(tc)) // bind to the ORIGINATING call (terminal_proof.go)
 					return actool.Text(fmt.Sprintf(locale.Text(locale.FromContext(ctx), "goal %d marked met; all task objectives are achieved and the task completes automatically"), goal)), nil

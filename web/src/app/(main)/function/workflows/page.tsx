@@ -14,6 +14,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import AssessmentWorkflows from "@/components/assessment-workflows";
 
 const scheduleKey = { manual: "workflows.manual", interval: "workflows.interval", daily: "workflows.daily" } as const;
 const defaultNodes = (): Node[] => [
@@ -37,7 +39,7 @@ function graphOf(w: Workflow | null): { nodes: Node[]; edges: Edge[] } {
   return { nodes: defaultNodes(), edges: defaultEdges() };
 }
 
-export default function WorkflowsPage() {
+function PromptWorkflowEditor() {
   const { t } = useI18n();
   const [items, setItems] = React.useState<Workflow[]>([]);
   const [agents, setAgents] = React.useState<Agent[]>([]);
@@ -198,4 +200,13 @@ export default function WorkflowsPage() {
       </div>
     </div>
   </div>;
+}
+
+export default function WorkflowsPage() {
+  const { t } = useI18n();
+  return <Tabs defaultValue="assessments">
+    <TabsList><TabsTrigger value="assessments">{t("operations.runWorkflows")}</TabsTrigger><TabsTrigger value="prompts">{t("operations.scheduledPrompts")}</TabsTrigger></TabsList>
+    <TabsContent value="assessments"><AssessmentWorkflows /></TabsContent>
+    <TabsContent value="prompts"><PromptWorkflowEditor /></TabsContent>
+  </Tabs>;
 }

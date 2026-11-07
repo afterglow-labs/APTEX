@@ -161,6 +161,9 @@ type TaskCreateOptions struct {
 	ChainVerifyID int64
 	// InterceptRules are task-level asset rules inserted into task_intercept_rules in the task-creation transaction.
 	InterceptRules []TaskInterceptRuleInput
+	// AssessmentWorkflow and OperatorScopes are created atomically with the task.
+	AssessmentWorkflow *AssessmentWorkflowInput
+	OperatorScopes     []TaskScope
 }
 
 // CreateTaskWithOptions creates an exploration, task, direct source relations,
@@ -254,6 +257,9 @@ RETURNING id, status, paused, created_at`, opts.Name, opts.CategoryID, descripti
 		return nil, err
 	}
 	if err := insertTaskInterceptRules(tx, t.ID, opts.InterceptRules); err != nil {
+		return nil, err
+	}
+	if err := insertAssessmentWorkflow(tx, t.ID, expID, opts.AssessmentWorkflow, opts.OperatorScopes); err != nil {
 		return nil, err
 	}
 	if len(opts.LLMProfileIDs) == 0 {

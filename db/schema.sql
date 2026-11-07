@@ -1743,6 +1743,16 @@ CREATE INDEX IF NOT EXISTS idx_task_artifacts_rank ON task_artifacts(task_id, va
 
 -- Operator-controlled C2 handoff. The application never transmits a binary
 -- or emits a ready-to-run delivery command from this record.
+CREATE TABLE IF NOT EXISTS assessment_workflow_runs (
+    task_id BIGINT PRIMARY KEY REFERENCES tasks(id) ON DELETE CASCADE,
+    workflow_key TEXT NOT NULL,
+    definition_json JSONB NOT NULL,
+    goal_ids JSONB NOT NULL DEFAULT '[]',
+    request_id TEXT UNIQUE,
+    request_hash TEXT NOT NULL DEFAULT '',
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
 CREATE TABLE IF NOT EXISTS c2_handoffs (
     id BIGSERIAL PRIMARY KEY,
     task_id BIGINT NOT NULL REFERENCES tasks(id) ON DELETE CASCADE,
