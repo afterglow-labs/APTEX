@@ -119,7 +119,9 @@ def optional_model_directory(backend: Path, settings: dict[str, str]) -> Path | 
         return None
     provider = os.getenv("SCOPEWEAVER_LLM_PROVIDER") or os.getenv("ARTEX_LLM_PROVIDER") or settings.get("SCOPEWEAVER_LLM_PROVIDER") or settings.get("ARTEX_LLM_PROVIDER", "")
     base = os.getenv("SCOPEWEAVER_LLM_BASE_URL") or os.getenv("ARTEX_LLM_BASE_URL") or settings.get("SCOPEWEAVER_LLM_BASE_URL") or settings.get("ARTEX_LLM_BASE_URL", "")
-    if mode == "auto" and provider and (provider != "ollama" or base not in {"", "http://ollama:11434"}):
+    model = os.getenv("SCOPEWEAVER_LLM_MODEL") or os.getenv("ARTEX_LLM_MODEL") or settings.get("SCOPEWEAVER_LLM_MODEL") or settings.get("ARTEX_LLM_MODEL", "")
+    # Finding weights on disk does not choose which model the user wants.
+    if mode == "auto" and (not model or provider != "ollama" or base not in {"", "http://ollama:11434"}):
         return None
     try:
         return model_directory(backend, settings)
@@ -140,17 +142,18 @@ def prepare_backend(backend: Path) -> dict[str, str]:
     updates = {}
     if model_path is not None:
         updates["OLLAMA_MODELS_DIR"] = str(model_path)
-        if not (os.getenv("SCOPEWEAVER_LLM_PROVIDER") or os.getenv("ARTEX_LLM_PROVIDER") or settings.get("SCOPEWEAVER_LLM_PROVIDER") or settings.get("ARTEX_LLM_PROVIDER")):
+    model = os.getenv("SCOPEWEAVER_LLM_MODEL") or os.getenv("ARTEX_LLM_MODEL") or settings.get("SCOPEWEAVER_LLM_MODEL") or settings.get("ARTEX_LLM_MODEL")
+    provider = os.getenv("SCOPEWEAVER_LLM_PROVIDER") or os.getenv("ARTEX_LLM_PROVIDER") or settings.get("SCOPEWEAVER_LLM_PROVIDER") or settings.get("ARTEX_LLM_PROVIDER")
+    if model_path is not None and model and provider in {None, "", "ollama"}:
+        if not provider:
             updates["SCOPEWEAVER_LLM_PROVIDER"] = "ollama"
         if not (os.getenv("SCOPEWEAVER_LLM_BASE_URL") or os.getenv("ARTEX_LLM_BASE_URL") or settings.get("SCOPEWEAVER_LLM_BASE_URL") or settings.get("ARTEX_LLM_BASE_URL")):
             updates["SCOPEWEAVER_LLM_BASE_URL"] = "http://ollama:11434"
-    if fresh or "SCOPEWEAVER_LOCAL_LLM_ONLY" not in settings:
-        updates["SCOPEWEAVER_LOCAL_LLM_ONLY"] = "true"
+    if "SCOPEWEAVER_LOCAL_LLM_ONLY" not in settings:
+        updates["SCOPEWEAVER_LOCAL_LLM_ONLY"] = "false"
     if not settings.get("POSTGRES_PASSWORD"):
         updates["POSTGRES_PASSWORD"] = secrets.token_urlsafe(32)
-    if model_path is not None and not (settings.get("SCOPEWEAVER_LLM_MODEL") or settings.get("ARTEX_LLM_MODEL")):
-        updates["SCOPEWEAVER_LLM_MODEL"] = "qwen3:32b"
-    if model_path is not None and not settings.get("SCOPEWEAVER_LLM_CONTEXT_WINDOW_K"):
+    if model_path is not None and model and provider in {None, "", "ollama"} and not settings.get("SCOPEWEAVER_LLM_CONTEXT_WINDOW_K"):
         updates["SCOPEWEAVER_LLM_CONTEXT_WINDOW_K"] = "32"
     update_env(env_path, updates)
     for name in ("data", "private/c2-binaries"):
@@ -353,9 +356,11 @@ def start(*, rebuild: bool = False) -> None:
     wait_for_backend(base)
     ensure_administrator(base)
     print(f"APTEX server ready: {base}. Open its client with aptex.", flush=True)
-    if model_path is not None:
+    provider = os.getenv("SCOPEWEAVER_LLM_PROVIDER") or os.getenv("ARTEX_LLM_PROVIDER") or settings.get("SCOPEWEAVER_LLM_PROVIDER") or settings.get("ARTEX_LLM_PROVIDER")
+    model = os.getenv("SCOPEWEAVER_LLM_MODEL") or os.getenv("ARTEX_LLM_MODEL") or settings.get("SCOPEWEAVER_LLM_MODEL") or settings.get("ARTEX_LLM_MODEL")
+    if model_path is not None and provider == "ollama" and model:
         try:
-            wait_for_local_model(ROOT, settings.get("SCOPEWEAVER_LLM_MODEL") or settings.get("ARTEX_LLM_MODEL") or "qwen3:32b")
+            wait_for_local_model(ROOT, model)
         except ValueError as error:
             print(f"Local model is not ready: {error}. Configure it in APTEX; the application is running.", flush=True)
 

@@ -37,15 +37,51 @@ class AptexLauncherTests(unittest.TestCase):
         models = self.directory / "model store"
         (models / "blobs").mkdir(parents=True)
         (models / "manifests").mkdir()
-        (self.repo / ".env").write_text("PERSONAL_SETTING=retained\nSCOPEWEAVER_LOCAL_LLM_ONLY=false\n")
+        (self.repo / ".env").write_text("PERSONAL_SETTING=retained\nSCOPEWEAVER_LOCAL_LLM_ONLY=false\nSCOPEWEAVER_LLM_PROVIDER=ollama\nSCOPEWEAVER_LLM_MODEL=chosen-local:latest\n")
         with patch.dict(aptex.os.environ, {"OLLAMA_MODELS_DIR": str(models)}):
             settings = aptex.prepare_backend(self.repo)
         self.assertEqual(settings["PERSONAL_SETTING"], "retained")
         self.assertEqual(settings["SCOPEWEAVER_LOCAL_LLM_ONLY"], "false")
-        self.assertEqual(settings["SCOPEWEAVER_LLM_MODEL"], "qwen3:32b")
+        self.assertEqual(settings["SCOPEWEAVER_LLM_MODEL"], "chosen-local:latest")
         self.assertEqual(settings["OLLAMA_MODELS_DIR"], str(models))
         self.assertTrue(settings["POSTGRES_PASSWORD"])
         self.assertEqual((self.repo / ".env").stat().st_mode & 0o777, 0o600)
+
+    def test_existing_weights_do_not_select_a_model_or_provider(self):
+        models = self.directory / "model store"
+        (models / "blobs").mkdir(parents=True)
+        (models / "manifests").mkdir()
+        with patch.dict(aptex.os.environ, {"OLLAMA_MODELS_DIR": str(models)}):
+            settings = aptex.prepare_backend(self.repo)
+            command = aptex.compose_command(self.repo, "up", "-d", *aptex.CORE_SERVICES)
+        self.assertNotIn("SCOPEWEAVER_LLM_MODEL", settings)
+        self.assertNotIn("SCOPEWEAVER_LLM_PROVIDER", settings)
+        self.assertEqual(settings["SCOPEWEAVER_LOCAL_LLM_ONLY"], "false")
+        self.assertNotIn("docker-compose.host-model.yml", command)
+
+    def test_explicit_local_runtime_without_model_does_not_choose_one(self):
+        models = self.directory / "model store"
+        (models / "blobs").mkdir(parents=True)
+        (models / "manifests").mkdir()
+        (self.repo / ".env").write_text(f"APTEX_LOCAL_MODEL_ENABLED=true\nOLLAMA_MODELS_DIR={models}\n")
+        settings = aptex.prepare_backend(self.repo)
+        self.assertNotIn("SCOPEWEAVER_LLM_MODEL", settings)
+        self.assertNotIn("SCOPEWEAVER_LLM_PROVIDER", settings)
+        self.assertIsNotNone(aptex.optional_model_directory(self.repo, settings))
+
+    def test_explicit_local_runtime_does_not_rewrite_cloud_provider(self):
+        models = self.directory / "model store"
+        (models / "blobs").mkdir(parents=True)
+        (models / "manifests").mkdir()
+        (self.repo / ".env").write_text(
+            f"APTEX_LOCAL_MODEL_ENABLED=true\nOLLAMA_MODELS_DIR={models}\n"
+            "SCOPEWEAVER_LLM_PROVIDER=openai-responses\nSCOPEWEAVER_LLM_MODEL=gpt-6.1-sol\n"
+        )
+        settings = aptex.prepare_backend(self.repo)
+        self.assertEqual(settings["SCOPEWEAVER_LLM_PROVIDER"], "openai-responses")
+        self.assertEqual(settings["SCOPEWEAVER_LLM_MODEL"], "gpt-6.1-sol")
+        self.assertNotIn("SCOPEWEAVER_LLM_BASE_URL", settings)
+        self.assertIsNotNone(aptex.optional_model_directory(self.repo, settings))
 
     def test_start_reuses_running_services_and_leaves_odysseus_configuration_alone(self):
         odysseus = self.directory / "odysseus"
@@ -53,7 +89,7 @@ class AptexLauncherTests(unittest.TestCase):
         config = odysseus / ".env"
         config.write_text("APP_PORT=7860\nPERSONAL_SETTING=retained\n")
         original = config.read_bytes()
-        with patch.object(aptex, "prepare_backend", return_value={"SCOPEWEAVER_LLM_MODEL": "qwen3:32b"}), \
+        with patch.object(aptex, "prepare_backend", return_value={"SCOPEWEAVER_LLM_PROVIDER": "ollama", "SCOPEWEAVER_LLM_MODEL": "chosen-local:latest"}), \
              patch.object(aptex, "ensure_docker"), \
              patch.object(aptex, "all_backend_services_running", return_value=True), \
              patch.object(aptex, "model_directory", return_value=self.directory / "models"), \
@@ -107,7 +143,7 @@ class AptexLauncherTests(unittest.TestCase):
             aptex.prepare_backend(self.repo)
 
     def test_missing_selected_model_leaves_application_running(self):
-        with patch.object(aptex, "prepare_backend", return_value={"SCOPEWEAVER_LLM_MODEL": "missing-model"}), \
+        with patch.object(aptex, "prepare_backend", return_value={"SCOPEWEAVER_LLM_PROVIDER": "ollama", "SCOPEWEAVER_LLM_MODEL": "missing-model"}), \
              patch.object(aptex, "ensure_docker"), \
              patch.object(aptex, "all_backend_services_running", return_value=True), \
              patch.object(aptex, "model_directory", return_value=self.directory / "models"), \

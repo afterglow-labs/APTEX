@@ -57,6 +57,11 @@ configured name invalidates existing administrator sessions.
 If a local Ollama model is already downloaded on the Docker host, the optional
 [`docker-compose.host-model.yml`](docker-compose.host-model.yml) runs Ollama on
 the private Compose network with that existing model directory mounted read-only.
+`aptex-start` starts this service automatically only when `.env` selects
+`SCOPEWEAVER_LLM_PROVIDER=ollama` and a specific
+`SCOPEWEAVER_LLM_MODEL` (or their `ARTEX_*` aliases). It never chooses a model
+from the presence of weights. Set `APTEX_LOCAL_MODEL_ENABLED=true` to start the
+private service without selecting a model, or `false` to omit that service.
 Export `OLLAMA_MODELS_DIR` as the directory that actually contains the model's
 `blobs/` and `manifests/`, verify it exists, then start the `local-llm` profile:
 
