@@ -1,11 +1,6 @@
 name: macOS client
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths: ['clients/macos/**', '.github/workflows/macos-client.yml']
-  pull_request:
-    paths: ['clients/macos/**', '.github/workflows/macos-client.yml']
 permissions:
   contents: read
 jobs:

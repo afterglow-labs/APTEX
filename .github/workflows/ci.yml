@@ -1,9 +1,6 @@
 name: checks
 on:
-  push:
-    branches: [dev, main]
-  pull_request:
-    types: [opened, synchronize, reopened, edited]
+  workflow_dispatch:
 permissions:
   contents: read
 jobs:

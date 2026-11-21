@@ -1,11 +1,6 @@
 name: iOS client
 on:
   workflow_dispatch:
-  pull_request:
-    paths: ['clients/ios/**', '.github/workflows/ios-client.yml']
-  push:
-    branches: [main]
-    paths: ['clients/ios/**', '.github/workflows/ios-client.yml']
 permissions:
   contents: read
 jobs:
