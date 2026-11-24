@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# ScopeWeaver install script: ① all-in-Docker  ② build and run locally
+# APTEX install script: ① all-in-Docker  ② build and run locally
 #
-# Messages default to English; set SCOPEWEAVER_LANGUAGE to en, ko, zh-Hans,
+# Messages default to English; set APTEX_LANGUAGE to en, ko, zh-Hans,
 # zh-Hant, ja or es. ARTEX_LANGUAGE remains supported.
 set -euo pipefail
 cd "$(cd "$(dirname "$0")" && pwd)"
@@ -33,7 +33,7 @@ normalize_language() (
     *) printf en ;;
   esac
 )
-LANG_SEL=$(normalize_language "${SCOPEWEAVER_LANGUAGE:-${ARTEX_LANGUAGE:-en}}")
+LANG_SEL=$(normalize_language "${APTEX_LANGUAGE:-${SCOPEWEAVER_LANGUAGE:-${ARTEX_LANGUAGE:-en}}}")
 # msg EN KO HANS HANT JA ES; no runtime catalog or extra packaging dependency.
 msg() {
   case "$LANG_SEL" in
@@ -53,12 +53,12 @@ die(){  printf '\033[31m[x]\033[0m %s\n' "$*" >&2; exit 1; }
 ask(){  local p="$1" d="${2:-}" a; read -rp "$p${d:+ [$d]}: " a; echo "${a:-$d}"; }
 rand(){ head -c 18 /dev/urandom | base64 | tr -dc 'A-Za-z0-9' | head -c 24; }
 
-# Detect only; configuring ScopeWeaver never changes the host Ollama daemon.
+# Detect only; configuring APTEX never changes the host Ollama daemon.
 choose_host_ollama(){
   OLLAMA_MODEL=''
   if command -v curl >/dev/null 2>&1 && curl -fsS --connect-timeout 1 --max-time 2 http://127.0.0.1:11434/api/tags >/dev/null 2>&1; then
     info "$(msg 'Detected Ollama on the host' '호스트에서 Ollama를 감지했습니다' "检测到主机上的 Ollama" "偵測到主機上的 Ollama" "ホスト上の Ollama を検出しました" "Se ha detectado Ollama en el equipo")" >&2
-    if [ "$(ask "$(msg 'Configure ScopeWeaver to use host Ollama? (y/n)' 'ScopeWeaver에서 호스트 Ollama를 사용할까요? (y/n)' "配置 ScopeWeaver 使用主机上的 Ollama？(y/n)" "設定 ScopeWeaver 使用主機上的 Ollama？(y/n)" "ホスト上の Ollama を ScopeWeaver で使用しますか？(y/n)" "¿Configurar ScopeWeaver para usar Ollama del equipo? (y/n)")" n)" = y ]; then
+    if [ "$(ask "$(msg 'Configure APTEX to use host Ollama? (y/n)' 'APTEX에서 호스트 Ollama를 사용할까요? (y/n)' "配置 APTEX 使用主机上的 Ollama？(y/n)" "設定 APTEX 使用主機上的 Ollama？(y/n)" "ホスト上の Ollama を APTEX で使用しますか？(y/n)" "¿Configurar APTEX para usar Ollama del equipo? (y/n)")" n)" = y ]; then
       OLLAMA_MODEL="$(ask "$(msg 'Downloaded model name (no download will be started)' '이미 다운로드한 모델 이름 (다운로드하지 않습니다)' "已下载的模型名称（不会开始下载）" "已下載的模型名稱（不會開始下載）" "ダウンロード済みのモデル名（ダウンロードは開始しません）" "Nombre del modelo descargado (no se iniciará ninguna descarga)")" 'qwen2.5-coder:7b')"
       case "$OLLAMA_MODEL" in *[!A-Za-z0-9_./:@-]*|'') die "$(msg 'Invalid model name' '잘못된 모델 이름' "模型名称无效" "模型名稱無效" "モデル名が無効です" "Nombre de modelo no válido")" ;; esac
     fi
@@ -98,20 +98,20 @@ install_docker(){
     rm -f .env.bak
     choose_host_ollama
     if [ -n "$OLLAMA_MODEL" ]; then
-      sed -i.bak 's|^SCOPEWEAVER_LLM_PROVIDER=.*|SCOPEWEAVER_LLM_PROVIDER=ollama|' .env
-      sed -i.bak "s|^SCOPEWEAVER_LLM_MODEL=.*|SCOPEWEAVER_LLM_MODEL=${OLLAMA_MODEL}|" .env
-      sed -i.bak 's|^SCOPEWEAVER_LLM_BASE_URL=.*|SCOPEWEAVER_LLM_BASE_URL=http://host.docker.internal:11434|' .env
+      sed -i.bak 's|^APTEX_LLM_PROVIDER=.*|APTEX_LLM_PROVIDER=ollama|' .env
+      sed -i.bak "s|^APTEX_LLM_MODEL=.*|APTEX_LLM_MODEL=${OLLAMA_MODEL}|" .env
+      sed -i.bak 's|^APTEX_LLM_BASE_URL=.*|APTEX_LLM_BASE_URL=http://host.docker.internal:11434|' .env
       rm -f .env.bak
     fi
     ok "$(msg '.env generated (POSTGRES_PASSWORD set)' '.env 생성 완료 (POSTGRES_PASSWORD 설정됨)' ".env 已生成（POSTGRES_PASSWORD 已设置）" ".env 已產生（POSTGRES_PASSWORD 已設定）" ".env を生成しました（POSTGRES_PASSWORD 設定済み）" ".env generado (POSTGRES_PASSWORD configurado)")"
   else
     info "$(msg 'Reusing existing .env' '기존 .env를 그대로 사용합니다' "复用现有 .env" "沿用現有的 .env" "既存の .env を再利用します" "Se reutiliza el archivo .env existente")"
   fi
-  info "$(msg 'Building ScopeWeaver from this checkout…' '현재 소스로 ScopeWeaver를 빌드합니다…' "正在从当前工作副本构建 ScopeWeaver…" "正在從目前的工作副本建置 ScopeWeaver…" "このチェックアウトから ScopeWeaver をビルドしています…" "Compilando ScopeWeaver desde esta copia de trabajo…")"
-  docker compose build scopeweaver
+  info "$(msg 'Building APTEX from this checkout…' '현재 소스로 APTEX를 빌드합니다…' "正在从当前工作副本构建 APTEX…" "正在從目前的工作副本建置 APTEX…" "このチェックアウトから APTEX をビルドしています…" "Compilando APTEX desde esta copia de trabajo…")"
+  docker compose build aptex
   docker compose up -d
   ok "$(msg 'Started → http://localhost:8787' '시작 완료 → http://localhost:8787' "已启动 → http://localhost:8787" "已啟動 → http://localhost:8787" "起動しました → http://localhost:8787" "Iniciado → http://localhost:8787")"
-  info "$(msg 'View logs: docker compose logs -f scopeweaver' '로그 보기: docker compose logs -f scopeweaver' "查看日志：docker compose logs -f scopeweaver" "檢視記錄：docker compose logs -f scopeweaver" "ログを表示: docker compose logs -f scopeweaver" "Ver registros: docker compose logs -f scopeweaver")"
+  info "$(msg 'View logs: docker compose logs -f aptex' '로그 보기: docker compose logs -f aptex' "查看日志：docker compose logs -f aptex" "檢視記錄：docker compose logs -f aptex" "ログを表示: docker compose logs -f aptex" "Ver registros: docker compose logs -f aptex")"
 }
 
 # ── ② build and run locally ─────────────────────────────────
@@ -123,9 +123,9 @@ install_local(){
     2)
       ensure_docker
       local pw; pw="$(ask "$(msg 'Postgres password (Enter for a random one)' 'Postgres 비밀번호 (Enter 시 무작위 생성)' "Postgres 密码（按 Enter 随机生成）" "Postgres 密碼（按 Enter 隨機產生）" "Postgres のパスワード（Enter でランダム生成）" "Contraseña de Postgres (Enter para generar una aleatoria)")" "$(rand)")"
-      docker run -d --name scopeweaver-pg -p 5432:5432 \
+      docker run -d --name aptex-pg -p 5432:5432 \
         -e POSTGRES_USER=artex -e POSTGRES_PASSWORD="$pw" -e POSTGRES_DB=artex \
-        -v scopeweaver-pg:/var/lib/postgresql/data postgres:16-alpine
+        -v aptex-pg:/var/lib/postgresql/data postgres:16-alpine
       DB_HOST=127.0.0.1 DB_PORT=5432 DB_USER=artex DB_PASS="$pw" DB_NAME=artex DB_SSL=disable ;;
     *)
       DB_HOST="$(ask "$(msg 'Database host' '데이터베이스 주소' "数据库主机" "資料庫主機" "データベースのホスト" "Servidor de la base de datos")" 127.0.0.1)"
@@ -170,19 +170,19 @@ JSON
     ( cd web && npm ci && npm run build:static )
     mkdir -p server/webui && rm -rf server/webui/dist && cp -r web/out server/webui/dist
     info "$(msg 'Compiling the single binary with the frontend embedded…' '프런트엔드가 내장된 단일 바이너리를 컴파일합니다…' "正在编译内嵌前端的单一二进制文件…" "正在編譯內嵌前端的單一執行檔…" "フロントエンドを埋め込んだ単一バイナリをコンパイルしています…" "Compilando un único binario con el frontend integrado…")"
-    CGO_ENABLED=0 go build -tags embedui -trimpath -o scopeweaver ./cmd/artex
+    CGO_ENABLED=0 go build -tags embedui -trimpath -o aptex ./cmd/aptex
   else
     warn "$(msg 'npm not found: building the backend WITHOUT the embedded frontend (run npm run dev for the frontend)' 'npm을 찾지 못함: 프런트엔드 미내장 백엔드를 빌드합니다 (프런트엔드는 따로 npm run dev)' "未找到 npm：仅构建不含前端的后端（请运行 npm run dev 启动前端）" "找不到 npm：僅建置未內嵌前端的後端（請執行 npm run dev 啟動前端）" "npm が見つかりません。フロントエンドを含めずバックエンドのみビルドします（フロントエンドは npm run dev で起動してください）" "No se ha encontrado npm: se compila el backend SIN el frontend integrado (ejecuta npm run dev para el frontend)")"
-    CGO_ENABLED=0 go build -o scopeweaver ./cmd/artex
+    CGO_ENABLED=0 go build -o aptex ./cmd/aptex
   fi
-  ok "$(msg 'Build complete → ./scopeweaver' '컴파일 완료 → ./scopeweaver' "构建完成 → ./scopeweaver" "建置完成 → ./scopeweaver" "ビルド完了 → ./scopeweaver" "Compilación terminada → ./scopeweaver")"
+  ok "$(msg 'Build complete → ./aptex' '컴파일 완료 → ./aptex' "构建完成 → ./aptex" "建置完成 → ./aptex" "ビルド完了 → ./aptex" "Compilación terminada → ./aptex")"
 
   info "$(msg 'Starting… (Ctrl-C to quit)' '시작합니다… (Ctrl-C로 종료)' "正在启动…（按 Ctrl-C 退出）" "正在啟動…（按 Ctrl-C 結束）" "起動しています…（Ctrl-C で終了）" "Iniciando… (Ctrl-C para salir)")"
   ./start.sh
 }
 
 echo "=============================="
-echo "  $(msg 'ScopeWeaver install' 'ScopeWeaver 설치' "安装 ScopeWeaver" "安裝 ScopeWeaver" "ScopeWeaver のインストール" "Instalación de ScopeWeaver")"
+echo "  $(msg 'APTEX install' 'APTEX 설치' "安装 APTEX" "安裝 APTEX" "APTEX のインストール" "Instalación de APTEX")"
 echo "  1) $(msg 'All-in-Docker install' '전부 Docker로 설치' "全部使用 Docker 安装" "全部使用 Docker 安裝" "すべて Docker でインストール" "Instalación completa con Docker")"
 echo "  2) $(msg 'Local run (go build)' '로컬 실행 (go 컴파일)' "本地运行 (go build)" "本機執行 (go build)" "ローカルで実行 (go build)" "Ejecución local (go build)")"
 echo "=============================="

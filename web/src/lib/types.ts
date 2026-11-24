@@ -1831,7 +1831,7 @@ export interface UpdateCheck {
   os: string;
   arch: string;
   repo: string;
-  /* Whether a previous binary (scopeweaver.old) is available for rollback. */
+  /* Whether a previous binary (aptex.old) is available for rollback. */
   has_backup: boolean;
   /* Self-update bootstrap result, such as failed replacement or rollback; empty if nothing occurred. */
   boot_notice?: string;

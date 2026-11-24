@@ -2,7 +2,7 @@ package db
 
 import (
 	"context"
-	"github.com/afterglow-labs/afterglow-cybersecurity/chatstate"
+	"github.com/afterglow-labs/APTEX/chatstate"
 )
 
 // Called before accepting HTTP requests after process recovery. A published

@@ -257,7 +257,7 @@ func TestDiagnosticsMeasuredOffloadAndAliases(t *testing.T) {
 				case "/api/show":
 					fmt.Fprint(w, `{"capabilities":["tools"]}`)
 				case "/api/chat":
-					fmt.Fprint(w, `{"done":true,"message":{"tool_calls":[{"function":{"name":"scopeweaver_ping","arguments":"{\"value\":\"OK\"}"}}]},"load_duration":2000000,"eval_count":12,"eval_duration":1000000000}`)
+					fmt.Fprint(w, `{"done":true,"message":{"tool_calls":[{"function":{"name":"aptex_ping","arguments":"{\"value\":\"OK\"}"}}]},"load_duration":2000000,"eval_count":12,"eval_duration":1000000000}`)
 				case "/api/ps":
 					fmt.Fprintf(w, `{"models":[%s,{"name":"alias","model":"local","context_length":32768},{"name":"selected-alias:latest"},{"name":"other:latest"},{"model":"other"},{"name":"second:tag"}]}`, tc.selected)
 				default:
@@ -354,7 +354,7 @@ func TestDiagnosticToolProbeDisablesThinking(t *testing.T) {
 					if request["options"].(map[string]any)["num_predict"] != float64(256) {
 						t.Errorf("diagnostic changed prediction budget: %+v", request)
 					}
-					fmt.Fprint(w, `{"done":true,"message":{"tool_calls":[{"function":{"name":"scopeweaver_ping","arguments":{"value":"OK"}}}]}}`)
+					fmt.Fprint(w, `{"done":true,"message":{"tool_calls":[{"function":{"name":"aptex_ping","arguments":{"value":"OK"}}}]}}`)
 				case "/api/ps":
 					fmt.Fprint(w, `{"models":[{"name":"fixture","context_length":32768}]}`)
 				default:

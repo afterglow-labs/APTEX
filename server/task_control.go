@@ -4,13 +4,13 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/locale"
 	"log"
 	"net/http"
 	"strings"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/agent"
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
+	"github.com/afterglow-labs/APTEX/agent"
+	"github.com/afterglow-labs/APTEX/db"
 )
 
 const maxBatchControlIDs = 100

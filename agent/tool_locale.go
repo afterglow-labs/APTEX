@@ -4,7 +4,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/locale"
 	actool "github.com/Autumn-27/norma/tool"
 	"strconv"
 	"sync"

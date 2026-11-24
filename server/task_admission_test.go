@@ -11,9 +11,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/agent"
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
-	"github.com/afterglow-labs/afterglow-cybersecurity/internal/dbtest"
+	"github.com/afterglow-labs/APTEX/agent"
+	"github.com/afterglow-labs/APTEX/db"
+	"github.com/afterglow-labs/APTEX/internal/dbtest"
 )
 
 func newAdmissionTestServer(m *Manager, available func(*Task) bool) *Server {

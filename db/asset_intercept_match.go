@@ -2,7 +2,7 @@ package db
 
 import (
 	"fmt"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/locale"
 	"net"
 	"net/url"
 	"strings"

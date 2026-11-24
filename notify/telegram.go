@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/locale"
 	"net/url"
 	"strings"
 )
@@ -112,7 +112,7 @@ func telegramHTML(m Message) (string, int) {
 		// Telegram limits characters, so packing uses runeSize.
 		footer := ""
 		if m.HomeURL != "" {
-			footer = fmt.Sprintf(locale.Text(locale.Resolve(m.Language), "\n\n<a href=\"%s\">View all in ScopeWeaver</a>"), telegramEscapeAttr(m.HomeURL))
+			footer = fmt.Sprintf(locale.Text(locale.Resolve(m.Language), "\n\n<a href=\"%s\">View all in APTEX</a>"), telegramEscapeAttr(m.HomeURL))
 		}
 		kept := packItemCount(m.Items, telegramTextLimit, telegramReservedRunes, footer, runeSize, func(it Item, idx int) string {
 			return telegramBatchLine(it, idx+1, locale.Resolve(m.Language))

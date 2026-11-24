@@ -1,4 +1,4 @@
-// Package db is ScopeWeaver's PostgreSQL data source, replacing the legacy single-file graph SQLite store.
+// Package db is APTEX's PostgreSQL data source, replacing the legacy single-file graph SQLite store.
 // It opens connections, applies the schema, and seeds built-in agents and variable catalogs.
 package db
 
@@ -7,13 +7,13 @@ import (
 	"database/sql"
 	_ "embed"
 	"errors"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/locale"
 	"net/url"
 	"strings"
 	"sync"
 	"time"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/config"
+	"github.com/afterglow-labs/APTEX/config"
 	"github.com/jackc/pgx/v5/pgconn"
 	_ "github.com/jackc/pgx/v5/stdlib" // pgx database/sql driver ("pgx")
 )

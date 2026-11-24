@@ -3,7 +3,7 @@ package db
 import (
 	"encoding/json"
 	"errors"
-	"github.com/afterglow-labs/afterglow-cybersecurity/chatstate"
+	"github.com/afterglow-labs/APTEX/chatstate"
 	"reflect"
 	"sync"
 	"sync/atomic"

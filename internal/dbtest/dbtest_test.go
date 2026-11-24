@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/config"
+	"github.com/afterglow-labs/APTEX/config"
 )
 
 // withLiveDSN temporarily overrides the package-level liveDSN (captured at init)
@@ -22,7 +22,7 @@ func withLiveDSN(t *testing.T, dsn string) {
 }
 
 func TestSameAsLive(t *testing.T) {
-	const live = "postgres://sw_user@fedora:5432/scopeweaver?sslmode=disable"
+	const live = "postgres://sw_user@fedora:5432/aptex?sslmode=disable"
 	cases := []struct {
 		name string
 		live string
@@ -30,13 +30,13 @@ func TestSameAsLive(t *testing.T) {
 		want bool
 	}{
 		{"identical url", live, live, true},
-		{"same host port db different user/password", live, "postgres://other:pw@fedora:5432/scopeweaver", true},
-		{"host case-insensitive", live, "postgres://sw_user@FEDORA:5432/scopeweaver", true},
-		{"database case-insensitive", live, "postgres://sw_user@fedora:5432/SCOPEWEAVER", true},
-		{"url form vs keyword form", live, "host=fedora port=5432 dbname=scopeweaver user=sw_user", true},
-		{"different database", live, "postgres://sw_user@fedora:5432/scopeweaver_test_1", false},
-		{"different host", live, "postgres://sw_user@otherhost:5432/scopeweaver", false},
-		{"different port", live, "postgres://sw_user@fedora:6543/scopeweaver", false},
+		{"same host port db different user/password", live, "postgres://other:pw@fedora:5432/aptex", true},
+		{"host case-insensitive", live, "postgres://sw_user@FEDORA:5432/aptex", true},
+		{"database case-insensitive", live, "postgres://sw_user@fedora:5432/APTEX", true},
+		{"url form vs keyword form", live, "host=fedora port=5432 dbname=aptex user=sw_user", true},
+		{"different database", live, "postgres://sw_user@fedora:5432/aptex_test_1", false},
+		{"different host", live, "postgres://sw_user@otherhost:5432/aptex", false},
+		{"different port", live, "postgres://sw_user@fedora:6543/aptex", false},
 		{"empty live dsn means nothing to protect", "", live, false},
 		{"unparseable test dsn", live, "::not a dsn::", false},
 	}
@@ -90,7 +90,7 @@ func TestResolveDSNSkipsWhenUnset(t *testing.T) {
 }
 
 func TestResolveDSNFatalsOnLiveDSN(t *testing.T) {
-	const live = "postgres://sw_user@fedora:5432/scopeweaver?sslmode=disable"
+	const live = "postgres://sw_user@fedora:5432/aptex?sslmode=disable"
 	withLiveDSN(t, live)
 	t.Setenv(EnvTestDSN, live)
 
@@ -108,8 +108,8 @@ func TestResolveDSNFatalsOnLiveDSN(t *testing.T) {
 }
 
 func TestResolveDSNReturnsThrowawayDSN(t *testing.T) {
-	const live = "postgres://sw_user@fedora:5432/scopeweaver?sslmode=disable"
-	const testDSN = "postgres://sw_user_test@/scopeweaver_test_1?host=/tmp&sslmode=disable"
+	const live = "postgres://sw_user@fedora:5432/aptex?sslmode=disable"
+	const testDSN = "postgres://sw_user_test@/aptex_test_1?host=/tmp&sslmode=disable"
 	withLiveDSN(t, live)
 	t.Setenv(EnvTestDSN, testDSN)
 
@@ -128,11 +128,11 @@ func TestResolveDSNReturnsThrowawayDSN(t *testing.T) {
 // live database, and connecting to it must fail without reaching any server.
 func TestDisabledDSNShadowsLiveConfig(t *testing.T) {
 	cfg := filepath.Join(t.TempDir(), "config.json")
-	live := `{"database":{"dsn":"postgres://sw_user@127.0.0.1:5432/scopeweaver?sslmode=disable"}}`
+	live := `{"database":{"dsn":"postgres://sw_user@127.0.0.1:5432/aptex?sslmode=disable"}}`
 	if err := os.WriteFile(cfg, []byte(live), 0o600); err != nil {
 		t.Fatal(err)
 	}
-	t.Setenv("SCOPEWEAVER_CONFIG", cfg)
+	t.Setenv("APTEX_CONFIG", cfg)
 	t.Setenv("ARTEX_PG_DSN", disabledDSN)
 
 	got, _, err := config.PostgresDSN()

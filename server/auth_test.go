@@ -9,8 +9,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/internal/dbtest"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/internal/dbtest"
+	"github.com/afterglow-labs/APTEX/locale"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/jackc/pgx/v5"
 	"golang.org/x/crypto/bcrypt"
@@ -18,7 +18,7 @@ import (
 
 // These tests delete password settings and require an explicitly disposable database.
 func backportTestDatabaseNameAllowed(name string) bool {
-	return strings.HasPrefix(name, "scopeweaver_test_") || strings.HasPrefix(name, "scopeweaver_adapter_")
+	return strings.HasPrefix(name, "aptex_test_") || strings.HasPrefix(name, "aptex_adapter_")
 }
 
 func backportTestDatabaseAllowed(dsn string) bool {
@@ -32,7 +32,7 @@ func backportTestDatabaseAllowed(dsn string) bool {
 func backportTestManager(t *testing.T) *Manager {
 	t.Helper()
 	if !backportTestDatabaseAllowed(dbtest.DSN(t)) {
-		t.Skip("requires an explicit ARTEX_TEST_DSN with database name scopeweaver_test_* or scopeweaver_adapter_*")
+		t.Skip("requires an explicit ARTEX_TEST_DSN with database name aptex_test_* or aptex_adapter_*")
 	}
 	m, err := NewManager(t.TempDir(), "")
 	if err != nil {
@@ -240,11 +240,11 @@ func TestBackportTestDatabaseGuardUsesEffectiveDatabase(t *testing.T) {
 	}{
 		{"", false},
 		{"postgres://localhost/artex", false},
-		{"postgres://localhost/scopeweaver_test_fixture", true},
-		{"postgres://localhost/scopeweaver_adapter_e2e", true},
-		{"postgres://localhost/scopeweaver_test_fixture?dbname=artex", false},
-		{"postgres://localhost/artex?dbname=scopeweaver_test_fixture", true},
-		{"host=localhost dbname=scopeweaver_test_fixture", true},
+		{"postgres://localhost/aptex_test_fixture", true},
+		{"postgres://localhost/aptex_adapter_e2e", true},
+		{"postgres://localhost/aptex_test_fixture?dbname=artex", false},
+		{"postgres://localhost/artex?dbname=aptex_test_fixture", true},
+		{"host=localhost dbname=aptex_test_fixture", true},
 	} {
 		if got := backportTestDatabaseAllowed(tc.dsn); got != tc.want {
 			t.Fatalf("dsn=%q allowed=%v want %v", tc.dsn, got, tc.want)

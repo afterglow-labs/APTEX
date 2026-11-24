@@ -2,7 +2,7 @@ package agent
 
 import (
 	"bytes"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/locale"
 	"log"
 	"text/template"
 	"time"

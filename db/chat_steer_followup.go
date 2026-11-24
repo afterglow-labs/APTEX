@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"errors"
-	"github.com/afterglow-labs/afterglow-cybersecurity/chatstate"
+	"github.com/afterglow-labs/APTEX/chatstate"
 )
 
 // QueueUndeliveredSteer atomically replaces the warning with one follow-up in

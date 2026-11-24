@@ -2,12 +2,12 @@ package server
 
 import (
 	"context"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/locale"
 	"log"
 	"time"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
-	"github.com/afterglow-labs/afterglow-cybersecurity/mcphttp"
+	"github.com/afterglow-labs/APTEX/db"
+	"github.com/afterglow-labs/APTEX/mcphttp"
 	"github.com/Autumn-27/norma/mcp"
 	actool "github.com/Autumn-27/norma/tool"
 )

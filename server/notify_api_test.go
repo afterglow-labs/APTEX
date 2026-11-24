@@ -13,9 +13,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
-	"github.com/afterglow-labs/afterglow-cybersecurity/internal/dbtest"
-	"github.com/afterglow-labs/afterglow-cybersecurity/notify"
+	"github.com/afterglow-labs/APTEX/db"
+	"github.com/afterglow-labs/APTEX/internal/dbtest"
+	"github.com/afterglow-labs/APTEX/notify"
 )
 
 // These tests cover finding persistence, event creation, dispatch, and actual HTTP delivery. Never

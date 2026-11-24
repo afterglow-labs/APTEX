@@ -10,7 +10,7 @@ import (
 	"sync/atomic"
 	"testing"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/opencodesdk"
+	"github.com/afterglow-labs/APTEX/opencodesdk"
 	"github.com/Autumn-27/norma/llm"
 )
 
@@ -45,7 +45,7 @@ func TestSDKConnectionHonorsConfiguredTokenLimit(t *testing.T) {
 						return
 					}
 					if r.URL.Path == "/v1/capabilities" {
-						fmt.Fprint(w, `{"protocol":"scopeweaver-opencode-sdk","version":1,"runtime":"native","sdk_version":"2.1.4","tool_execution":"capture-only","streaming":true}`)
+						fmt.Fprint(w, `{"protocol":"aptex-opencode-sdk","version":1,"runtime":"native","sdk_version":"2.1.4","tool_execution":"capture-only","streaming":true}`)
 						return
 					}
 					if r.Method == http.MethodDelete {
@@ -97,13 +97,13 @@ func TestFromEnvOpenCodeSDKTokenIsolation(t *testing.T) {
 	}{{"dedicated only", "", "dedicated-token", false, "dedicated-token"}, {"generic override", "generic-token", "dedicated-token", true, "generic-token"}, {"explicit blank suppresses fallback", "", "dedicated-token", true, ""}, {"never cloud fallback", "", "", false, ""}} {
 		t.Run(tc.name, func(t *testing.T) {
 			isolateLLMEnvironment(t)
-			t.Setenv("SCOPEWEAVER_LLM_PROVIDER", opencodesdk.Format)
-			t.Setenv("SCOPEWEAVER_LLM_MODEL", "opencode/test")
-			t.Setenv("SCOPEWEAVER_OPENCODE_TOKEN", tc.dedicated)
+			t.Setenv("APTEX_LLM_PROVIDER", opencodesdk.Format)
+			t.Setenv("APTEX_LLM_MODEL", "opencode/test")
+			t.Setenv("APTEX_OPENCODE_TOKEN", tc.dedicated)
 			t.Setenv("OPENAI_API_KEY", "cloud-openai")
 			t.Setenv("OPENCODE_API_KEY", "cloud-go")
 			if tc.explicit {
-				t.Setenv("SCOPEWEAVER_LLM_API_KEY", tc.modern)
+				t.Setenv("APTEX_LLM_API_KEY", tc.modern)
 			}
 			cfg, ok := FromEnv()
 			if cfg.APIKey != tc.want || ok != (tc.want != "") {
@@ -158,7 +158,7 @@ func TestSDKQuotaClassificationUsesStructuredEvidence(t *testing.T) {
 			t.Run(fmt.Sprintf("%v/%s", stream, tc.name), func(t *testing.T) {
 				b := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 					if r.URL.Path == "/v1/capabilities" {
-						fmt.Fprint(w, `{"protocol":"scopeweaver-opencode-sdk","version":1,"runtime":"native","sdk_version":"2.1.4","tool_execution":"capture-only","streaming":true}`)
+						fmt.Fprint(w, `{"protocol":"aptex-opencode-sdk","version":1,"runtime":"native","sdk_version":"2.1.4","tool_execution":"capture-only","streaming":true}`)
 						return
 					}
 					if r.Method == "DELETE" {

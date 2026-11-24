@@ -3,7 +3,7 @@ package agent
 import (
 	"crypto/sha256"
 	"encoding/hex"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/locale"
 )
 
 // Hashes identify exact upstream stock templates without storing or rewriting

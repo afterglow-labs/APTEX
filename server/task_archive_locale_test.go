@@ -12,8 +12,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/db"
+	"github.com/afterglow-labs/APTEX/locale"
 )
 
 func TestTaskTrancheBilingualValidation(t *testing.T) {

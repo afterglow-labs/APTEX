@@ -4,12 +4,12 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/locale"
 	"net/http"
 	"strings"
 	"unicode/utf8"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
+	"github.com/afterglow-labs/APTEX/db"
 )
 
 const maxTaskCategoryRequestBytes = 16 << 10

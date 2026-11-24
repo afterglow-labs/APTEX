@@ -15,9 +15,9 @@ import { en as sEn, ko as sKo } from "../web/src/i18n/messages/settings.ts";
 assert.ok(process.env.ARTEX_PG_DSN, "ARTEX_PG_DSN is required; run smoke first against a fresh database");
 const dsn = new URL(process.env.ARTEX_PG_DSN);
 assert.ok(["postgres:", "postgresql:"].includes(dsn.protocol), "requires a PostgreSQL DSN");
-assert.match(dsn.pathname.slice(1), /^scopeweaver_test_/, "requires a disposable database");
-assert.ok(process.env.SCOPEWEAVER_BINARY, "SCOPEWEAVER_BINARY is required for completed-task coverage");
-const binary = path.resolve(process.env.SCOPEWEAVER_BINARY);
+assert.match(dsn.pathname.slice(1), /^aptex_test_/, "requires a disposable database");
+assert.ok(process.env.APTEX_BINARY, "APTEX_BINARY is required for completed-task coverage");
+const binary = path.resolve(process.env.APTEX_BINARY);
 fs.accessSync(binary, fs.constants.R_OK | fs.constants.X_OK);
 const out = path.resolve(process.env.E2E_OUT || "e2e-results", "dashboard-token-chart");
 fs.mkdirSync(out, { recursive: true });
@@ -58,8 +58,8 @@ const errors = [];
 const cleanupErrors = [];
 let bodyError;
 async function startServer() {
-  runtime = fs.mkdtempSync(path.join(os.tmpdir(), "scopeweaver-dashboard-"));
-  const isolatedBinary = path.join(runtime, process.platform === "win32" ? "scopeweaver.exe" : "scopeweaver");
+  runtime = fs.mkdtempSync(path.join(os.tmpdir(), "aptex-dashboard-"));
+  const isolatedBinary = path.join(runtime, process.platform === "win32" ? "aptex.exe" : "aptex");
   // BaseDir also anchors self-update files, so isolate the executable itself.
   fs.copyFileSync(binary, isolatedBinary);
   fs.chmodSync(isolatedBinary, 0o700);
@@ -181,7 +181,7 @@ try {
   browser = await chromium.launch();
   for (const locale of ["en", "ko"]) {
     const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
-    await context.addInitScript(([l, t]) => { localStorage.setItem("scopeweaver.locale", l); localStorage.setItem("afterglow_token", t); }, [locale, token]);
+    await context.addInitScript(([l, t]) => { localStorage.setItem("aptex.locale", l); localStorage.setItem("afterglow_token", t); }, [locale, token]);
     const page = await context.newPage(); page.on("pageerror", e => errors.push(`${locale}: ${e.message}`));
     await page.goto(`${base}/dashboard`);
     await page.getByRole("button", { name: `${prefix}-a`, exact: true }).waitFor();

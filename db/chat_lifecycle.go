@@ -3,7 +3,7 @@ package db
 import (
 	"context"
 	"database/sql"
-	"github.com/afterglow-labs/afterglow-cybersecurity/chatstate"
+	"github.com/afterglow-labs/APTEX/chatstate"
 )
 
 func (d *DB) CloseChatGate(ctx context.Context, ref chatstate.SessionRef) error {

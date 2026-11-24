@@ -3,10 +3,10 @@
 set -euo pipefail
 repo="$(cd "$(dirname "$0")/.." && pwd)"
 temp_root="$(cd "${TMPDIR:-/tmp}" && pwd -P)"
-fixture="$(mktemp -d "$temp_root/scopeweaver-package.XXXXXX")"
+fixture="$(mktemp -d "$temp_root/aptex-package.XXXXXX")"
 cleanup() {
   case "$fixture" in
-    "$temp_root"/scopeweaver-package.*) rm -rf -- "$fixture" ;;
+    "$temp_root"/aptex-package.*) rm -rf -- "$fixture" ;;
     *) printf 'Refusing cleanup outside packaging fixture: %s\n' "$fixture" >&2 ;;
   esac
 }
@@ -84,7 +84,7 @@ SH
   chmod +x "$fixture/bin/zip"
 fi
 for language in $(cat "$fixture/languages.txt"); do
-  (cd "$fixture" && PATH="$fixture/bin:$PATH" SCOPEWEAVER_LANGUAGE="$language" \
+  (cd "$fixture" && PATH="$fixture/bin:$PATH" APTEX_LANGUAGE="$language" \
     ARTEX_BUILD_VERSION=v0.2.1 ARTEX_SKIP_FRONTEND=1 ARTEX_OUTPUT_DIR="dist-$language" bash ./build.sh --release)
   "$PACKAGE_FIXTURE_PYTHON" - "$fixture/dist-$language" "$repo/THIRD_PARTY_NOTICES.txt" "$fixture/expected-documents.txt" <<'PY'
 import hashlib
@@ -112,8 +112,8 @@ for path in archives:
                      "adapters/opencode-sdk/.env.local", "adapters/opencode-sdk/provider-config.local.json",
                      "adapters/opencode-sdk/.runtime/fixture.json", "adapters/opencode-sdk/.cache/fixture.json"):
             assert f"{root}/{name}" not in archive.namelist(), f"Unexpected archived source: {name}"
-        target = root.removeprefix("scopeweaver-0.2.1-").replace("-", "/")
-        binary = "scopeweaver.exe" if target.startswith("windows/") else "scopeweaver"
+        target = root.removeprefix("aptex-0.2.1-").replace("-", "/")
+        binary = "aptex.exe" if target.startswith("windows/") else "aptex"
         assert archive.read(f"{root}/{binary}") == f"fixture executable {target}\n".encode()
 for line in (directory / "SHA256SUMS").read_text().splitlines():
     digest, name = line.split()

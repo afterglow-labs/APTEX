@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
+	"github.com/afterglow-labs/APTEX/db"
 )
 
 func TestRerunRollbackPreservesConcurrentDeletion(t *testing.T) {

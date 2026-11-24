@@ -3,14 +3,14 @@ package server
 import (
 	"context"
 	"fmt"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/locale"
 	"log"
 	"strconv"
 	"sync/atomic"
 	"time"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/agent"
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
+	"github.com/afterglow-labs/APTEX/agent"
+	"github.com/afterglow-labs/APTEX/db"
 )
 
 // Task timeout coordinator; see the task-timeout and wrap-up design, sections 4 and 8.5.

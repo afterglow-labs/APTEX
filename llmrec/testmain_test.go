@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/internal/dbtest"
+	"github.com/afterglow-labs/APTEX/internal/dbtest"
 )
 
 // Coordinate schema initialization and cleanup with every other DB-backed suite.

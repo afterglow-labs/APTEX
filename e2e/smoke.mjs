@@ -1,7 +1,7 @@
-// Essential browser smoke test against a running ScopeWeaver binary and its PostgreSQL database.
-// It initializes the password, so the database must be fresh and disposable (scopeweaver_test_*).
+// Essential browser smoke test against a running APTEX binary and its PostgreSQL database.
+// It initializes the password, so the database must be fresh and disposable (aptex_test_*).
 //
-// Usage: SCOPEWEAVER_URL=http://127.0.0.1:8787 ARTEX_PG_DSN=postgres://.../scopeweaver_test_e2e node smoke.mjs
+// Usage: APTEX_URL=http://127.0.0.1:8787 ARTEX_PG_DSN=postgres://.../aptex_test_e2e node smoke.mjs
 // Requires the psql client; it toggles connections to the test database to simulate an outage.
 import { execFileSync } from "node:child_process";
 import fs from "node:fs";
@@ -12,10 +12,10 @@ import { runWorkflowChecks } from "./workflows.mjs";
 import { runAssessmentChecks } from "./assessment-workflows.mjs";
 import { LOCALES, intlLocale, namespaceMessages } from "./locale-resources.mjs";
 
-const base = process.env.SCOPEWEAVER_URL || "http://127.0.0.1:8787";
+const base = process.env.APTEX_URL || "http://127.0.0.1:8787";
 const dsn = new URL((process.env.ARTEX_PG_DSN || "").replace("@/", "@localhost/"));
 const dbName = dsn.pathname.slice(1);
-if (!dbName.startsWith("scopeweaver_test_")) throw new Error(`refusing to use non-test database "${dbName}"`);
+if (!dbName.startsWith("aptex_test_")) throw new Error(`refusing to use non-test database "${dbName}"`);
 const out = process.env.E2E_OUT || "e2e-results";
 fs.mkdirSync(out, { recursive: true });
 
@@ -63,7 +63,7 @@ const browser = await chromium.launch();
 async function openPage(locale, token) {
   const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
   await context.addInitScript(([l, t]) => {
-    localStorage.setItem("scopeweaver.locale", l);
+    localStorage.setItem("aptex.locale", l);
     if (t) localStorage.setItem("afterglow_token", t);
   }, [locale, token]);
   const page = await context.newPage();
@@ -75,8 +75,8 @@ const localeSelector = (p) => p.locator('select:has(option[value="zh-Hans"])');
 async function switchLocale(p, locale) {
   await localeSelector(p).selectOption(locale);
   await p.waitForFunction((l) => document.documentElement.lang === l, locale);
-  const preference = await p.evaluate(() => ({stored:localStorage.getItem("scopeweaver.locale"),cookie:document.cookie}));
-  check(preference.stored === locale && preference.cookie.includes(`scopeweaver_locale=${locale}`), "preference stores disagree");
+  const preference = await p.evaluate(() => ({stored:localStorage.getItem("aptex.locale"),cookie:document.cookie}));
+  check(preference.stored === locale && preference.cookie.includes(`aptex_locale=${locale}`), "preference stores disagree");
 }
 async function checkDraftSwitches(p, selector, draft) {
   await p.locator(selector).fill(draft);
@@ -171,11 +171,11 @@ await step("[zh-Hans] login draft and persisted reload preserve preference", asy
 await step("[zh-Hans] cookie-only and locale-storage privacy fallback restore Chinese", async () => {
   for (const privacy of [false,true]) {
     const context=await browser.newContext();
-    await context.addCookies([{name:"scopeweaver_locale",value:"zh-Hans",url:base}]);
+    await context.addCookies([{name:"aptex_locale",value:"zh-Hans",url:base}]);
     if (privacy) await context.addInitScript(() => {
       const get=Storage.prototype.getItem, set=Storage.prototype.setItem;
-      Storage.prototype.getItem=function(key) {if(key==="scopeweaver.locale")throw new Error("blocked locale storage");return get.call(this,key);};
-      Storage.prototype.setItem=function(key,value) {if(key==="scopeweaver.locale")throw new Error("blocked locale storage");return set.call(this,key,value);};
+      Storage.prototype.getItem=function(key) {if(key==="aptex.locale")throw new Error("blocked locale storage");return get.call(this,key);};
+      Storage.prototype.setItem=function(key,value) {if(key==="aptex.locale")throw new Error("blocked locale storage");return set.call(this,key,value);};
     });
     const p=await context.newPage();
     p.on("pageerror",err=>pageErrors.push(`cookie/privacy: ${err.message}`));

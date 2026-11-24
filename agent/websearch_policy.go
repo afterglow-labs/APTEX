@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"strings"
 
-	runtimeconfig "github.com/afterglow-labs/afterglow-cybersecurity/config"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	runtimeconfig "github.com/afterglow-labs/APTEX/config"
+	"github.com/afterglow-labs/APTEX/locale"
 	"github.com/Autumn-27/norma/agentcore"
 	actool "github.com/Autumn-27/norma/tool"
 )

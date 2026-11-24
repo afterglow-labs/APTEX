@@ -5,7 +5,7 @@ export default async (_input, options) => {
   const state = JSON.parse(readFileSync(options.state, "utf8"));
   const attempts = new Map();
   let network = 0, quota = false, contextOverflow = false, freeTier = false, redirected = false;
-  const blocked = () => redirected ? "SCOPEWEAVER_LEGACY_REDIRECT" : freeTier ? "SCOPEWEAVER_LEGACY_FREE_TIER" : contextOverflow ? "SCOPEWEAVER_LEGACY_CONTEXT_LENGTH" : quota ? "SCOPEWEAVER_LEGACY_QUOTA" : "SCOPEWEAVER_LEGACY_SECOND_REQUEST";
+  const blocked = () => redirected ? "APTEX_LEGACY_REDIRECT" : freeTier ? "APTEX_LEGACY_FREE_TIER" : contextOverflow ? "APTEX_LEGACY_CONTEXT_LENGTH" : quota ? "APTEX_LEGACY_QUOTA" : "APTEX_LEGACY_SECOND_REQUEST";
   return {
     config: async config => {
       config.provider ??= {};
@@ -42,7 +42,7 @@ export default async (_input, options) => {
       };
     },
     "tool.execute.before": async input => {
-      if (!state.allowed.includes(input.tool)) throw Error("SCOPEWEAVER_LEGACY_NATIVE_TOOL");
+      if (!state.allowed.includes(input.tool)) throw Error("APTEX_LEGACY_NATIVE_TOOL");
     },
     "chat.params": async (input, output) => {
       const count = (attempts.get(input.sessionID) ?? 0) + 1;
@@ -68,7 +68,7 @@ export default async (_input, options) => {
     },
     "experimental.chat.messages.transform": async (_input, output) => {
       const sessionID = output.messages[0]?.info.sessionID;
-      if (!sessionID) throw Error("SCOPEWEAVER_LEGACY_HISTORY");
+      if (!sessionID) throw Error("APTEX_LEGACY_HISTORY");
       const history = state.history.map(message => ({
         info: { ...message.info, sessionID },
         parts: message.parts.map(part => ({ ...part, sessionID })),

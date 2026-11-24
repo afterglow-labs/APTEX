@@ -1,7 +1,7 @@
 package agent
 
 import (
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/locale"
 	"log"
 	"path/filepath"
 

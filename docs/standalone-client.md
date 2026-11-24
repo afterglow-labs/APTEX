@@ -35,9 +35,9 @@ to this APTEX launcher. Commands owned by Odysseus remain under its control.
 | `aptex-start --rebuild` | Rebuild the APTEX image and apply the current source |
 
 Start reuses running services. Stop retains database, account, and key volumes.
-Each application's commands control its own server lifecycle. The existing
-Docker project name `afterglow` is retained so the current data volumes remain
-attached to APTEX.
+Each application's commands control its own server lifecycle. The Compose project name `afterglow` keeps the existing data volumes attached
+to the renamed `aptex` service. If you previously set a custom Compose project
+name, keep using that project name to access its existing volumes.
 
 ## Login
 
@@ -56,8 +56,8 @@ accounts. The launcher does not mint an Odysseus gateway token.
 
 ## Local model
 
-The native start command can use the existing local Ollama model, normally
-`qwen3:32b`. API startup also works without local weights. Automatic mode starts
+The native start command can use an existing local Ollama model selected with
+`APTEX_LLM_MODEL`. API startup also works without local weights. Automatic mode starts
 Ollama when a verified local store is available and the selected provider uses
 it. Set `APTEX_LOCAL_MODEL_ENABLED=false` to leave local-runtime management off,
 or `true` to require a valid store. An unavailable selected model is reported
@@ -81,7 +81,9 @@ change revokes all interactive sessions.
 
 Open **Preferences** with the gear button and choose **Theme preset**. Obsidian
 uses graphite and cyan, Phosphor uses near-black and green, and Afterglow uses
-warm charcoal and amber. All three support light, dark, and system mode. The
+warm charcoal and amber. Afterglow Dreamsicle, Afterglow Odysseus, and
+Afterglow Orangurple bring the related Terminally and Odysseus palettes to
+the APTEX console. All presets support light, dark, and system mode. The
 selector previews each palette, and choices persist across routes and reloads.
 Classic presets and font options remain available.
 

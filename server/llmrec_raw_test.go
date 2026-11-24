@@ -9,9 +9,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/agent"
-	"github.com/afterglow-labs/afterglow-cybersecurity/internal/dbtest"
-	"github.com/afterglow-labs/afterglow-cybersecurity/llmrec"
+	"github.com/afterglow-labs/APTEX/agent"
+	"github.com/afterglow-labs/APTEX/internal/dbtest"
+	"github.com/afterglow-labs/APTEX/llmrec"
 	"github.com/Autumn-27/norma/llm"
 	"github.com/Autumn-27/norma/transcript"
 )

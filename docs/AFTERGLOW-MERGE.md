@@ -170,3 +170,14 @@ credential loaders, and automatic WAF rotation lists remain available as
 source material outside the runtime image. The active runbooks use an exact
 test target rather than the original race playbook's hardcoded public host,
 and report actual evidence rather than treating a status code as proof.
+
+## Afterglow appearance presets
+
+APTEX adapts the Afterglow Dreamsicle, Afterglow Odysseus, and Afterglow
+Orangurple palettes from Terminally's `ios/Terminally/TerminalThemes.json`
+at `3dadac214102d3a3e3333afafd2c3e5b72c45647` and Odysseus's
+`static/js/theme.js` at `448be9021ca3ec9f297a3ed045c8709005038b47`
+(AGPL-3.0). The preset files retain both source credits. APTEX maps the
+colors to its own light and dark interface roles, with text colors chosen
+for contrast. The web console, including the Mac client's web view, uses
+the full palettes. The iOS native picker uses the corresponding accent colors.

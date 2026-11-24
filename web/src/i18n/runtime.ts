@@ -27,7 +27,8 @@ const listeners = new Set<Listener>();
 export function readStoredLocale(): Locale | null {
   if (typeof window === "undefined") return null;
   try {
-    const stored = normalizeLocale(window.localStorage.getItem(LOCALE_STORAGE_KEY));
+    const stored = normalizeLocale(window.localStorage.getItem(LOCALE_STORAGE_KEY))
+      ?? normalizeLocale(window.localStorage.getItem("scopeweaver.locale"));
     if (stored) return stored;
   } catch {
     // Storage can be unavailable (privacy mode); fall through to the cookie.

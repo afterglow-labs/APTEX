@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
+	"github.com/afterglow-labs/APTEX/db"
 )
 
 func TestLateralScanObservedPortAndScopeGate(t *testing.T) {

@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
+	"github.com/afterglow-labs/APTEX/db"
 )
 
 const (

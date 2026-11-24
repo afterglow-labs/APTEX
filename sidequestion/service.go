@@ -3,7 +3,7 @@ package sidequestion
 import (
 	"context"
 	"errors"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/locale"
 	"strings"
 
 	"github.com/Autumn-27/norma/llm"

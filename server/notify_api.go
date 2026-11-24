@@ -4,13 +4,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/locale"
 	"net/http"
 	"strings"
 	"time"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
-	"github.com/afterglow-labs/afterglow-cybersecurity/notify"
+	"github.com/afterglow-labs/APTEX/db"
+	"github.com/afterglow-labs/APTEX/notify"
 )
 
 // Notification HTTP endpoints are all behind requireAuth in Handler, matching
@@ -450,8 +450,8 @@ func notifyTestMessage(baseURL string, langs ...locale.Lang) notify.Message {
 			Name:      locale.Text(locale.First(langs), "Test message · Channel configured successfully"),
 			VulnClass: locale.Text(locale.First(langs), "Connectivity test"),
 			Severity:  "low",
-			Summary:   locale.Text(locale.First(langs), "This is a ScopeWeaver notification-channel test. Receiving it confirms the channel configuration works."),
-			Assets:    []string{"scopeweaver.example.com"},
+			Summary:   locale.Text(locale.First(langs), "This is a APTEX notification-channel test. Receiving it confirms the channel configuration works."),
+			Assets:    []string{"aptex.example.com"},
 			DetailURL: baseURL,
 		}},
 		HomeURL: baseURL,

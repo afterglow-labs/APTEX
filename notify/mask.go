@@ -2,7 +2,7 @@ package notify
 
 import (
 	"encoding/json"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/locale"
 	"strings"
 )
 

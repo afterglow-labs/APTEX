@@ -11,11 +11,11 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/agent"
-	"github.com/afterglow-labs/afterglow-cybersecurity/chatgptauth"
-	"github.com/afterglow-labs/afterglow-cybersecurity/chatgptllm"
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
-	"github.com/afterglow-labs/afterglow-cybersecurity/llmnet"
+	"github.com/afterglow-labs/APTEX/agent"
+	"github.com/afterglow-labs/APTEX/chatgptauth"
+	"github.com/afterglow-labs/APTEX/chatgptllm"
+	"github.com/afterglow-labs/APTEX/db"
+	"github.com/afterglow-labs/APTEX/llmnet"
 )
 
 const chatGPTCallbackEnv = "ARTEX_CHATGPT_CALLBACK_URL"

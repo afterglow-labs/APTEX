@@ -86,7 +86,7 @@ func TestEveryShippedLanguageNegotiatesAcrossBoundaries(t *testing.T) {
 				t.Fatal("server or context preference lost")
 			}
 			if got, ok := FromEnv(func(key string) string {
-				if key == "SCOPEWEAVER_LANGUAGE" {
+				if key == "APTEX_LANGUAGE" {
 					return string(lang)
 				}
 				return ""
@@ -110,10 +110,10 @@ func TestAcceptLanguageQWeights(t *testing.T) {
 	}
 }
 
-func TestFromEnvPrefersScopeWeaver(t *testing.T) {
-	env := map[string]string{"SCOPEWEAVER_LANGUAGE": "ko", "ARTEX_LANGUAGE": "en"}
+func TestFromEnvPrefersAPTEX(t *testing.T) {
+	env := map[string]string{"APTEX_LANGUAGE": "ko", "ARTEX_LANGUAGE": "en"}
 	if l, ok := FromEnv(func(k string) string { return env[k] }); !ok || l != Ko {
-		t.Errorf("SCOPEWEAVER_LANGUAGE should win: got %q,%v", l, ok)
+		t.Errorf("APTEX_LANGUAGE should win: got %q,%v", l, ok)
 	}
 	env = map[string]string{"ARTEX_LANGUAGE": "ko"}
 	if l, ok := FromEnv(func(k string) string { return env[k] }); !ok || l != Ko {

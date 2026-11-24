@@ -2,9 +2,9 @@ package server
 
 import (
 	"encoding/json"
-	"github.com/afterglow-labs/afterglow-cybersecurity/agent"
-	"github.com/afterglow-labs/afterglow-cybersecurity/chatstate"
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
+	"github.com/afterglow-labs/APTEX/agent"
+	"github.com/afterglow-labs/APTEX/chatstate"
+	"github.com/afterglow-labs/APTEX/db"
 	"net/http/httptest"
 	"testing"
 )

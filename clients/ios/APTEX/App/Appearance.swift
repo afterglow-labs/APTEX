@@ -2,6 +2,8 @@ import SwiftUI
 import Observation
 
 @MainActor @Observable final class Appearance {
+    static let presets = ["Obsidian", "Phosphor", "Afterglow", "Afterglow Dreamsicle", "Afterglow Odysseus", "Afterglow Orangurple"]
+
     var preset: String { didSet { UserDefaults.standard.set(preset, forKey: "aptex.theme") } }
     var mode: String { didSet { UserDefaults.standard.set(mode, forKey: "aptex.appearance") } }
     var language: String { didSet { UserDefaults.standard.set(language, forKey: "aptex.language") } }
@@ -14,12 +16,25 @@ import Observation
         switch preset {
         case "Phosphor":return Self.phosphor
         case "Afterglow":return Self.afterglow
+        case "Afterglow Dreamsicle":return Self.dreamsicle
+        case "Afterglow Odysseus":return Self.odysseus
+        case "Afterglow Orangurple":return Self.orangurple
         default:return Self.obsidian
         }
     }
     private static let phosphor=dynamicAccent(light:UIColor(red:0.086,green:0.471,blue:0.267,alpha:1),dark:UIColor(red:0.361,green:0.922,blue:0.635,alpha:1))
     private static let afterglow=dynamicAccent(light:UIColor(red:0.643,green:0.322,blue:0.086,alpha:1),dark:UIColor(red:0.961,green:0.718,blue:0.361,alpha:1))
     private static let obsidian=dynamicAccent(light:UIColor(red:0.055,green:0.455,blue:0.565,alpha:1),dark:UIColor(red:0.404,green:0.910,blue:0.976,alpha:1))
+    private static let dreamsicle = dynamicAccent(light: paletteColor(0xc45100), dark: paletteColor(0xff943d))
+    private static let odysseus = dynamicAccent(light: paletteColor(0xa84400), dark: paletteColor(0xff6a00))
+    private static let orangurple = dynamicAccent(light: paletteColor(0x7000ff), dark: paletteColor(0xff8000))
+
+    private static func paletteColor(_ value: UInt32) -> UIColor {
+        UIColor(red: CGFloat((value >> 16) & 0xff) / 255,
+                green: CGFloat((value >> 8) & 0xff) / 255,
+                blue: CGFloat(value & 0xff) / 255, alpha: 1)
+    }
+
     private static func dynamicAccent(light:UIColor,dark:UIColor)->Color {Color(uiColor:UIColor {$0.userInterfaceStyle == .dark ? dark : light})}
     var scheme: ColorScheme? { mode == "system" ? nil : mode == "light" ? .light : .dark }
 }

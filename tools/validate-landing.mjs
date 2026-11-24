@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-/* Integrity check for the ScopeWeaver landing page.
+/* Integrity check for the APTEX landing page.
    Lives outside landing/ so it is never published. Verifies that every
-   referenced asset exists, that relative paths resolve under /scopeweaver/
+   referenced asset exists, that relative paths resolve under /aptex/
    and each locale subdirectory, that six-language structural parity holds, and that no
    planning/seed/contract metadata leaked into the shipped folder. */
 
@@ -64,7 +64,7 @@ for (const { file, base, lang } of pages) {
   }
   ok(`${lang}: ${refs.size} references scanned, all local assets present`);
 
-  // no absolute-root asset paths (would break under /scopeweaver/ base)
+  // no absolute-root asset paths (would break under /aptex/ base)
   if (/(?:src|href)="\/(?!\/)/.test(html))
     fail(`${lang}: absolute root path found (breaks project-pages base)`);
   else ok(`${lang}: no absolute root asset paths`);
@@ -91,7 +91,7 @@ for (const { file, lang } of pages) {
     const href = lang === "en" ? `${other}/` : other === "en" ? "../" : `../${other}/`;
     if (!html.includes(`href="${href}"`) && !html.includes(`href="${href}index.html"`)) fail(`${lang}: missing language link to ${other}`);
     else ok(`${lang}: links to ${other}`);
-    const canonical = `https://cskwork.github.io/scopeweaver/${other === "en" ? "" : `${other}/`}`;
+    const canonical = `https://cskwork.github.io/aptex/${other === "en" ? "" : `${other}/`}`;
     if (!html.includes(`hreflang="${other}" href="${canonical}"`)) fail(`${lang}: missing alternate metadata for ${other}`);
   }
   const figures = (html.match(/<figure/g) || []).length;

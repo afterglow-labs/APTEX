@@ -8,8 +8,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/db"
+	"github.com/afterglow-labs/APTEX/locale"
 )
 
 // Assets export renders CSV. The server serializes JSON directly from db.Asset.

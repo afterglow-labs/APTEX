@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"strings"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/cloudassess"
+	"github.com/afterglow-labs/APTEX/cloudassess"
 	actool "github.com/Autumn-27/norma/tool"
 )
 

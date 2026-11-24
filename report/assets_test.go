@@ -5,8 +5,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/db"
+	"github.com/afterglow-labs/APTEX/locale"
 )
 
 // mixedAssets covers one row per asset type with type-specific fields populated.

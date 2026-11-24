@@ -2,7 +2,7 @@
 
 English · [한국어](ko/llm-providers.md) · [简体中文](zh-Hans/llm-providers.md) · [繁體中文](zh-Hant/llm-providers.md) · [日本語](ja/llm-providers.md) · [Español](es/llm-providers.md)
 
-The four existing ScopeWeaver profile formats are: **Anthropic**, **OpenAI Chat Completions**, **OpenAI Responses** and native **Ollama**. Every format keeps its custom base URL, proxy, session header, retry, rate and concurrency settings, so cloud providers, gateways and self-hosted OpenAI-compatible servers keep working unchanged. Ollama is optional, and cloud providers remain the default-compatible path.
+The four existing APTEX profile formats are: **Anthropic**, **OpenAI Chat Completions**, **OpenAI Responses** and native **Ollama**. Every format keeps its custom base URL, proxy, session header, retry, rate and concurrency settings, so cloud providers, gateways and self-hosted OpenAI-compatible servers keep working unchanged. Ollama is optional, and cloud providers remain the default-compatible path.
 
 The optional **OpenCode SDK bridge** adds a separate profile format with its own credentials and restrictions described below. It does not replace the existing API or OpenCode Go gateway paths.
 
@@ -14,7 +14,7 @@ A template fills a **new profile's form** without saving credentials, activating
 
 Template preview with no API key entered; this is not a live provider connection.
 
-Open **LLM → New → Configuration template**. Choose **General API (recommended)** for API billing, or **Coding Plan (reference)** only after obtaining Z.ai authorization for ScopeWeaver.
+Open **LLM → New → Configuration template**. Choose **General API (recommended)** for API billing, or **Coding Plan (reference)** only after obtaining Z.ai authorization for APTEX.
 
 | Field | General API | Coding Plan reference |
 | --- | --- | --- |
@@ -30,7 +30,7 @@ The endpoints and billing are distinct: General API usage is separate from Codin
 
 GLM-5.3 accepts text, has a 1M-token context window, and requires reasoning to remain enabled. Supported effort values are `low`, `high`, and `max`; this template uses `low`, which [measured](#measured-effect-glm-proxy) well under half the tokens of `max` on a small task with the same finding. Raise it for harder tasks. The model field remains editable, so review reasoning and context settings when choosing another model. See the [official GLM-5.3 guide](https://docs.z.ai/guides/llm/glm-5.3).
 
-**Coding Plan support boundary:** Z.ai limits Coding Plan to officially supported tools. ScopeWeaver is not on that list; an endpoint template does not establish permission or support. Obtain Z.ai authorization before using it here. See [tool integration](https://docs.z.ai/devpack/tool/others) and [usage policy](https://docs.z.ai/devpack/usage-policy). ScopeWeaver does not impersonate supported tools or switch billing endpoints automatically.
+**Coding Plan support boundary:** Z.ai limits Coding Plan to officially supported tools. APTEX is not on that list; an endpoint template does not establish permission or support. Obtain Z.ai authorization before using it here. See [tool integration](https://docs.z.ai/devpack/tool/others) and [usage policy](https://docs.z.ai/devpack/usage-policy). APTEX does not impersonate supported tools or switch billing endpoints automatically.
 
 Enter a profile name and your own API key. Applying either template preserves any name, key, proxy, session-header setting, and other unrelated preferences already entered. Save when ready; a new profile must be activated separately. The existing **Test connection** and **Load models** controls make real provider requests only when clicked; this change does not perform a live provider test.
 
@@ -40,9 +40,9 @@ Verified against official documentation on **2026-10-03**. Provider availability
 
 ## OpenCode SDK bridge
 
-This separate backend supports two pinned runtimes through the same `opencode-sdk` profile format. ScopeWeaver's existing Norma runtime remains responsible for host tool execution and approval checks.
+This separate backend supports two pinned runtimes through the same `opencode-sdk` profile format. APTEX's existing Norma runtime remains responsible for host tool execution and approval checks.
 
-| `SCOPEWEAVER_OPENCODE_RUNTIME` | Pinned runtime | Supported input boundary |
+| `APTEX_OPENCODE_RUNTIME` | Pinned runtime | Supported input boundary |
 | --- | --- | --- |
 | `native` (default) | Official CLI and `@opencode/client` 2.1.4 | Preserves raw tool-argument JSON, including 64-bit integers, through responses and host history. Unsafe numeric values outside authoritative raw arguments are rejected. |
 | `legacy` | SDK and CLI 1.19.4 | Structurally valid, safely representable JSON history and JavaScript-safe integers (absolute value no greater than 9,007,199,254,740,991). Benign whitespace and equivalent HTML/Unicode escapes may be normalized; original lexical bytes are not preserved. Unsafe integers and opaque/signed thinking history fail explicitly. Use `native` when lossless raw tool arguments are required. |
@@ -51,27 +51,27 @@ This separate backend supports two pinned runtimes through the same `opencode-sd
 
 Custom providers for `legacy` use the explicit OpenAI-compatible mapping in the adapter guide. **Both runtimes are unsupported on Windows** because the required POSIX process-tree cleanup boundary is not implemented there. Local runtime verification covers **macOS arm64**. CI runs actual-runtime fixtures on **Linux x64**; other platforms are not claimed verified. Untested SDK versions require separate verification.
 
-Start the Bun bridge using the [adapter setup instructions](../adapters/opencode-sdk/README.md). It has its own provider configuration; it does not import saved user OpenCode or cloud-provider credentials. Set a separate `SCOPEWEAVER_OPENCODE_TOKEN` on the bridge (at least 32 non-whitespace characters), then open **LLM → New → Configuration template → OpenCode SDK · bridge**.
+Start the Bun bridge using the [adapter setup instructions](../adapters/opencode-sdk/README.md). It has its own provider configuration; it does not import saved user OpenCode or cloud-provider credentials. Set a separate `APTEX_OPENCODE_TOKEN` on the bridge (at least 32 non-whitespace characters), then open **LLM → New → Configuration template → OpenCode SDK · bridge**.
 
 Use the tested **Bun 1.3.14** runtime; newer Bun versions have not been verified. From the repository root:
 
 ```bash
 cd adapters/opencode-sdk
 bun install --frozen-lockfile --ignore-scripts
-export SCOPEWEAVER_OPENCODE_TOKEN="$(openssl rand -hex 32)"
+export APTEX_OPENCODE_TOKEN="$(openssl rand -hex 32)"
 bun run start
 ```
 
-Keep this token available for the profile's **Bridge token** field. The default runtime is `native` (SDK 2.1.4); set `SCOPEWEAVER_OPENCODE_RUNTIME=legacy` before starting the bridge to select SDK 1.19.4. The listener defaults to `127.0.0.1:4097`. For explicit provider settings, use a dedicated JSON file through `SCOPEWEAVER_OPENCODE_PROVIDER_CONFIG`; follow the adapter guide's schema rather than pointing it at a saved user auth file.
+Keep this token available for the profile's **Bridge token** field. The default runtime is `native` (SDK 2.1.4); set `APTEX_OPENCODE_RUNTIME=legacy` before starting the bridge to select SDK 1.19.4. The listener defaults to `127.0.0.1:4097`. For explicit provider settings, use a dedicated JSON file through `APTEX_OPENCODE_PROVIDER_CONFIG`; follow the adapter guide's schema rather than pointing it at a saved user auth file.
 
-`SCOPEWEAVER_OPENCODE_TIMEOUT_MS` accepts 0–86,400,000 ms; its default `0` leaves duration under host cancellation control. Request bodies are limited to **16 MiB** and oversized input fails explicitly. See the adapter guide for the remaining output and cleanup bounds.
+`APTEX_OPENCODE_TIMEOUT_MS` accepts 0–86,400,000 ms; its default `0` leaves duration under host cancellation control. Request bodies are limited to **16 MiB** and oversized input fails explicitly. See the adapter guide for the remaining output and cleanup bounds.
 
 | Field | Value |
 | --- | --- |
 | Format | `opencode-sdk` |
 | Bridge URL | `http://127.0.0.1:4097` |
 | Model | `providerID/modelID`, chosen using **Load models** or entered explicitly |
-| Bridge token | The bridge's `SCOPEWEAVER_OPENCODE_TOKEN`, not a cloud API key |
+| Bridge token | The bridge's `APTEX_OPENCODE_TOKEN`, not a cloud API key |
 | Streaming | On; streams the selected pinned runtime |
 | Thinking / reasoning effort | Omitted by the template; set only values supported by the selected model |
 | Output limit | `0` uses the existing host call-path default; the bridge caps requests at the native model's declared output limit |
@@ -83,7 +83,7 @@ The template clears an unsaved cloud key, leaves the model blank and makes **no 
 
 When editing, a blank token retains the saved value only for the same SDK endpoint. Changing the URL clears an entered token; changing the endpoint or format with a blank token does not reuse the saved credential. Host aliases such as `localhost`, `127.0.0.1` and `::1` are distinct token scopes. Model IDs and output limits use current native model metadata. Reasoning settings depend on model/provider support and can fail at the provider; errors remain explicit.
 
-**Network and account limits:** run the loopback-only bridge in the same network namespace as ScopeWeaver; inside Docker, localhost means that container. Its downstream provider can still be a cloud service. SDK profiles are therefore rejected in **local-only LLM** mode. Bridge proxies are unsupported; configure downstream provider connectivity on the bridge. A free model ID means current availability, not subscription entitlement, permanent availability, or unlimited use. Confirm the provider's terms and current limits. The bridge does not select a paid fallback or import user accounts; any host-configured failover policy remains separate. Existing API and OpenCode Go profiles remain separate.
+**Network and account limits:** run the loopback-only bridge in the same network namespace as APTEX; inside Docker, localhost means that container. Its downstream provider can still be a cloud service. SDK profiles are therefore rejected in **local-only LLM** mode. Bridge proxies are unsupported; configure downstream provider connectivity on the bridge. A free model ID means current availability, not subscription entitlement, permanent availability, or unlimited use. Confirm the provider's terms and current limits. The bridge does not select a paid fallback or import user accounts; any host-configured failover policy remains separate. Existing API and OpenCode Go profiles remain separate.
 
 **Downgrade preparation:** this change adds `opencode-sdk` to the profile-format database `CHECK` constraint. An older binary cannot start while SDK profiles are present. Back up the database and prepare conversion to an older supported profile format or removal of SDK profiles using the current version before downgrading. Verification used disposable databases; no live database migration was performed here.
 
@@ -102,19 +102,19 @@ Open **LLM → New → Configuration template** and choose **OpenCode Go · glm-
 | Output limit | `16384`, sent as `max_tokens` |
 | Session header | `x-opencode-session` (required by the gateway; the template fills it) |
 
-The gateway is OpenAI-compatible: the opencode 1.18.5 provider definition (`opencode-go`) uses `@ai-sdk/openai-compatible` at `https://opencode.ai/zen/go/v1` with the `OPENCODE_API_KEY` environment key (checked 2026-10-20). GLM-class models accept effort `low`, `high` and `max`; this template deliberately fills `max` at the operator's request, so expect the highest reasoning-token use. **Load models** reads the gateway's model list; the model field stays editable for other ids such as `qwen3.7-plus`. Every request must carry an `x-opencode-session` header (the gateway answers `400 MissingSessionID` without it); the template fills the profile's **Session header** field with that name, and ScopeWeaver sends its own session ids as the value.
+The gateway is OpenAI-compatible: the opencode 1.18.5 provider definition (`opencode-go`) uses `@ai-sdk/openai-compatible` at `https://opencode.ai/zen/go/v1` with the `OPENCODE_API_KEY` environment key (checked 2026-10-20). GLM-class models accept effort `low`, `high` and `max`; this template deliberately fills `max` at the operator's request, so expect the highest reasoning-token use. **Load models** reads the gateway's model list; the model field stays editable for other ids such as `qwen3.7-plus`. Every request must carry an `x-opencode-session` header (the gateway answers `400 MissingSessionID` without it); the template fills the profile's **Session header** field with that name, and APTEX sends its own session ids as the value.
 
-**Credential and terms:** the key belongs to your opencode subscription; opencode stores it in its own auth file, which ScopeWeaver never reads. Paste the key into the profile or set `OPENCODE_API_KEY`. The key is governed by opencode's subscription terms — confirm that using it from another tool is permitted before saving. As with the Z.ai Coding Plan boundary, a template here does not establish permission.
+**Credential and terms:** the key belongs to your opencode subscription; opencode stores it in its own auth file, which APTEX never reads. Paste the key into the profile or set `OPENCODE_API_KEY`. The key is governed by opencode's subscription terms — confirm that using it from another tool is permitted before saving. As with the Z.ai Coding Plan boundary, a template here does not establish permission.
 
 Environment configuration:
 
 ```bash
-SCOPEWEAVER_LLM_PROVIDER=opencode-go
-SCOPEWEAVER_LLM_MODEL=glm-5.3-flash
-# Key: OPENCODE_API_KEY is used when no generic key is set; SCOPEWEAVER_LLM_API_KEY overrides.
+APTEX_LLM_PROVIDER=opencode-go
+APTEX_LLM_MODEL=glm-5.3-flash
+# Key: OPENCODE_API_KEY is used when no generic key is set; APTEX_LLM_API_KEY overrides.
 ```
 
-`SCOPEWEAVER_LLM_PROVIDER=opencode-go` resolves to the OpenAI Chat Completions wire format; an unset base URL and model default to the values in the table above.
+`APTEX_LLM_PROVIDER=opencode-go` resolves to the OpenAI Chat Completions wire format; an unset base URL and model default to the values in the table above.
 
 ## Controlling token use
 
@@ -146,7 +146,7 @@ Open **LLM → New → Configuration template** and choose an *(economy)* entry.
 These rules apply only to a model id of the form `claude-…-5-5` (or its dated snapshot `claude-…-5-5-YYYYMMDD`) on the official host (`https://api.anthropic.com`, or an empty base URL).
 
 - Thinking left empty (**Omit**) now sends `thinking: {type: adaptive, display: summarized}`. The new **Adaptive** option sends the same; **On** (`enabled`) also gets `display: summarized`.
-- In tool loops, thinking blocks are replayed with their tool calls, including blocks with empty text and `redacted_thinking` blocks. ScopeWeaver keeps them in memory for the latest 128 tool calls (at most 4 MiB) per provider; blocks with summarized text are also saved in the session history, but empty or redacted blocks do not survive a restart in the middle of a tool loop.
+- In tool loops, thinking blocks are replayed with their tool calls, including blocks with empty text and `redacted_thinking` blocks. APTEX keeps them in memory for the latest 128 tool calls (at most 4 MiB) per provider; blocks with summarized text are also saved in the session history, but empty or redacted blocks do not survive a restart in the middle of a tool loop.
 - Summary and approval-judge calls no longer send `temperature`. They also drop their `disabled` thinking for Sonnet, Opus, and Haiku at effort `xhigh` or `max`, which reject it; the profile's thinking setting applies instead.
 - A profile set to **Off** (`disabled`) still sends `disabled` on agent turns, so Sonnet and Opus 5.5 need **Omit** or **Adaptive**.
 - Third-party Anthropic-compatible endpoints (DeepSeek, Kimi, Z.ai) and other model ids are unchanged: empty thinking is still omitted.
@@ -163,7 +163,7 @@ One small task (three routes on a local test target with one planted unauthentic
 
 - Economy vs baseline: 54% fewer input + output tokens and 65% fewer credits at the median; every economy run was below the cheapest baseline run. The largest single call used 13,287 input and 3,829 output tokens, so neither the 200K window nor the output limit was reached: the saving here comes from effort `low`. The output limit and window bound larger tasks and were not measured. Run-to-run spread: largest/smallest run 1.25× for baseline, 1.10× for economy.
 - Share by lane: baseline credits: worker 29.6%, planner 29.3%, report writer 29.1%, goal setup 12.0%; economy credits: report writer 38.8%, planner 34.1%, worker 20.2%, goal setup 6.9%. Runs had no compaction, so no session-summary calls; judge and web search were off.
-- Cached share of input: 85.2% baseline, 92.3% economy. Reasoning share: output, which includes reasoning, was 39.3% of baseline credits and 23.4% of economy credits; ScopeWeaver did not yet record reasoning tokens separately when these runs were made.
+- Cached share of input: 85.2% baseline, 92.3% economy. Reasoning share: output, which includes reasoning, was 39.3% of baseline credits and 23.4% of economy credits; APTEX did not yet record reasoning tokens separately when these runs were made.
 
 GLM-5.3 always thinks, so these runs do not measure the effect of turning thinking off.
 
@@ -201,7 +201,7 @@ A `codex exec` bridge ran the OpenAI template (gpt-6-luna, Responses) through on
 
 **Prompt caching:**
 
-- Claude: ScopeWeaver now always marks the system prompt, and the tool schemas before it, as cacheable in planner, worker, main-agent and chat sessions (including the report writer). Every other Anthropic-format request with a system prompt and no boundary now marks the whole system prompt: goal setup, conversation and graph summaries, side-question preparation and the approval judge. A prompt shorter than the model's minimum cacheable length is not cached even with a marker. The first use of each distinct system prompt writes the cache at 1.25× the input price; later calls within the cache lifetime read it at the cached price. Worker prompts differ per intent, so each intent writes once. Marker placement is verified by tests; **the live saving is unverified** (no Claude key).
+- Claude: APTEX now always marks the system prompt, and the tool schemas before it, as cacheable in planner, worker, main-agent and chat sessions (including the report writer). Every other Anthropic-format request with a system prompt and no boundary now marks the whole system prompt: goal setup, conversation and graph summaries, side-question preparation and the approval judge. A prompt shorter than the model's minimum cacheable length is not cached even with a marker. The first use of each distinct system prompt writes the cache at 1.25× the input price; later calls within the cache lifetime read it at the cached price. Worker prompts differ per intent, so each intent writes once. Marker placement is verified by tests; **the live saving is unverified** (no Claude key).
 - DeepSeek, Kimi and Z.ai cache prefixes automatically. DeepSeek and Kimi document that their Anthropic-compatible endpoints ignore block markers. OpenAI, Qwen and OpenRouter (DeepSeek Flash) also cache matching prefixes automatically.
 - Tests confirm that consecutive tool turns in one session keep the same system prompt and tool schemas and only append history, for all three cloud formats. Compaction, wrap-up and newly unlocked deferred tools change the prefix. An edited prompt template that uses `{{.Now}}` changes the system prompt on each run.
 
@@ -219,11 +219,11 @@ A `codex exec` bridge ran the OpenAI template (gpt-6-luna, Responses) through on
 - Planner: a new session on each wake (start, intent completion, new finding, idle heartbeat), with several turns each.
 - Goal decomposition runs before planning, up to 8 turns.
 - **Report writer:** a seeded custom agent with an enabled trigger on each `report_finding` tool call. Each finding starts its own conversation, up to 5 in parallel.
-- **DeepSeek web search:** each search is a separate DeepSeek call with the active profile's key (output cap 1024, up to 3 searches per call). Agent searches and the web search test in settings are now recorded in `llm_usage` with lane `web_search` and the active profile's name and model; they are not in LLM recordings. DeepSeek does not document the usage format of these search responses, so ScopeWeaver reads Anthropic-style usage fields. **A response with no usage frame is recorded with 0 tokens: the call is counted, its tokens are unknown.** Check the DeepSeek console for billed tokens.
+- **DeepSeek web search:** each search is a separate DeepSeek call with the active profile's key (output cap 1024, up to 3 searches per call). Agent searches and the web search test in settings are now recorded in `llm_usage` with lane `web_search` and the active profile's name and model; they are not in LLM recordings. DeepSeek does not document the usage format of these search responses, so APTEX reads Anthropic-style usage fields. **A response with no usage frame is recorded with 0 tokens: the call is counted, its tokens are unknown.** Check the DeepSeek console for billed tokens.
 - Approval judge (off by default): one call per tool action without a matching rule. Side questions: on request only, with up to 12 summary calls before the answer.
 - **Test connection** makes a real call (output cap 8192) that is not recorded.
-- Fixed accounting error: Anthropic-format streams (Claude and Anthropic-compatible endpoints) over-counted output in `llm_usage`. A test stream with cumulative output counts 10 and 20 was recorded as 30 instead of 20. Only ScopeWeaver's numbers were inflated, not provider billing.
-- Fixed: ScopeWeaver's internal session and transcript totals also over-counted streamed output (the same 10-then-20 stream counted 30). They now count 20. These totals are not `llm_usage`; an over-count could only move compaction earlier.
+- Fixed accounting error: Anthropic-format streams (Claude and Anthropic-compatible endpoints) over-counted output in `llm_usage`. A test stream with cumulative output counts 10 and 20 was recorded as 30 instead of 20. Only APTEX's numbers were inflated, not provider billing.
+- Fixed: APTEX's internal session and transcript totals also over-counted streamed output (the same 10-then-20 stream counted 30). They now count 20. These totals are not `llm_usage`; an over-count could only move compaction earlier.
 - Fixed: side questions on OpenAI Responses profiles were reported as interrupted because the stream had no stop event. A `response.completed` event now ends the answer normally; `response.incomplete` is still reported as interrupted.
 
 ### Checking where tokens go
@@ -258,9 +258,9 @@ Cache reads are counted from `prompt_tokens_details.cached_tokens`, DeepSeek's t
 
 ## Native Ollama (local inference)
 
-ScopeWeaver talks to Ollama through its native `/api/chat` API. Ollama's OpenAI-compatible endpoint has no way to set the context size ([Ollama OpenAI compatibility](https://docs.ollama.com/api/openai-compatibility)), so a profile pointed at `/v1` cannot guarantee `num_ctx`. The native format sends it on every request. A base URL ending in `/v1`, `/api` or `/api/chat` is normalized to the server root.
+APTEX talks to Ollama through its native `/api/chat` API. Ollama's OpenAI-compatible endpoint has no way to set the context size ([Ollama OpenAI compatibility](https://docs.ollama.com/api/openai-compatibility)), so a profile pointed at `/v1` cannot guarantee `num_ctx`. The native format sends it on every request. A base URL ending in `/v1`, `/api` or `/api/chat` is normalized to the server root.
 
-Ollama's documented default context differs between pages: the [FAQ](https://docs.ollama.com/faq) states 4,096 tokens, and the [context length page](https://docs.ollama.com/context-length) describes a VRAM-based default (about 4K below 24 GiB, 32K for 24–48 GiB, 256K above). ScopeWeaver therefore does not rely on the server default.
+Ollama's documented default context differs between pages: the [FAQ](https://docs.ollama.com/faq) states 4,096 tokens, and the [context length page](https://docs.ollama.com/context-length) describes a VRAM-based default (about 4K below 24 GiB, 32K for 24–48 GiB, 256K above). APTEX therefore does not rely on the server default.
 
 ### Templates
 
@@ -282,7 +282,7 @@ Selecting an Ollama template reads `/api/tags` and model metadata from the selec
 
 **API key behavior:** Ollama templates and switching to the Ollama format clear an unsaved key before discovery. Ollama templates keep the profile name, proxy, session header and other entered preferences, but **clear any unsaved API key** so a cloud credential is never sent to a local endpoint. The GLM templates still keep an entered key. Leave the key blank for local Ollama; enter a token only when a reverse proxy in front of Ollama requires one (it is sent as `Authorization: Bearer`). Keyless Ollama profiles can be tested, saved, activated and used in failover; the profile card shows **No key needed** instead of a missing-key warning. When you edit a saved native Ollama profile, a blank key field keeps the saved token; switching a cloud profile to Ollama with the field blank deletes the old cloud key.
 
-**Keys for the other formats:** Anthropic and OpenAI formats require a key unless the base URL is explicitly local, meaning its host resolves only to loopback or private addresses. A keyless local OpenAI-compatible server such as vLLM or LM Studio therefore works with a blank key. ScopeWeaver then sends an internal non-secret placeholder so the SDK does not inherit `OPENAI_API_KEY` or `ANTHROPIC_API_KEY` from the environment. A non-local endpoint with no key is refused (*llm: API key required for non-local compatible endpoint*).
+**Keys for the other formats:** Anthropic and OpenAI formats require a key unless the base URL is explicitly local, meaning its host resolves only to loopback or private addresses. A keyless local OpenAI-compatible server such as vLLM or LM Studio therefore works with a blank key. APTEX then sends an internal non-secret placeholder so the SDK does not inherit `OPENAI_API_KEY` or `ANTHROPIC_API_KEY` from the environment. A non-local endpoint with no key is refused (*llm: API key required for non-local compatible endpoint*).
 
 ### Context, output and residency controls
 
@@ -299,7 +299,7 @@ Raise concurrency only when the server sets `OLLAMA_NUM_PARALLEL` above 1. Ollam
 
 ### Runtime safeguards
 
-- **Pre-warm:** before the first inference through a native profile, ScopeWeaver calls `/api/show`, refuses a model that does not declare `tools`, then loads the model with an empty `/api/chat` request using the profile's `num_ctx` and `keep_alive`. Warm-up runs inside the same concurrency slot.
+- **Pre-warm:** before the first inference through a native profile, APTEX calls `/api/show`, refuses a model that does not declare `tools`, then loads the model with an empty `/api/chat` request using the profile's `num_ctx` and `keep_alive`. Warm-up runs inside the same concurrency slot.
 - **Compaction:** for native Ollama with a window of 64K or less, history compaction triggers at 72% of the window and keeps complete tool call/result pairs. If experimental noa compaction is enabled, this safeguard takes priority for those profiles: noa is skipped and a warning is emitted. At 32K or less, the part of each tool output given to the model is capped at 16,384 **bytes** (16 KiB, measured as the SDK's `len(s)`, not Unicode characters); above 32K through 64K, the cap is 32,768 bytes (32 KiB). The full output is preserved in a spill file referenced from the tool result. Cloud formats keep their existing compaction and noa behavior.
 - **Approval judge:** an explicitly selected judge profile wins. Otherwise the actual native profile used by the originating agent/run is preferred (including binding, pool or failover); cloud or missing origin uses the active profile. For a native judge, the default timeout is **90 s** and the default failure action is **ask**. Saved timeout/failure overrides win; user approval still expires after 300 seconds with deny by default. Native output is constrained to a decision/comment JSON schema and still validated. The settings form cannot save until its server configuration loads successfully.
 
@@ -312,13 +312,13 @@ The existing formats remain selectable for these servers: choose **OpenAI (Chat 
 
 ### Load models and Test connection
 
-**Load models** reads `/api/tags` and `/api/show`. Each entry shows parameter size, quantization and `tools` / `thinking` / `vision` badges. A model whose metadata omits `tools` shows: *"Warning: This model does not declare native tool-calling support. ScopeWeaver agents require tool calling to update the asset and exploration graphs."* Failed metadata is shown as unknown, not as missing.
+**Load models** reads `/api/tags` and `/api/show`. Each entry shows parameter size, quantization and `tools` / `thinking` / `vision` badges. A model whose metadata omits `tools` shows: *"Warning: This model does not declare native tool-calling support. APTEX agents require tool calling to update the asset and exploration graphs."* Failed metadata is shown as unknown, not as missing.
 
-**Test connection** checks the model with `/api/show`, runs a one-turn tool-call smoke test with the profile's `num_ctx`, `keep_alive` and `num_predict`, and reads `/api/ps`. The panel shows whether the allocated context covers the request, whether the tool call returned, cold-load time in milliseconds and generation speed in tokens/s. A missing model shows the exact command to run on the server, for example `ollama pull qwen2.5-coder:32b`. ScopeWeaver does not pull models or create Modelfiles.
+**Test connection** checks the model with `/api/show`, runs a one-turn tool-call smoke test with the profile's `num_ctx`, `keep_alive` and `num_predict`, and reads `/api/ps`. The panel shows whether the allocated context covers the request, whether the tool call returned, cold-load time in milliseconds and generation speed in tokens/s. A missing model shows the exact command to run on the server, for example `ollama pull qwen2.5-coder:32b`. APTEX does not pull models or create Modelfiles.
 
 ### Host and container routing
 
-| ScopeWeaver runs | Ollama runs | Base URL |
+| APTEX runs | Ollama runs | Base URL |
 | --- | --- | --- |
 | On the host | On the same host | `http://127.0.0.1:11434` |
 | In Docker Compose | On the host | `http://host.docker.internal:11434` |
@@ -330,31 +330,31 @@ Inside a container, `127.0.0.1` is the container itself. Compose maps `host.dock
 
 ### Network policy (`local_llm_only`)
 
-Off by default; cloud providers remain available. Turn it on in **System settings → Local-only LLM network** or with `SCOPEWEAVER_LOCAL_LLM_ONLY=true`. When on:
+Off by default; cloud providers remain available. Turn it on in **System settings → Local-only LLM network** or with `APTEX_LOCAL_LLM_ONLY=true`. When on:
 
 - LLM HTTP (inference, model lists, connection tests, warm-up and the approval judge) permits **loopback plus explicit trusted CIDRs** (`local_llm_allowed_cidrs`). Private IPv4, IPv6 ULA, LAN and Docker addresses are no longer implicitly trusted. Add only inference-server addresses you control, preferably `/32` for IPv4 or `/128` for IPv6.
 - Link-local, multicast and unspecified addresses are always refused, even in a trusted CIDR. DNS names are checked against every resolved address when a connection opens; all addresses must be allowed. All redirects and LLM profile proxies are refused.
 - **Agent web search (every backend), search connectivity probes, update checks and update downloads are blocked.** The update screen describes this deliberate policy separately from a network failure. Local version status, update progress and rollback remain available; cached remote release information is not returned as a way around the policy.
 - Runtime changes apply without a restart, including already-created sessions. A download admitted before strict mode is enabled stops at the next guarded network operation/body read and removes partial staging; traffic already sent cannot be recalled.
-- CIDRs from `SCOPEWEAVER_LOCAL_LLM_ALLOWED_CIDRS` (or retained `ARTEX_LOCAL_LLM_ALLOWED_CIDRS`) also apply, are not copied into the stored list and cannot be edited in the UI. An environment `true` for the policy is a floor that the UI cannot disable.
+- CIDRs from `APTEX_LOCAL_LLM_ALLOWED_CIDRS` (or retained `ARTEX_LOCAL_LLM_ALLOWED_CIDRS`) also apply, are not copied into the stored list and cannot be edited in the UI. An environment `true` for the policy is a floor that the UI cannot disable.
 - Target traffic, target tools and the global proxy remain connected. This is an application policy, not a cryptographic or whole-host offline guarantee.
 
-**Migration for existing strict LAN/Docker profiles:** same-machine `http://127.0.0.1:11434` needs no CIDR. A LAN endpoint such as `http://192.168.1.20:11434` needs `192.168.1.20/32`; an IPv6 inference address such as `fd00::20` needs `fd00::20/128`. For Docker, resolve the name **from the ScopeWeaver container**, because the host and container may see different addresses:
+**Migration for existing strict LAN/Docker profiles:** same-machine `http://127.0.0.1:11434` needs no CIDR. A LAN endpoint such as `http://192.168.1.20:11434` needs `192.168.1.20/32`; an IPv6 inference address such as `fd00::20` needs `fd00::20/128`. For Docker, resolve the name **from the APTEX container**, because the host and container may see different addresses:
 
 ```bash
 # Existing Compose service; read its actual name resolution and network addresses.
-docker compose exec scopeweaver getent ahosts host.docker.internal
-docker compose exec scopeweaver getent ahosts ollama
+docker compose exec aptex getent ahosts host.docker.internal
+docker compose exec aptex getent ahosts ollama
 docker inspect --format '{{range .NetworkSettings.Networks}}{{.IPAddress}} {{.GlobalIPv6Address}}{{end}}' "$(docker compose ps -q ollama)"
 ```
 
-If the image lacks `getent`, inspect the existing host-gateway mapping with `docker compose exec scopeweaver cat /etc/hosts` and the Ollama container's address with `docker inspect`. Use the inference IP that ScopeWeaver actually reaches, not a copied example or a whole Docker subnet. Add it to **Additional trusted CIDRs** or the environment allowlist, for example `SCOPEWEAVER_LOCAL_LLM_ALLOWED_CIDRS=192.168.1.20/32`. Neither `host.docker.internal` nor the service name `ollama` grants implicit trust. Recheck after Docker recreates the service or changes its address; update the narrow allowlist before retrying **Load models** or **Test connection**.
+If the image lacks `getent`, inspect the existing host-gateway mapping with `docker compose exec aptex cat /etc/hosts` and the Ollama container's address with `docker inspect`. Use the inference IP that APTEX actually reaches, not a copied example or a whole Docker subnet. Add it to **Additional trusted CIDRs** or the environment allowlist, for example `APTEX_LOCAL_LLM_ALLOWED_CIDRS=192.168.1.20/32`. Neither `host.docker.internal` nor the service name `ollama` grants implicit trust. Recheck after Docker recreates the service or changes its address; update the narrow allowlist before retrying **Load models** or **Test connection**.
 
-ScopeWeaver cannot see what an Ollama server does next. **Ollama can forward requests to Ollama cloud models**; the bundled Compose service sets `OLLAMA_NO_CLOUD=1`, but a host or remote Ollama must disable cloud independently (`OLLAMA_NO_CLOUD=1` or `disable_ollama_cloud` in `~/.ollama/server.json`, per the [FAQ](https://docs.ollama.com/faq)).
+APTEX cannot see what an Ollama server does next. **Ollama can forward requests to Ollama cloud models**; the bundled Compose service sets `OLLAMA_NO_CLOUD=1`, but a host or remote Ollama must disable cloud independently (`OLLAMA_NO_CLOUD=1` or `disable_ollama_cloud` in `~/.ollama/server.json`, per the [FAQ](https://docs.ollama.com/faq)).
 
 ### Environment and configuration
 
-`SCOPEWEAVER_LLM_*` overrides `ARTEX_LLM_*`; an explicitly empty modern variable also overrides the legacy one. Both override the `llm` block in `config.json` (path from `SCOPEWEAVER_CONFIG` or `ARTEX_CONFIG`).
+`APTEX_LLM_*` overrides `ARTEX_LLM_*`; an explicitly empty modern variable also overrides the legacy one. Both override the `llm` block in `config.json` (path from `APTEX_CONFIG` or `ARTEX_CONFIG`).
 
 | Suffix | Meaning |
 | --- | --- |
@@ -364,24 +364,24 @@ ScopeWeaver cannot see what an Ollama server does next. **Ollama can forward req
 | `CONTEXT_WINDOW_K`, `MAX_TOKENS`, `KEEP_ALIVE`, `MAX_CONCURRENT` | Controls described above |
 | `THINKING_TYPE`, `REASONING_EFFORT`, `STREAM` | Existing reasoning and streaming options |
 
-Policy variables: `SCOPEWEAVER_LOCAL_LLM_ONLY` / `ARTEX_LOCAL_LLM_ONLY` and comma-separated `SCOPEWEAVER_LOCAL_LLM_ALLOWED_CIDRS` / `ARTEX_LOCAL_LLM_ALLOWED_CIDRS`.
+Policy variables: `APTEX_LOCAL_LLM_ONLY` / `ARTEX_LOCAL_LLM_ONLY` and comma-separated `APTEX_LOCAL_LLM_ALLOWED_CIDRS` / `ARTEX_LOCAL_LLM_ALLOWED_CIDRS`.
 
-At startup, Anthropic and OpenAI formats use `ANTHROPIC_API_KEY` or `OPENAI_API_KEY` when no generic key is configured, including for authenticated local gateways. The `opencode-go` provider uses `OPENCODE_API_KEY` instead — never `OPENAI_API_KEY` — and is inferred when only `OPENCODE_API_KEY` is set. To start a deliberately keyless local profile while those provider keys are set, explicitly set `SCOPEWEAVER_LLM_API_KEY=` (or `ARTEX_LLM_API_KEY=`). This overrides file credentials and suppresses provider-key fallback. Native Ollama falls back only to `OLLAMA_API_KEY`, never to Anthropic, OpenAI or OpenCode keys.
+At startup, Anthropic and OpenAI formats use `ANTHROPIC_API_KEY` or `OPENAI_API_KEY` when no generic key is configured, including for authenticated local gateways. The `opencode-go` provider uses `OPENCODE_API_KEY` instead — never `OPENAI_API_KEY` — and is inferred when only `OPENCODE_API_KEY` is set. To start a deliberately keyless local profile while those provider keys are set, explicitly set `APTEX_LLM_API_KEY=` (or `ARTEX_LLM_API_KEY=`). This overrides file credentials and suppresses provider-key fallback. Native Ollama falls back only to `OLLAMA_API_KEY`, never to Anthropic, OpenAI or OpenCode keys.
 
 Saving a new UI profile with a blank key does not import provider environment credentials. **Test connection** with a blank key can reuse an existing profile's saved key when its profile ID is supplied. Without a profile ID, a local Anthropic/OpenAI test reuses the active key only when the format, normalized base URL and proxy all match the active service, including when testing a new draft. A different local endpoint, format or proxy does not inherit the active key; native Ollama never inherits an active cloud key. Existing non-local connection tests retain their active-key fallback.
 
 ```bash
-# .env for ScopeWeaver in Docker with Ollama on the host
+# .env for APTEX in Docker with Ollama on the host
 # Replace your-installed-tool-model with a tool-capable tag shown by Load models.
-SCOPEWEAVER_LLM_PROVIDER=ollama
-SCOPEWEAVER_LLM_BASE_URL=http://host.docker.internal:11434
-SCOPEWEAVER_LLM_MODEL=your-installed-tool-model
-SCOPEWEAVER_LLM_CONTEXT_WINDOW_K=32
-SCOPEWEAVER_LLM_MAX_CONCURRENT=1
-SCOPEWEAVER_LLM_KEEP_ALIVE=30m
-SCOPEWEAVER_LLM_MAX_TOKENS=4096
-SCOPEWEAVER_LOCAL_LLM_ONLY=false   # add the actual host /32 or /128 before enabling strict mode
-# SCOPEWEAVER_LOCAL_LLM_ALLOWED_CIDRS=192.168.1.20/32  # replace with the resolved inference IP
+APTEX_LLM_PROVIDER=ollama
+APTEX_LLM_BASE_URL=http://host.docker.internal:11434
+APTEX_LLM_MODEL=your-installed-tool-model
+APTEX_LLM_CONTEXT_WINDOW_K=32
+APTEX_LLM_MAX_CONCURRENT=1
+APTEX_LLM_KEEP_ALIVE=30m
+APTEX_LLM_MAX_TOKENS=4096
+APTEX_LOCAL_LLM_ONLY=false   # add the actual host /32 or /128 before enabling strict mode
+# APTEX_LOCAL_LLM_ALLOWED_CIDRS=192.168.1.20/32  # replace with the resolved inference IP
 ```
 
 ```json
@@ -415,7 +415,7 @@ Templates choose from models installed on the selected server and use a 32K cont
 
 ### Model candidates
 
-Only models whose [Ollama library](https://ollama.com/library) page lists the `tools` capability are listed (checked 2026-10-15). Download sizes are the default quantization. **Memory guidance is an estimate**: weights plus a KV cache that grows with context and parallel requests. ScopeWeaver has not benchmarked these models or hardware, and tool-calling quality varies by model.
+Only models whose [Ollama library](https://ollama.com/library) page lists the `tools` capability are listed (checked 2026-10-15). Download sizes are the default quantization. **Memory guidance is an estimate**: weights plus a KV cache that grows with context and parallel requests. APTEX has not benchmarked these models or hardware, and tool-calling quality varies by model.
 
 | Model | Download | Notes |
 | --- | --- | --- |
@@ -429,6 +429,6 @@ Only models whose [Ollama library](https://ollama.com/library) page lists the `t
 
 **Observed limitation (2026-10-15):** a declared `tools` capability does not guarantee wire tool calls. In branch testing, `qwen2.5-coder:7b` wrote tool-shaped JSON as plain text, so no tool ran, and `qwen3:4b` passed the tool-call diagnostic but did not complete long autonomous tasks. Treat small models as unvalidated for the main agent; see [Verification](VERIFICATION.md#autonomous-task-reliability-is-not-validated).
 
-The usage restrictions in the [README](../README.md) still apply: run ScopeWeaver only in a locally isolated environment, whichever provider you choose.
+The usage restrictions in the [README](../README.md) still apply: run APTEX only in a locally isolated environment, whichever provider you choose.
 
 [한국어 안내](ko/llm-providers.md)

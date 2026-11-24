@@ -10,12 +10,12 @@ package guard
 import (
 	"context"
 	"encoding/json"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/locale"
 	"regexp"
 	"sync"
 	"time"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/intercept"
+	"github.com/afterglow-labs/APTEX/intercept"
 	"github.com/Autumn-27/norma/hook"
 )
 
@@ -158,7 +158,7 @@ func isNativeReplayTool(name string) bool {
 // Audit/history rows keep the raw reason (see Interceptor.Log); only the
 // model-facing tool_result carries this framing.
 func systemBlockMessage(reason string) string {
-	return locale.Text(locale.ServerDefault(), "[ScopeWeaver platform control, not target defense] This call was blocked by the platform. ") +
+	return locale.Text(locale.ServerDefault(), "[APTEX platform control, not target defense] This call was blocked by the platform. ") +
 		locale.Text(locale.ServerDefault(), "Reason: ") + reason + locale.Text(locale.ServerDefault(), ". This operation is prohibited.")
 }
 

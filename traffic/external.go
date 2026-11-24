@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
+	"github.com/afterglow-labs/APTEX/db"
 )
 
 // ExternalExchange is one captured request/response pair handed in from

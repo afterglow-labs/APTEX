@@ -13,7 +13,7 @@ import (
 
 func isolateLLMEnvironment(t *testing.T) {
 	t.Helper()
-	for _, prefix := range []string{"SCOPEWEAVER_LLM_", "ARTEX_LLM_"} {
+	for _, prefix := range []string{"APTEX_LLM_", "ARTEX_LLM_"} {
 		for _, suffix := range []string{"PROVIDER", "MODEL", "BASE_URL", "API_KEY", "PROXY", "KEEP_ALIVE", "CONTEXT_WINDOW_K", "MAX_CONCURRENT", "MAX_TOKENS", "THINKING_TYPE", "REASONING_EFFORT", "STREAM"} {
 			key := prefix + suffix
 			t.Setenv(key, "")
@@ -22,9 +22,9 @@ func isolateLLMEnvironment(t *testing.T) {
 			}
 		}
 	}
-	t.Setenv("SCOPEWEAVER_CONFIG", filepath.Join(t.TempDir(), "missing.json"))
-	t.Setenv("SCOPEWEAVER_LOCAL_LLM_ONLY", "false")
-	t.Setenv("SCOPEWEAVER_LOCAL_LLM_ALLOWED_CIDRS", "")
+	t.Setenv("APTEX_CONFIG", filepath.Join(t.TempDir(), "missing.json"))
+	t.Setenv("APTEX_LOCAL_LLM_ONLY", "false")
+	t.Setenv("APTEX_LOCAL_LLM_ALLOWED_CIDRS", "")
 	t.Setenv("ANTHROPIC_API_KEY", "anthropic-provider-key")
 	t.Setenv("OPENAI_API_KEY", "openai-provider-key")
 	t.Setenv("OLLAMA_API_KEY", "ollama-provider-key")
@@ -59,20 +59,20 @@ func TestFromEnvLocalGatewayAuthentication(t *testing.T) {
 						if err := os.WriteFile(path, []byte(fmt.Sprintf(`{"llm":{"api_key":%q}}`, tc.fileKey)), 0600); err != nil {
 							t.Fatal(err)
 						}
-						t.Setenv("SCOPEWEAVER_CONFIG", path)
+						t.Setenv("APTEX_CONFIG", path)
 					}
 					if tc.legacy {
 						t.Setenv("ARTEX_LLM_API_KEY", tc.legacyKey)
 					}
 					if tc.modern {
-						t.Setenv("SCOPEWEAVER_LLM_API_KEY", tc.modernKey)
+						t.Setenv("APTEX_LLM_API_KEY", tc.modernKey)
 					}
 					calls := 0
 					srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 						calls++
 						key := tc.want
 						if key == "" {
-							key = "scopeweaver-local"
+							key = "aptex-local"
 						}
 						path, header, want := "/custom/chat/completions", "Authorization", "Bearer "+key
 						if format == "anthropic" {
@@ -131,7 +131,7 @@ func TestFromEnvNativeCredentialIsolation(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Setenv("OLLAMA_API_KEY", tc.ollamaKey)
 			if tc.explicitBlank {
-				t.Setenv("SCOPEWEAVER_LLM_API_KEY", "")
+				t.Setenv("APTEX_LLM_API_KEY", "")
 			}
 			calls := 0
 			srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

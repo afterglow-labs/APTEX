@@ -59,6 +59,14 @@ Thumbs.db
 /bench/
 /Dockerfile.bench
 /Dockerfile.bench.v2
+/aptex
+/aptex.exe
+/aptex.new
+/aptex.new.sha256
+/aptex.old
+/aptex.failed
+/aptex.upgrade.json
+# Ignore artifacts from older local installations.
 /scopeweaver
 /scopeweaver.exe
 /scopeweaver.new

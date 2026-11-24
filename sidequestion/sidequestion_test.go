@@ -11,7 +11,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/llmpool"
+	"github.com/afterglow-labs/APTEX/llmpool"
 	"github.com/Autumn-27/norma/harness"
 	"github.com/Autumn-27/norma/llm"
 )

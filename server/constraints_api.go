@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
+	"github.com/afterglow-labs/APTEX/db"
 )
 
 // Manual constraint CRUD from overview management, plus injection-scope settings. These allow/deny constraints

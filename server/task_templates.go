@@ -3,13 +3,13 @@ package server
 import (
 	"encoding/json"
 	"errors"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/locale"
 	"io"
 	"net/http"
 	"strings"
 	"unicode/utf8"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
+	"github.com/afterglow-labs/APTEX/db"
 )
 
 const maxTaskTemplateRequestBytes = 512 << 10

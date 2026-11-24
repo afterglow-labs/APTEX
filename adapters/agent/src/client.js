@@ -4,10 +4,11 @@ export { SUPPORTED_LANGUAGES } from "./messages.js";
 const MAX_RESPONSE_BYTES = 2 * 1024 * 1024;
 
 export function configFromEnv(env = process.env) {
-  const requestedLanguage = env.SCOPEWEAVER_LANGUAGE || "en";
+  const setting = (name) => env[`APTEX_${name}`] ?? env[`SCOPEWEAVER_${name}`];
+  const requestedLanguage = setting("LANGUAGE") || "en";
   const t = translator(SUPPORTED_LANGUAGES.includes(requestedLanguage) ? requestedLanguage : "en");
   let baseURL;
-  try { baseURL = new URL(env.SCOPEWEAVER_URL || "http://127.0.0.1:8787"); }
+  try { baseURL = new URL(setting("URL") || "http://127.0.0.1:8787"); }
   catch { throw new TypeError(t("config.url_invalid")); }
   const loopback = ["localhost", "127.0.0.1", "[::1]"].includes(baseURL.hostname);
   if ((baseURL.protocol !== "https:" && !(baseURL.protocol === "http:" && loopback)) ||
@@ -16,21 +17,21 @@ export function configFromEnv(env = process.env) {
   }
   const language = requestedLanguage;
   if (!SUPPORTED_LANGUAGES.includes(language)) throw new Error(t("config.language", { languages: SUPPORTED_LANGUAGES.join(", ") }));
-  const timeoutMs = Number(env.SCOPEWEAVER_TIMEOUT_MS || 30000);
+  const timeoutMs = Number(setting("TIMEOUT_MS") || 30000);
   if (!Number.isInteger(timeoutMs) || timeoutMs < 1 || timeoutMs > 120000) {
     throw new Error(t("config.timeout"));
   }
-  const token = env.SCOPEWEAVER_TOKEN || "";
+  const token = setting("TOKEN") || "";
   if (/[\r\n]/.test(token)) throw new Error(t("config.token"));
-  if (env.SCOPEWEAVER_ALLOW_WRITES && !["true", "false"].includes(env.SCOPEWEAVER_ALLOW_WRITES)) {
+  if (setting("ALLOW_WRITES") && !["true", "false"].includes(setting("ALLOW_WRITES"))) {
     throw new Error(t("config.writes"));
   }
-  return { baseURL, language, timeoutMs, token, password: env.SCOPEWEAVER_PASSWORD || "",
+  return { baseURL, language, timeoutMs, token, password: setting("PASSWORD") || "",
     username: env.AFTERGLOW_ADMIN_USERNAME || "Afterglow",
-    allowWrites: env.SCOPEWEAVER_ALLOW_WRITES === "true" };
+    allowWrites: setting("ALLOW_WRITES") === "true" };
 }
 
-export class ScopeWeaverClient {
+export class APTEXClient {
   constructor(config = configFromEnv()) {
     this.config = config;
     this.t = translator(config.language);

@@ -12,9 +12,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
-	"github.com/afterglow-labs/afterglow-cybersecurity/internal/dbtest"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/db"
+	"github.com/afterglow-labs/APTEX/internal/dbtest"
+	"github.com/afterglow-labs/APTEX/locale"
 	"github.com/Autumn-27/norma/llm"
 	"github.com/Autumn-27/norma/permission"
 	actool "github.com/Autumn-27/norma/tool"
@@ -39,7 +39,7 @@ func TestPlannerResolvedEvidenceBoundary(t *testing.T) {
 			}
 			defer d.Close()
 			var dbname string
-			if err := d.QueryRow("SELECT current_database()").Scan(&dbname); err != nil || !strings.HasPrefix(dbname, "scopeweaver_test_") {
+			if err := d.QueryRow("SELECT current_database()").Scan(&dbname); err != nil || !strings.HasPrefix(dbname, "aptex_test_") {
 				t.Fatal("not an owned disposable database")
 			}
 			row, err := d.CreateTask("R23 resolved boundary fixture", "Assess only actual permitted evidence; no automatic proof", nil, 0, 600)

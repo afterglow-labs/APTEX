@@ -37,12 +37,12 @@ class AptexLauncherTests(unittest.TestCase):
         models = self.directory / "model store"
         (models / "blobs").mkdir(parents=True)
         (models / "manifests").mkdir()
-        (self.repo / ".env").write_text("PERSONAL_SETTING=retained\nSCOPEWEAVER_LOCAL_LLM_ONLY=false\nSCOPEWEAVER_LLM_PROVIDER=ollama\nSCOPEWEAVER_LLM_MODEL=chosen-local:latest\n")
+        (self.repo / ".env").write_text("PERSONAL_SETTING=retained\nAPTEX_LOCAL_LLM_ONLY=false\nAPTEX_LLM_PROVIDER=ollama\nAPTEX_LLM_MODEL=chosen-local:latest\n")
         with patch.dict(aptex.os.environ, {"OLLAMA_MODELS_DIR": str(models)}):
             settings = aptex.prepare_backend(self.repo)
         self.assertEqual(settings["PERSONAL_SETTING"], "retained")
-        self.assertEqual(settings["SCOPEWEAVER_LOCAL_LLM_ONLY"], "false")
-        self.assertEqual(settings["SCOPEWEAVER_LLM_MODEL"], "chosen-local:latest")
+        self.assertEqual(settings["APTEX_LOCAL_LLM_ONLY"], "false")
+        self.assertEqual(settings["APTEX_LLM_MODEL"], "chosen-local:latest")
         self.assertEqual(settings["OLLAMA_MODELS_DIR"], str(models))
         self.assertTrue(settings["POSTGRES_PASSWORD"])
         self.assertEqual((self.repo / ".env").stat().st_mode & 0o777, 0o600)
@@ -54,9 +54,9 @@ class AptexLauncherTests(unittest.TestCase):
         with patch.dict(aptex.os.environ, {"OLLAMA_MODELS_DIR": str(models)}):
             settings = aptex.prepare_backend(self.repo)
             command = aptex.compose_command(self.repo, "up", "-d", *aptex.CORE_SERVICES)
-        self.assertNotIn("SCOPEWEAVER_LLM_MODEL", settings)
-        self.assertNotIn("SCOPEWEAVER_LLM_PROVIDER", settings)
-        self.assertEqual(settings["SCOPEWEAVER_LOCAL_LLM_ONLY"], "false")
+        self.assertNotIn("APTEX_LLM_MODEL", settings)
+        self.assertNotIn("APTEX_LLM_PROVIDER", settings)
+        self.assertEqual(settings["APTEX_LOCAL_LLM_ONLY"], "false")
         self.assertNotIn("docker-compose.host-model.yml", command)
 
     def test_explicit_local_runtime_without_model_does_not_choose_one(self):
@@ -65,8 +65,8 @@ class AptexLauncherTests(unittest.TestCase):
         (models / "manifests").mkdir()
         (self.repo / ".env").write_text(f"APTEX_LOCAL_MODEL_ENABLED=true\nOLLAMA_MODELS_DIR={models}\n")
         settings = aptex.prepare_backend(self.repo)
-        self.assertNotIn("SCOPEWEAVER_LLM_MODEL", settings)
-        self.assertNotIn("SCOPEWEAVER_LLM_PROVIDER", settings)
+        self.assertNotIn("APTEX_LLM_MODEL", settings)
+        self.assertNotIn("APTEX_LLM_PROVIDER", settings)
         self.assertIsNotNone(aptex.optional_model_directory(self.repo, settings))
 
     def test_explicit_local_runtime_does_not_rewrite_cloud_provider(self):
@@ -75,12 +75,12 @@ class AptexLauncherTests(unittest.TestCase):
         (models / "manifests").mkdir()
         (self.repo / ".env").write_text(
             f"APTEX_LOCAL_MODEL_ENABLED=true\nOLLAMA_MODELS_DIR={models}\n"
-            "SCOPEWEAVER_LLM_PROVIDER=openai-responses\nSCOPEWEAVER_LLM_MODEL=gpt-6.1-sol\n"
+            "APTEX_LLM_PROVIDER=openai-responses\nAPTEX_LLM_MODEL=gpt-6.1-sol\n"
         )
         settings = aptex.prepare_backend(self.repo)
-        self.assertEqual(settings["SCOPEWEAVER_LLM_PROVIDER"], "openai-responses")
-        self.assertEqual(settings["SCOPEWEAVER_LLM_MODEL"], "gpt-6.1-sol")
-        self.assertNotIn("SCOPEWEAVER_LLM_BASE_URL", settings)
+        self.assertEqual(settings["APTEX_LLM_PROVIDER"], "openai-responses")
+        self.assertEqual(settings["APTEX_LLM_MODEL"], "gpt-6.1-sol")
+        self.assertNotIn("APTEX_LLM_BASE_URL", settings)
         self.assertIsNotNone(aptex.optional_model_directory(self.repo, settings))
 
     def test_start_reuses_running_services_and_leaves_odysseus_configuration_alone(self):
@@ -89,9 +89,10 @@ class AptexLauncherTests(unittest.TestCase):
         config = odysseus / ".env"
         config.write_text("APP_PORT=7860\nPERSONAL_SETTING=retained\n")
         original = config.read_bytes()
-        with patch.object(aptex, "prepare_backend", return_value={"SCOPEWEAVER_LLM_PROVIDER": "ollama", "SCOPEWEAVER_LLM_MODEL": "chosen-local:latest"}), \
+        with patch.object(aptex, "prepare_backend", return_value={"APTEX_LLM_PROVIDER": "ollama", "APTEX_LLM_MODEL": "chosen-local:latest"}), \
              patch.object(aptex, "ensure_docker"), \
              patch.object(aptex, "all_backend_services_running", return_value=True), \
+             patch.object(aptex, "legacy_service_containers", return_value=[]), \
              patch.object(aptex, "model_directory", return_value=self.directory / "models"), \
              patch.object(aptex, "ollama_ip_and_mount", return_value="172.20.0.2"), \
              patch.object(aptex, "wait_for_local_model"), \
@@ -100,7 +101,7 @@ class AptexLauncherTests(unittest.TestCase):
              patch.object(aptex, "ensure_administrator"), \
              patch.object(aptex.subprocess, "run") as run:
             aptex.start()
-            expected = aptex.compose_command(self.repo, "up", "-d", "--no-build", "postgres", "ollama", "scopeweaver")
+            expected = aptex.compose_command(self.repo, "up", "-d", "--no-build", "postgres", "ollama", "aptex")
         self.assertEqual(run.call_args.args[0], expected)
         self.assertEqual(run.call_count, 1)
         self.assertEqual(config.read_bytes(), original)
@@ -110,11 +111,12 @@ class AptexLauncherTests(unittest.TestCase):
             settings = aptex.prepare_backend(self.repo)
             command = aptex.compose_command(self.repo, "up", "-d", *aptex.CORE_SERVICES)
         self.assertTrue(settings["POSTGRES_PASSWORD"])
-        self.assertNotIn("SCOPEWEAVER_LLM_PROVIDER", settings)
+        self.assertNotIn("APTEX_LLM_PROVIDER", settings)
         self.assertNotIn("docker-compose.host-model.yml", " ".join(command))
         with patch.object(aptex, "prepare_backend", return_value=settings), \
              patch.object(aptex, "ensure_docker"), \
              patch.object(aptex, "all_backend_services_running", return_value=True), \
+             patch.object(aptex, "legacy_service_containers", return_value=[]), \
              patch.object(aptex, "wait_for_backend"), \
              patch.object(aptex, "ensure_administrator"), \
              patch.object(aptex, "ollama_ip_and_mount", side_effect=AssertionError("required optional Ollama")), \
@@ -125,11 +127,11 @@ class AptexLauncherTests(unittest.TestCase):
     def test_prepare_preserves_cloud_provider_and_remote_ollama(self):
         for provider, base in [("openai-responses", "https://provider.example/v1"), ("ollama", "http://private-vpn:11434")]:
             with self.subTest(provider=provider):
-                (self.repo / ".env").write_text(f"SCOPEWEAVER_LLM_PROVIDER={provider}\nSCOPEWEAVER_LLM_BASE_URL={base}\nSCOPEWEAVER_LLM_MODEL=chosen-model\n")
+                (self.repo / ".env").write_text(f"APTEX_LLM_PROVIDER={provider}\nAPTEX_LLM_BASE_URL={base}\nAPTEX_LLM_MODEL=chosen-model\n")
                 settings = aptex.prepare_backend(self.repo)
-                self.assertEqual(settings["SCOPEWEAVER_LLM_PROVIDER"], provider)
-                self.assertEqual(settings["SCOPEWEAVER_LLM_BASE_URL"], base)
-                self.assertEqual(settings["SCOPEWEAVER_LLM_MODEL"], "chosen-model")
+                self.assertEqual(settings["APTEX_LLM_PROVIDER"], provider)
+                self.assertEqual(settings["APTEX_LLM_BASE_URL"], base)
+                self.assertEqual(settings["APTEX_LLM_MODEL"], "chosen-model")
                 self.assertIsNone(aptex.optional_model_directory(self.repo, settings))
 
     def test_disabled_or_missing_local_model_does_not_require_override(self):
@@ -143,9 +145,10 @@ class AptexLauncherTests(unittest.TestCase):
             aptex.prepare_backend(self.repo)
 
     def test_missing_selected_model_leaves_application_running(self):
-        with patch.object(aptex, "prepare_backend", return_value={"SCOPEWEAVER_LLM_PROVIDER": "ollama", "SCOPEWEAVER_LLM_MODEL": "missing-model"}), \
+        with patch.object(aptex, "prepare_backend", return_value={"APTEX_LLM_PROVIDER": "ollama", "APTEX_LLM_MODEL": "missing-model"}), \
              patch.object(aptex, "ensure_docker"), \
              patch.object(aptex, "all_backend_services_running", return_value=True), \
+             patch.object(aptex, "legacy_service_containers", return_value=[]), \
              patch.object(aptex, "model_directory", return_value=self.directory / "models"), \
              patch.object(aptex, "ollama_ip_and_mount", return_value="172.20.0.2"), \
              patch.object(aptex, "update_local_allowlist", return_value=False), \
@@ -160,11 +163,28 @@ class AptexLauncherTests(unittest.TestCase):
     def test_stop_targets_only_aptex_services(self):
         with patch.object(aptex.shutil, "which", return_value=None), \
              patch.object(aptex, "docker_running", return_value=True), \
+             patch.object(aptex, "legacy_service_containers", return_value=[]), \
              patch.object(aptex.subprocess, "run") as run:
             aptex.stop()
         self.assertEqual(run.call_args.args[0], aptex.compose_command(
-            self.repo, "stop", "scopeweaver", "ollama", "postgres"))
+            self.repo, "stop", "aptex", "ollama", "postgres"))
         self.assertEqual(run.call_count, 1)
+
+    def test_rename_builds_before_replacing_only_legacy_application_container(self):
+        with patch.object(aptex, "prepare_backend", return_value={}), \
+             patch.object(aptex, "ensure_docker"), \
+             patch.object(aptex, "all_backend_services_running", return_value=False), \
+             patch.object(aptex, "wait_for_backend"), \
+             patch.object(aptex, "ensure_administrator"), \
+             patch.object(aptex.subprocess, "run", side_effect=[SimpleNamespace(stdout="abc123\n"), None, None, None]) as run:
+            aptex.start()
+        commands = [call.args[0] for call in run.call_args_list]
+        self.assertEqual(commands[0], ["docker", "ps", "-q", "--filter",
+            "label=com.docker.compose.project=afterglow", "--filter",
+            "label=com.docker.compose.service=scopeweaver"])
+        self.assertEqual(commands[1][-2:], ["build", "aptex"])
+        self.assertEqual(commands[2], ["docker", "stop", "abc123"])
+        self.assertEqual(commands[3][-5:], ["up", "-d", "--no-build", "postgres", "aptex"])
 
     def test_docker_start_does_not_stop_other_projects(self):
         with patch.object(aptex, "docker_running", side_effect=[False, True]), \

@@ -3,15 +3,15 @@ package server
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/locale"
 	"net/http"
 	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/chatstate"
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
+	"github.com/afterglow-labs/APTEX/chatstate"
+	"github.com/afterglow-labs/APTEX/db"
 )
 
 // maxChatUpload caps a single chat-attachment upload request (memory + spill).

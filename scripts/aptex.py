@@ -21,8 +21,9 @@ import urllib.request
 ROOT = Path(__file__).resolve().parents[1]
 PROJECT = "afterglow"  # Preserve the existing PostgreSQL and account volumes.
 PROFILE = "local-llm"
-SERVICES = ("postgres", "ollama", "scopeweaver")
-CORE_SERVICES = ("postgres", "scopeweaver")
+SERVICES = ("postgres", "ollama", "aptex")
+CORE_SERVICES = ("postgres", "aptex")
+LEGACY_SERVICE = "scopeweaver"
 OPENER = urllib.request.build_opener(urllib.request.ProxyHandler({}))
 
 
@@ -111,15 +112,24 @@ def model_directory(backend: Path, backend_settings: dict[str, str]) -> Path:
     raise ValueError("OLLAMA_MODELS_DIR must name an existing model directory with blobs/ and manifests/")
 
 
+def aptex_setting(settings: dict[str, str], suffix: str, default: str | None = "") -> str | None:
+    keys = tuple(prefix + suffix for prefix in ("APTEX_", "SCOPEWEAVER_", "ARTEX_"))
+    for key in keys:
+        for source in (os.environ, settings):
+            if key in source:
+                return source[key]
+    return default
+
+
 def optional_model_directory(backend: Path, settings: dict[str, str]) -> Path | None:
     mode = (os.getenv("APTEX_LOCAL_MODEL_ENABLED") or settings.get("APTEX_LOCAL_MODEL_ENABLED", "auto")).lower()
     if mode not in {"auto", "true", "false"}:
         raise ValueError("APTEX_LOCAL_MODEL_ENABLED must be auto, true, or false")
     if mode == "false":
         return None
-    provider = os.getenv("SCOPEWEAVER_LLM_PROVIDER") or os.getenv("ARTEX_LLM_PROVIDER") or settings.get("SCOPEWEAVER_LLM_PROVIDER") or settings.get("ARTEX_LLM_PROVIDER", "")
-    base = os.getenv("SCOPEWEAVER_LLM_BASE_URL") or os.getenv("ARTEX_LLM_BASE_URL") or settings.get("SCOPEWEAVER_LLM_BASE_URL") or settings.get("ARTEX_LLM_BASE_URL", "")
-    model = os.getenv("SCOPEWEAVER_LLM_MODEL") or os.getenv("ARTEX_LLM_MODEL") or settings.get("SCOPEWEAVER_LLM_MODEL") or settings.get("ARTEX_LLM_MODEL", "")
+    provider = aptex_setting(settings, "LLM_PROVIDER")
+    base = aptex_setting(settings, "LLM_BASE_URL")
+    model = aptex_setting(settings, "LLM_MODEL")
     # Finding weights on disk does not choose which model the user wants.
     if mode == "auto" and (not model or provider != "ollama" or base not in {"", "http://ollama:11434"}):
         return None
@@ -142,19 +152,19 @@ def prepare_backend(backend: Path) -> dict[str, str]:
     updates = {}
     if model_path is not None:
         updates["OLLAMA_MODELS_DIR"] = str(model_path)
-    model = os.getenv("SCOPEWEAVER_LLM_MODEL") or os.getenv("ARTEX_LLM_MODEL") or settings.get("SCOPEWEAVER_LLM_MODEL") or settings.get("ARTEX_LLM_MODEL")
-    provider = os.getenv("SCOPEWEAVER_LLM_PROVIDER") or os.getenv("ARTEX_LLM_PROVIDER") or settings.get("SCOPEWEAVER_LLM_PROVIDER") or settings.get("ARTEX_LLM_PROVIDER")
+    model = aptex_setting(settings, "LLM_MODEL")
+    provider = aptex_setting(settings, "LLM_PROVIDER")
     if model_path is not None and model and provider in {None, "", "ollama"}:
         if not provider:
-            updates["SCOPEWEAVER_LLM_PROVIDER"] = "ollama"
-        if not (os.getenv("SCOPEWEAVER_LLM_BASE_URL") or os.getenv("ARTEX_LLM_BASE_URL") or settings.get("SCOPEWEAVER_LLM_BASE_URL") or settings.get("ARTEX_LLM_BASE_URL")):
-            updates["SCOPEWEAVER_LLM_BASE_URL"] = "http://ollama:11434"
-    if "SCOPEWEAVER_LOCAL_LLM_ONLY" not in settings:
-        updates["SCOPEWEAVER_LOCAL_LLM_ONLY"] = "false"
+            updates["APTEX_LLM_PROVIDER"] = "ollama"
+        if not (aptex_setting(settings, "LLM_BASE_URL")):
+            updates["APTEX_LLM_BASE_URL"] = "http://ollama:11434"
+    if aptex_setting(settings, "LOCAL_LLM_ONLY", None) is None:
+        updates["APTEX_LOCAL_LLM_ONLY"] = "false"
     if not settings.get("POSTGRES_PASSWORD"):
         updates["POSTGRES_PASSWORD"] = secrets.token_urlsafe(32)
-    if model_path is not None and model and provider in {None, "", "ollama"} and not settings.get("SCOPEWEAVER_LLM_CONTEXT_WINDOW_K"):
-        updates["SCOPEWEAVER_LLM_CONTEXT_WINDOW_K"] = "32"
+    if model_path is not None and model and provider in {None, "", "ollama"} and not aptex_setting(settings, "LLM_CONTEXT_WINDOW_K"):
+        updates["APTEX_LLM_CONTEXT_WINDOW_K"] = "32"
     update_env(env_path, updates)
     for name in ("data", "private/c2-binaries"):
         (backend / name).mkdir(parents=True, exist_ok=True, mode=0o700)
@@ -175,6 +185,15 @@ def compose_command(backend: Path, *args: str) -> list[str]:
     return [*command, *args]
 
 
+def legacy_service_containers() -> list[str]:
+    result = subprocess.run(
+        ["docker", "ps", "-q", "--filter", f"label=com.docker.compose.project={PROJECT}",
+         "--filter", f"label=com.docker.compose.service={LEGACY_SERVICE}"],
+        check=True, text=True, capture_output=True,
+    )
+    return result.stdout.split()
+
+
 def all_backend_services_running(backend: Path) -> bool:
     result = subprocess.run(compose_command(backend, "ps", "--status", "running", "--services"),
                             cwd=backend, check=True, text=True, capture_output=True)
@@ -184,7 +203,7 @@ def all_backend_services_running(backend: Path) -> bool:
 
 def wait_for_local_model(backend: Path, model: str) -> None:
     if not re.fullmatch(r"[A-Za-z0-9_.][A-Za-z0-9_.:/-]*", model):
-        raise ValueError("SCOPEWEAVER_LLM_MODEL must name one local Ollama model")
+        raise ValueError("APTEX_LLM_MODEL must name one local Ollama model")
     deadline = time.monotonic() + 3
     while time.monotonic() < deadline:
         result = subprocess.run(compose_command(backend, "exec", "-T", "ollama", "ollama", "show", model),
@@ -224,7 +243,7 @@ def reconcile_cidrs(configured: str, previous: str, current: str) -> str:
 
 
 def update_local_allowlist(backend: Path, settings: dict[str, str], address: str) -> bool:
-    if settings.get("SCOPEWEAVER_LOCAL_LLM_ONLY", "false").lower() != "true":
+    if aptex_setting(settings, "LOCAL_LLM_ONLY", "false").lower() != "true":
         return False
     credential_dir = Path.home() / ".config" / "afterglow-security"
     credential_dir.mkdir(parents=True, exist_ok=True, mode=0o700)
@@ -232,8 +251,8 @@ def update_local_allowlist(backend: Path, settings: dict[str, str], address: str
     state = credential_dir / "managed-ollama-cidr"
     previous = state.read_text().strip() if state.is_file() else ""
     current = address + ("/32" if ":" not in address else "/128")
-    value = reconcile_cidrs(settings.get("SCOPEWEAVER_LOCAL_LLM_ALLOWED_CIDRS", ""), previous, current)
-    changed = update_env(backend / ".env", {"SCOPEWEAVER_LOCAL_LLM_ALLOWED_CIDRS": value})
+    value = reconcile_cidrs(aptex_setting(settings, "LOCAL_LLM_ALLOWED_CIDRS"), previous, current)
+    changed = update_env(backend / ".env", {"APTEX_LOCAL_LLM_ALLOWED_CIDRS": value})
     atomic_write(state, current + "\n")
     return changed
 
@@ -296,9 +315,9 @@ def verify_repository() -> None:
 
 
 def base_url() -> str:
-    port = read_env(ROOT / ".env").get("ARTEX_PORT") or "8787"
+    port = aptex_setting(read_env(ROOT / ".env"), "PORT", "8787") or "8787"
     if not port.isdecimal() or not 1 <= int(port) <= 65535:
-        raise ValueError("ARTEX_PORT must be a valid TCP port")
+        raise ValueError("APTEX_PORT must be a valid TCP port")
     return f"http://127.0.0.1:{port}"
 
 
@@ -346,18 +365,23 @@ def start(*, rebuild: bool = False) -> None:
     build_option = "--build" if rebuild or not running else "--no-build"
     model_path = optional_model_directory(ROOT, settings)
     services = SERVICES if model_path is not None else CORE_SERVICES
+    legacy_containers = legacy_service_containers()
+    if legacy_containers:
+        subprocess.run(compose_command(ROOT, "build", "aptex"), cwd=ROOT, check=True)
+        subprocess.run(["docker", "stop", *legacy_containers], check=True)
+        build_option = "--no-build"
     subprocess.run(compose_command(ROOT, "up", "-d", build_option, *services), cwd=ROOT, check=True)
     if model_path is not None:
         address = ollama_ip_and_mount(ROOT, model_path)
         if update_local_allowlist(ROOT, read_env(ROOT / ".env"), address):
-            subprocess.run(compose_command(ROOT, "up", "-d", "--no-deps", "--no-build", "--force-recreate", "scopeweaver"),
+            subprocess.run(compose_command(ROOT, "up", "-d", "--no-deps", "--no-build", "--force-recreate", "aptex"),
                            cwd=ROOT, check=True)
     base = base_url()
     wait_for_backend(base)
     ensure_administrator(base)
     print(f"APTEX server ready: {base}. Open its client with aptex.", flush=True)
-    provider = os.getenv("SCOPEWEAVER_LLM_PROVIDER") or os.getenv("ARTEX_LLM_PROVIDER") or settings.get("SCOPEWEAVER_LLM_PROVIDER") or settings.get("ARTEX_LLM_PROVIDER")
-    model = os.getenv("SCOPEWEAVER_LLM_MODEL") or os.getenv("ARTEX_LLM_MODEL") or settings.get("SCOPEWEAVER_LLM_MODEL") or settings.get("ARTEX_LLM_MODEL")
+    provider = aptex_setting(settings, "LLM_PROVIDER")
+    model = aptex_setting(settings, "LLM_MODEL")
     if model_path is not None and provider == "ollama" and model:
         try:
             wait_for_local_model(ROOT, model)
@@ -379,7 +403,10 @@ def stop() -> None:
     if not docker_running():
         print("APTEX services are already stopped.", flush=True)
         return
-    subprocess.run(compose_command(ROOT, "stop", "scopeweaver", "ollama", "postgres"), cwd=ROOT, check=True)
+    legacy_containers = legacy_service_containers()
+    if legacy_containers:
+        subprocess.run(["docker", "stop", *legacy_containers], check=True)
+    subprocess.run(compose_command(ROOT, "stop", "aptex", "ollama", "postgres"), cwd=ROOT, check=True)
     print("APTEX services stopped; their data is retained.", flush=True)
 
 

@@ -31,7 +31,7 @@ import path from "node:path";
 import test from "node:test";
 
 function browser(stored = null, cookie = "") {
-  const values = new Map(stored ? [["scopeweaver.locale", stored]] : []);
+  const values = new Map(stored ? [["aptex.locale", stored]] : []);
   globalThis.window = {
     localStorage: { getItem: (key) => values.get(key) ?? null, setItem: (key, value) => values.set(key, value) },
   };
@@ -49,14 +49,26 @@ test("English is the default; unsupported and malformed preferences safely fall 
   assert.equal(getLocale(), "en");
   assert.equal(normalizeLocale("ko-KR"), "ko");
   assert.equal(normalizeLocale("zh-CN"), "zh-Hans");
-  assert.equal(readCookieLocale("scopeweaver_locale=%E0%A4%A"), null);
-  browser("unsupported", "scopeweaver_locale=ko");
+  assert.equal(readCookieLocale("aptex_locale=%E0%A4%A"), null);
+  browser("unsupported", "aptex_locale=ko");
   initializeLocale();
   assert.equal(getLocale(), "ko");
   reset();
-  browser("unsupported", "scopeweaver_locale=%bad");
+  browser("unsupported", "aptex_locale=%bad");
   initializeLocale();
   assert.equal(getLocale(), "en");
+  reset();
+});
+
+test("legacy locale preferences migrate to the APTEX keys", () => {
+  reset();
+  const storage = browser(null, "scopeweaver_locale=ko");
+  storage.set("scopeweaver.locale", "ja");
+  assert.equal(readCookieLocale("scopeweaver_locale=ko; aptex_locale=es"), "es");
+  initializeLocale();
+  assert.equal(getLocale(), "ja");
+  assert.equal(storage.get("aptex.locale"), "ja");
+  assert.match(document.cookie, /aptex_locale=ja/);
   reset();
 });
 
@@ -72,10 +84,10 @@ test("persisted Korean starts with the English hydration snapshot and initialize
   assert.equal(getLocale(), "ko");
   assert.equal(translate("common.save"), "저장");
   assert.equal(calls, 1);
-  assert.match(document.cookie, /scopeweaver_locale=ko; Path=\//);
+  assert.match(document.cookie, /aptex_locale=ko; Path=\//);
   assert.equal(document.documentElement.lang, "ko");
   setLocale("en");
-  assert.equal(window.localStorage.getItem("scopeweaver.locale"), "en");
+  assert.equal(window.localStorage.getItem("aptex.locale"), "en");
   assert.equal(calls, 2);
   unsubscribe();
   reset();
@@ -95,7 +107,7 @@ function checkCatalog(source, translated, locale) {
 
 test("every shipped catalog is complete and preserves placeholders and rich tags", () => {
   // Includes the ChatGPT, workflow, proxy, task intelligence, and managed browser controls.
-  assert.equal(Object.keys(catalogs.en).length, 3592);
+  assert.equal(Object.keys(catalogs.en).length, 3595);
   assert.deepEqual(catalogLocales.sort(), [...LOCALES].sort());
   assert.deepEqual(Object.keys(catalogs).sort(), [...LOCALES].sort());
   for (const locale of LOCALES) checkCatalog(catalogs.en, catalogs[locale], locale);
@@ -132,7 +144,7 @@ test("SDK bridge guidance preserves runtime, credential and model boundaries in 
     for (const version of ["2.1.4", "1.19.4", "Windows"]) {
       assert.ok(catalog["providers.sdkHelp"].includes(version), `${locale}: runtime boundary ${version}`);
     }
-    assert.ok(catalog["providers.sdkTokenHelp"].includes("SCOPEWEAVER_OPENCODE_TOKEN"), `${locale}: separate bridge credential`);
+    assert.ok(catalog["providers.sdkTokenHelp"].includes("APTEX_OPENCODE_TOKEN"), `${locale}: separate bridge credential`);
     assert.ok(catalog["providers.sdkModelHelp"].includes("providerID/modelID"), `${locale}: explicit native model ID`);
   }
 });
@@ -371,10 +383,10 @@ test("Chinese preference preserves English hydration, persistence and cookie pri
   initializeLocale();
   assert.equal(translate("common.save"), "保存");
   assert.equal(document.documentElement.lang, "zh-Hans");
-  assert.equal(window.localStorage.getItem("scopeweaver.locale"), "zh-Hans");
-  assert.match(document.cookie, /scopeweaver_locale=zh-Hans/);
+  assert.equal(window.localStorage.getItem("aptex.locale"), "zh-Hans");
+  assert.match(document.cookie, /aptex_locale=zh-Hans/);
   reset();
-  browser(null, "scopeweaver_locale=zh-SG");
+  browser(null, "aptex_locale=zh-SG");
   window.localStorage.getItem = () => {
     throw new Error("privacy mode");
   };
@@ -499,10 +511,10 @@ test("all six languages restore preferences and carry the first API/SSE locale w
       assert.equal(await response.text(), raw);
       setLocale("en");
       setLocale(locale);
-      assert.equal(window.localStorage.getItem("scopeweaver.locale"), locale);
+      assert.equal(window.localStorage.getItem("aptex.locale"), locale);
       assert.equal(readCookieLocale(document.cookie), locale);
       reset();
-      browser(null, `scopeweaver_locale=${locale}`);
+      browser(null, `aptex_locale=${locale}`);
       initializeLocale();
       assert.equal(getLocale(), locale, `${locale}: cookie fallback`);
     }

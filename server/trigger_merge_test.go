@@ -1,7 +1,7 @@
 package server
 
 import (
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/locale"
 	"strings"
 	"testing"
 )

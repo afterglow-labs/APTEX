@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/sidequestion"
+	"github.com/afterglow-labs/APTEX/sidequestion"
 	"github.com/Autumn-27/norma/llm"
 )
 

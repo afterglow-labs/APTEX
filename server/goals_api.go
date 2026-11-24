@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
+	"github.com/afterglow-labs/APTEX/db"
 )
 
 // Manual goal CRUD from overview management. These handlers write the same goal nodes as the agent set_goals tool,

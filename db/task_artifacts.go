@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/artifactindex"
+	"github.com/afterglow-labs/APTEX/artifactindex"
 )
 
 type TaskArtifact struct {

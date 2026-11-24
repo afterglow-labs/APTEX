@@ -13,7 +13,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/selfupdate"
+	"github.com/afterglow-labs/APTEX/selfupdate"
 )
 
 type policyRoundTrip func(*http.Request) (*http.Response, error)
@@ -35,7 +35,7 @@ func strictTestServer(t *testing.T) *Server {
 			m.pg.Exec(`DELETE FROM settings WHERE key=$1`, settingLocalLLMOnly)
 		}
 	})
-	t.Setenv("SCOPEWEAVER_LOCAL_LLM_ONLY", "false")
+	t.Setenv("APTEX_LOCAL_LLM_ONLY", "false")
 	m.pg.SetBool(settingLocalLLMOnly, false)
 	return &Server{m: m}
 }
@@ -118,8 +118,8 @@ func TestUpdateAsyncStageStopsAndCleansAfterToggle(t *testing.T) {
 	BuildVersion = "v0.1.0"
 	updHub = &updateHub{subs: map[chan updateProgress]struct{}{}}
 	name := selfupdate.AssetName("v99.0.0", runtime.GOOS, runtime.GOARCH)
-	assetURL := "https://github.com/afterglow-labs/afterglow-cybersecurity/releases/download/v99.0.0/" + name
-	sumsURL := "https://github.com/afterglow-labs/afterglow-cybersecurity/releases/download/v99.0.0/SHA256SUMS"
+	assetURL := "https://github.com/afterglow-labs/APTEX/releases/download/v99.0.0/" + name
+	sumsURL := "https://github.com/afterglow-labs/APTEX/releases/download/v99.0.0/SHA256SUMS"
 	entered, allowRead := make(chan struct{}), make(chan struct{})
 	calls := 0
 	relCache = &releaseCache{fetch: func(_ context.Context, client *http.Client) (*selfupdate.Release, error) {

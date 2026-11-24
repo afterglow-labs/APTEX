@@ -5,8 +5,8 @@ import (
 	"database/sql"
 	"encoding/json"
 	"errors"
-	"github.com/afterglow-labs/afterglow-cybersecurity/chatstate"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/chatstate"
+	"github.com/afterglow-labs/APTEX/locale"
 )
 
 // Reserve a short durable operation token; no transaction spans summarization.

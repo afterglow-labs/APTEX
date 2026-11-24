@@ -3,7 +3,7 @@ package server
 import (
 	"context"
 	"errors"
-	"github.com/afterglow-labs/afterglow-cybersecurity/sidequestion"
+	"github.com/afterglow-labs/APTEX/sidequestion"
 )
 
 // DrainChats refuses further dispatches and waits for admitted background chats,

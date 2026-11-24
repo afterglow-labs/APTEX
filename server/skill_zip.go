@@ -4,7 +4,7 @@ import (
 	"archive/zip"
 	"bytes"
 	"compress/bzip2"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/locale"
 	"io"
 	"path"
 	"strings"

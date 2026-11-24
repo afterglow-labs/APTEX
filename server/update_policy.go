@@ -4,7 +4,7 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/locale"
 )
 
 const updateLocalOnlyMessage = "Update checks and downloads are unavailable while local_llm_only is enabled"

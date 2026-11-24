@@ -11,7 +11,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/locale"
 	"github.com/Autumn-27/norma/llm"
 )
 
@@ -164,7 +164,7 @@ func TestMetadataWarmAndDiagnostics(t *testing.T) {
 			if body["keep_alive"] != "30m" || body["options"].(map[string]any)["num_ctx"] != float64(32768) {
 				t.Errorf("warm/test=%+v", body)
 			}
-			fmt.Fprint(w, `{"done":true,"message":{"tool_calls":[{"function":{"name":"scopeweaver_ping","arguments":{"value":"OK"}}}]},"load_duration":2000000,"eval_count":12,"eval_duration":1000000000}`)
+			fmt.Fprint(w, `{"done":true,"message":{"tool_calls":[{"function":{"name":"aptex_ping","arguments":{"value":"OK"}}}]},"load_duration":2000000,"eval_count":12,"eval_duration":1000000000}`)
 		default:
 			t.Errorf("path=%s", r.URL.Path)
 		}
@@ -290,9 +290,9 @@ func TestDiagnosticsRejectFalseReadiness(t *testing.T) {
 		context            int
 		want               string
 	}{
-		{"no-tools", `["completion"]`, `"tool_calls":[{"function":{"name":"scopeweaver_ping","arguments":{"value":"OK"}}}]`, 32768, "does not declare tools"},
+		{"no-tools", `["completion"]`, `"tool_calls":[{"function":{"name":"aptex_ping","arguments":{"value":"OK"}}}]`, 32768, "does not declare tools"},
 		{"no-tool-call", `["tools"]`, `"content":"OK"`, 32768, "did not execute"},
-		{"context-truncated", `["tools"]`, `"tool_calls":[{"function":{"name":"scopeweaver_ping","arguments":{"value":"OK"}}}]`, 2048, "requested context"},
+		{"context-truncated", `["tools"]`, `"tool_calls":[{"function":{"name":"aptex_ping","arguments":{"value":"OK"}}}]`, 2048, "requested context"},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -362,7 +362,7 @@ func TestWarmRequiresDoneAndDiagnosticArgumentsExact(t *testing.T) {
 		case "/api/show":
 			fmt.Fprint(w, `{"capabilities":["tools"]}`)
 		case "/api/chat":
-			fmt.Fprint(w, `{"done":false,"message":{"tool_calls":[{"function":{"name":"scopeweaver_ping","arguments":{"value":"WRONG"}}}]}}`)
+			fmt.Fprint(w, `{"done":false,"message":{"tool_calls":[{"function":{"name":"aptex_ping","arguments":{"value":"WRONG"}}}]}}`)
 		case "/api/ps":
 			fmt.Fprint(w, `{"models":[{"name":"test","context_length":32768}]}`)
 		}
@@ -415,7 +415,7 @@ func TestModelDiscoveryCompatibilityFallback(t *testing.T) {
 }
 
 func TestNativeHTTPFailureClassification(t *testing.T) {
-	const model = "scopeweaver-missing:fixture"
+	const model = "aptex-missing:fixture"
 	for _, tc := range []struct {
 		name   string
 		status int
@@ -423,7 +423,7 @@ func TestNativeHTTPFailureClassification(t *testing.T) {
 		want   string
 		pull   bool
 	}{
-		{"missing-model", 404, `{"error":"model 'scopeweaver-missing:fixture' not found"}`, "ollama pull " + model, true},
+		{"missing-model", 404, `{"error":"model 'aptex-missing:fixture' not found"}`, "ollama pull " + model, true},
 		{"endpoint-json", 404, `{"error":"Not Found"}`, "choose the OpenAI format", false},
 		{"endpoint-text", 404, "404 page not found", "check the base URL", false},
 		{"unsupported-method", 405, `{"error":"Method not allowed"}`, "choose the OpenAI format", false},

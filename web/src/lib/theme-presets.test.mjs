@@ -16,7 +16,7 @@ function contrast(a, b) {
 
 test("cybersecurity themes keep normal text readable in both appearances", () => {
   const cyber = THEME_PRESET_OPTIONS.filter((preset) => preset.family === "cyber");
-  assert.deepEqual(cyber.map((preset) => preset.value), ["aptex-obsidian", "aptex-phosphor", "aptex-afterglow"]);
+  assert.deepEqual(cyber.map((preset) => preset.value), ["aptex-obsidian", "aptex-phosphor", "aptex-afterglow", "afterglow-dreamsicle", "afterglow-odysseus", "afterglow-orangurple"]);
   for (const preset of cyber) {
     const css = fs.readFileSync(new URL(`../styles/presets/${preset.value}.css`, import.meta.url), "utf8");
     const blocks = [...css.matchAll(/\{([^}]+)\}/g)];

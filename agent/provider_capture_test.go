@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/llmrec"
+	"github.com/afterglow-labs/APTEX/llmrec"
 )
 
 // The transport is the only layer that still sees the wire bodies: norma builds

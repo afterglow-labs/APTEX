@@ -1,4 +1,4 @@
-module github.com/afterglow-labs/afterglow-cybersecurity
+module github.com/afterglow-labs/APTEX
 
 go 1.26.3
 

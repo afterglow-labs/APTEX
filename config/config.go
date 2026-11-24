@@ -5,7 +5,7 @@ package config
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/locale"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -84,11 +84,13 @@ func isGoRunDir(dir string) bool {
 // The first existing file wins. If none exist, the CWD path is returned so the
 // "not found" message points at the project dir the user most likely expected.
 func Path() string {
-	if v := strings.TrimSpace(os.Getenv("SCOPEWEAVER_CONFIG")); v != "" {
+	if v := strings.TrimSpace(os.Getenv("APTEX_CONFIG")); v != "" {
 		return v
 	}
-	if v := strings.TrimSpace(os.Getenv("ARTEX_CONFIG")); v != "" {
-		return v
+	for _, key := range []string{"SCOPEWEAVER_CONFIG", "ARTEX_CONFIG"} {
+		if v := strings.TrimSpace(os.Getenv(key)); v != "" {
+			return v
+		}
 	}
 	var candidates []string
 	if cwd, err := os.Getwd(); err == nil {

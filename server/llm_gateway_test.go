@@ -10,13 +10,13 @@ import (
 	"sync/atomic"
 	"testing"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/agent"
+	"github.com/afterglow-labs/APTEX/agent"
 )
 
 func TestConnectionLocalGatewayCredentialReuse(t *testing.T) {
-	t.Setenv("SCOPEWEAVER_CONFIG", filepath.Join(t.TempDir(), "missing.json"))
-	t.Setenv("SCOPEWEAVER_LOCAL_LLM_ONLY", "false")
-	t.Setenv("SCOPEWEAVER_LOCAL_LLM_ALLOWED_CIDRS", "")
+	t.Setenv("APTEX_CONFIG", filepath.Join(t.TempDir(), "missing.json"))
+	t.Setenv("APTEX_LOCAL_LLM_ONLY", "false")
+	t.Setenv("APTEX_LOCAL_LLM_ALLOWED_CIDRS", "")
 	for _, format := range []string{"anthropic", "openai", "openai-responses"} {
 		for _, scenario := range []string{"same normalized endpoint", "different endpoint", "different format", "different proxy", "nonlocal fallback"} {
 			t.Run(format+"/"+scenario, func(t *testing.T) {
@@ -27,7 +27,7 @@ func TestConnectionLocalGatewayCredentialReuse(t *testing.T) {
 						targetFormat = "anthropic"
 					}
 				}
-				wantKey := "scopeweaver-local"
+				wantKey := "aptex-local"
 				if scenario == "same normalized endpoint" || scenario == "nonlocal fallback" {
 					wantKey = "fixture-active-key"
 				}
@@ -86,9 +86,9 @@ func TestConnectionLocalGatewayCredentialReuse(t *testing.T) {
 }
 
 func TestConnectionNativeTargetDoesNotReuseActiveGatewayKey(t *testing.T) {
-	t.Setenv("SCOPEWEAVER_CONFIG", filepath.Join(t.TempDir(), "missing.json"))
-	t.Setenv("SCOPEWEAVER_LOCAL_LLM_ONLY", "false")
-	t.Setenv("SCOPEWEAVER_LOCAL_LLM_ALLOWED_CIDRS", "")
+	t.Setenv("APTEX_CONFIG", filepath.Join(t.TempDir(), "missing.json"))
+	t.Setenv("APTEX_LOCAL_LLM_ONLY", "false")
+	t.Setenv("APTEX_LOCAL_LLM_ALLOWED_CIDRS", "")
 	gateway := nativeFixture(t) // Asserts no Authorization header on every native request.
 	s := &Server{m: &Manager{}, llmCfg: agent.ConfigFrom("openai", "fixture-model", gateway.URL, "fixture-active-key", "")}
 	result := testGatewayConnection(t, s, "ollama", gateway.URL, "")

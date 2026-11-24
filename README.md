@@ -47,7 +47,7 @@ cp .env.example .env
 docker compose up -d --build
 ```
 
-Open `http://localhost:8787` and create the administrator password at `/setup`. Compose binds the app to loopback by default. Configure a model in **System → LLM** before starting an agent task. The Docker service and executable still use the internal `scopeweaver` name, and environment variables retain `SCOPEWEAVER_*` and `ARTEX_*` names for compatibility with the base. `docker compose logs -f scopeweaver` shows startup logs.
+Open `http://localhost:8787` and create the administrator password at `/setup`. Compose binds the app to loopback by default. Configure a model in **System → LLM** before starting an agent task. The Docker service and executable are named `aptex`. New model and language settings use `APTEX_*`. Existing configuration remains readable through compatibility aliases. `docker compose logs -f aptex` shows startup logs.
 
 The administrator username defaults to **Afterglow**. Set `AFTERGLOW_ADMIN_USERNAME`
 in `.env` to use a personal name on the login screen; **Afterglow** remains an
@@ -58,8 +58,8 @@ If a local Ollama model is already downloaded on the Docker host, the optional
 [`docker-compose.host-model.yml`](docker-compose.host-model.yml) runs Ollama on
 the private Compose network with that existing model directory mounted read-only.
 `aptex-start` starts this service automatically only when `.env` selects
-`SCOPEWEAVER_LLM_PROVIDER=ollama` and a specific
-`SCOPEWEAVER_LLM_MODEL` (or their `ARTEX_*` aliases). It never chooses a model
+`APTEX_LLM_PROVIDER=ollama` and a specific
+`APTEX_LLM_MODEL` (or their `ARTEX_*` aliases). It never chooses a model
 from the presence of weights. Set `APTEX_LOCAL_MODEL_ENABLED=true` to start the
 private service without selecting a model, or `false` to omit that service.
 Export `OLLAMA_MODELS_DIR` as the directory that actually contains the model's
@@ -70,9 +70,9 @@ test -d "$OLLAMA_MODELS_DIR"
 docker compose -f docker-compose.yml -f docker-compose.host-model.yml --profile local-llm up -d --build
 ```
 
-Use `http://ollama:11434` as the model endpoint inside ScopeWeaver. The Ollama
+Use `http://ollama:11434` as the model endpoint inside APTEX. The Ollama
 port is not published on the host, and the base Compose service disables Ollama
-cloud. With `SCOPEWEAVER_LOCAL_LLM_ONLY=true`, allowlist the Ollama container's
+cloud. With `APTEX_LOCAL_LLM_ONLY=true`, allowlist the Ollama container's
 actual `/32` address as described in the [local model network policy](docs/llm-providers.md#network-policy-local_llm_only). Container addresses can change when Compose recreates services.
 
 ## Optional integration API
@@ -83,7 +83,7 @@ running APTEX does not configure credentials on Odysseus.
 
 ## Connect ChatGPT
 
-Open **System → LLM**, press **Sign in with ChatGPT**, finish the browser sign-in, then create or select a `ChatGPT plan` profile. No API key is required for this account flow. The account connection and administrator login are separate. Docker stores account tokens in the `chatgpt_auth` volume; the database stores an account reference. The callback is fixed to `http://127.0.0.1:${ARTEX_PORT:-8787}/auth/callback`. When `SCOPEWEAVER_LOCAL_LLM_ONLY=true`, plan inference and the account model catalog are disabled. Set it to `false` and apply the configuration with `aptex-start` to use remote models; the launcher preserves this choice and keeps the local model available. A disconnected or blocked plan profile fails closed instead of switching to an API-key profile.
+Open **System → LLM**, press **Sign in with ChatGPT**, finish the browser sign-in, then create or select a `ChatGPT plan` profile. No API key is required for this account flow. The account connection and administrator login are separate. Docker stores account tokens in the `chatgpt_auth` volume; the database stores an account reference. The callback is fixed to `http://127.0.0.1:${APTEX_PORT:-8787}/auth/callback`. When `APTEX_LOCAL_LLM_ONLY=true`, plan inference and the account model catalog are disabled. Set it to `false` and apply the configuration with `aptex-start` to use remote models; the launcher preserves this choice and keeps the local model available. A disconnected or blocked plan profile fails closed instead of switching to an API-key profile.
 
 Both account and API-key profiles offer GPT-6 Astra, GPT-6.1 Sol, GPT-6 Sol, GPT-5.6 Sol, and Daybreak Blue Latest, alongside models returned by the provider. The Blue controls apply to GPT-6 Sol, GPT-5.6 Sol, and `gpt-daybreak-blue-latest`; Astra and GPT-6.1 Sol explicitly use standard access for a Blue-only installation. A Blue selection persists with the profile and sends `access_programs.cyber=daybreak_blue` without changing the selected model. These choices do not grant account or project access; OpenAI checks authorization on each request. See the [Daybreak request documentation](https://developers.openai.com/api/docs/guides/daybreak).
 
@@ -102,7 +102,7 @@ The optional [Telegram MCP helper](plugins/telegram-mcp/README.md) requires oper
 
 For the optional C2 **handoff record** feature, place an operator-owned binary under `private/c2-binaries/`, set `ARTEX_ENABLE_C2_HANDOFF=true`, and point `ARTEX_C2_BIN_X64` or `ARTEX_C2_BIN_X86` to its `/app/c2-binaries/...` path in `.env`. Docker mounts that directory read-only and excludes it from the image build context and Git. The tool verifies its hash and creates a review record; it does not deliver the file.
 
-For other installation modes and detailed operation, consult the [ScopeWeaver baseline guide](README.scopeweaver.md). Its release links and one-click updater refer to the original project; the updater in this checkout is pinned to `afterglow-labs/afterglow-cybersecurity` so it cannot replace this build with a ScopeWeaver release. No Afterglow release artifacts are assumed to exist yet.
+For other installation modes and detailed operation, consult the [ScopeWeaver baseline guide](README.scopeweaver.md). Its release links and one-click updater refer to the original project; the updater in this checkout is pinned to `afterglow-labs/APTEX` so it cannot replace this build with a ScopeWeaver release. No Afterglow release artifacts are assumed to exist yet.
 
 ## Capture browser traffic
 

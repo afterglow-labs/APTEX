@@ -13,8 +13,9 @@ export const DEFAULT_LOCALE = definition.default as Locale;
 
 // Persistence contract shared with the backend (see status notes):
 // localStorage for the UI, a cookie so the server can negotiate too.
-export const LOCALE_STORAGE_KEY = "scopeweaver.locale";
-export const LOCALE_COOKIE = "scopeweaver_locale";
+export const LOCALE_STORAGE_KEY = "aptex.locale";
+export const LOCALE_COOKIE = "aptex_locale";
+const LEGACY_LOCALE_COOKIE = "scopeweaver_locale";
 export const LOCALE_COOKIE_MAX_AGE = 365 * 24 * 60 * 60;
 
 // Query parameter used where headers cannot be set (EventSource, downloads).
@@ -74,11 +75,16 @@ export function localeCookie(locale: Locale): string {
 }
 
 export function readCookieLocale(cookie: string): Locale | null {
-  for (const part of cookie.split(";")) {
-    const [name, ...rest] = part.trim().split("=");
-    if (name === LOCALE_COOKIE) {
-      try { return normalizeLocale(decodeURIComponent(rest.join("="))); }
-      catch { return null; }
+  for (const key of [LOCALE_COOKIE, LEGACY_LOCALE_COOKIE]) {
+    for (const part of cookie.split(";")) {
+      const [name, ...rest] = part.trim().split("=");
+      if (name !== key) continue;
+      try {
+        const locale = normalizeLocale(decodeURIComponent(rest.join("=")));
+        if (locale) return locale;
+      } catch {
+        // Ignore malformed cookie values.
+      }
     }
   }
   return null;

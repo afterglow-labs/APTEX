@@ -9,14 +9,14 @@ import { fileURLToPath } from 'node:url';
 
 assert.equal(process.platform, 'win32', 'Native Windows is required; use node --check on other platforms.');
 const repo = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const fixture = mkdtempSync(join(tmpdir(), 'scopeweaver-windows launcher-'));
+const fixture = mkdtempSync(join(tmpdir(), 'aptex-windows launcher-'));
 const messages = {
-  en: ['Executable not found: scopeweaver.exe', 'Exited normally', 'Restart requested; applying update...', 'Exited with code 7; restarting in 1s'],
-  ko: ['실행 파일을 찾을 수 없습니다: scopeweaver.exe', '정상 종료', '다시 시작 요청; 업데이트 적용 중...', '종료 코드 7; 1초 후 다시 시작'],
-  'zh-Hans': ['未找到可执行文件：scopeweaver.exe', '已正常退出', '收到重启请求；正在应用更新...', '退出码为 7；1 秒后重启'],
-  'zh-Hant': ['找不到執行檔：scopeweaver.exe', '已正常結束', '收到重新啟動要求；正在套用更新...', '結束代碼為 7；1 秒後重新啟動'],
-  ja: ['実行ファイルが見つかりません: scopeweaver.exe', '正常終了しました', '再起動が要求されました。更新を適用中...', '終了コード 7。1 秒後に再起動します'],
-  es: ['No se ha encontrado el ejecutable: scopeweaver.exe', 'Finalizó normalmente', 'Se ha solicitado reiniciar; aplicando la actualización...', 'Finalizó con el código 7; se reiniciará en 1 s'],
+  en: ['Executable not found: aptex.exe', 'Exited normally', 'Restart requested; applying update...', 'Exited with code 7; restarting in 1s'],
+  ko: ['실행 파일을 찾을 수 없습니다: aptex.exe', '정상 종료', '다시 시작 요청; 업데이트 적용 중...', '종료 코드 7; 1초 후 다시 시작'],
+  'zh-Hans': ['未找到可执行文件：aptex.exe', '已正常退出', '收到重启请求；正在应用更新...', '退出码为 7；1 秒后重启'],
+  'zh-Hant': ['找不到執行檔：aptex.exe', '已正常結束', '收到重新啟動要求；正在套用更新...', '結束代碼為 7；1 秒後重新啟動'],
+  ja: ['実行ファイルが見つかりません: aptex.exe', '正常終了しました', '再起動が要求されました。更新を適用中...', '終了コード 7。1 秒後に再起動します'],
+  es: ['No se ha encontrado el ejecutable: aptex.exe', 'Finalizó normalmente', 'Se ha solicitado reiniciar; aplicando la actualización...', 'Finalizó con el código 7; se reiniciará en 1 s'],
 };
 const definitions = JSON.parse(readFileSync(join(repo, 'locale/definitions.json')));
 assert.deepEqual(Object.keys(messages), definitions.locales.map(language => language.id));
@@ -26,7 +26,7 @@ const env = { ...process.env, [pathKey]: `${fixture};${process.env[pathKey] || '
 const launch = (language, codes = [0]) => spawnSync(process.env.ComSpec || 'cmd.exe', [
   '/d', '/s', '/c', 'start.bat "argument with spaces" "--literal=*"',
 ], {
-  cwd: fixture, env: { ...env, SCOPEWEAVER_LANGUAGE: language, FIXTURE_CODES: JSON.stringify(codes) },
+  cwd: fixture, env: { ...env, APTEX_LANGUAGE: language, FIXTURE_CODES: JSON.stringify(codes) },
   encoding: 'utf8', timeout: 30000, windowsHide: true, windowsVerbatimArguments: true,
 });
 const success = result => assert.equal(result.status, 0, result.error?.message || result.stderr || result.stdout);
@@ -59,17 +59,17 @@ func main(){root:=os.Getenv("FIXTURE_ROOT");executable,err:=os.Executable();must
   assert.ok(!existsSync(join(fixture, 'count')), 'extensionless ping was mistaken for the child');
   clear();
   for (const [language, [missing, normal, restart, failed]] of Object.entries(messages)) {
-    rmSync(join(fixture, 'scopeweaver.exe'), { force: true });
+    rmSync(join(fixture, 'aptex.exe'), { force: true });
     clear();
     const absent = launch(language);
     assert.equal(absent.status, 1, absent.error?.message || absent.stderr || absent.stdout);
-    assert.equal(absent.stderr.trim(), `[ScopeWeaver] ${missing}`);
+    assert.equal(absent.stderr.trim(), `[APTEX] ${missing}`);
     assert.equal(absent.stdout.trim(), '');
     assert.ok(!existsSync(join(fixture, 'count')), 'missing child was invoked');
-    copyFileSync(join(fixture, 'fixture.exe'), join(fixture, 'scopeweaver.exe'));
+    copyFileSync(join(fixture, 'fixture.exe'), join(fixture, 'aptex.exe'));
     const exited = launch(language);
     success(exited);
-    assert.equal(exited.stdout.trim(), `[ScopeWeaver] ${normal}`);
+    assert.equal(exited.stdout.trim(), `[APTEX] ${normal}`);
     assert.equal(exited.stderr.trim(), '');
     assert.equal(contents('count'), '1');
     assert.deepEqual(JSON.parse(contents('args.jsonl')), ['argument with spaces', '--literal=*']);
@@ -77,19 +77,19 @@ func main(){root:=os.Getenv("FIXTURE_ROOT");executable,err:=os.Executable();must
     const restarted = launch(language, [75, 7, 7, 7, 7, 7, 7, 7, 7, 75, 7, 0]);
     success(restarted);
     assert.equal(contents('count'), '12');
-    assert.equal(restarted.stdout.split(`[ScopeWeaver] ${restart}`).length - 1, 2);
-    assert.ok(restarted.stdout.trim().endsWith(`[ScopeWeaver] ${normal}`));
-    assert.ok(restarted.stderr.includes(`[ScopeWeaver] ${failed}`));
+    assert.equal(restarted.stdout.split(`[APTEX] ${restart}`).length - 1, 2);
+    assert.ok(restarted.stdout.trim().endsWith(`[APTEX] ${normal}`));
+    assert.ok(restarted.stderr.includes(`[APTEX] ${failed}`));
     for (const line of contents('args.jsonl').trim().split(/\r?\n/)) assert.deepEqual(JSON.parse(line), ['argument with spaces', '--literal=*']);
     const pings = contents('pings.jsonl').trim().split(/\r?\n/).map(line => JSON.parse(line));
     assert.deepEqual(pings, [2, 3, 5, 9, 17, 33, 61, 61, 2].map(count => ['-n', String(count), '127.0.0.1']));
     console.log(`PASS: ${language} native missing/normal/restart/failure messages, arguments, capped backoff and exit-75 reset`);
   }
-  rmSync(join(fixture, 'scopeweaver.exe'));
+  rmSync(join(fixture, 'aptex.exe'));
   for (const { input, expected } of vectors) {
     const absent = launch(input);
     assert.equal(absent.status, 1, absent.error?.message || absent.stderr || absent.stdout);
-    assert.equal(absent.stderr.trim(), `[ScopeWeaver] ${messages[expected || 'en'][0]}`, input);
+    assert.equal(absent.stderr.trim(), `[APTEX] ${messages[expected || 'en'][0]}`, input);
   }
   console.log(`PASS: ${vectors.length} shared matching vectors through native Windows missing-binary output`);
 } finally {

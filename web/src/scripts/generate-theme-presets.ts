@@ -39,7 +39,7 @@ const presets = fs.readdirSync(presetDir).filter((file) => file.endsWith(".css")
   return { value, label, labelKey: metadata("labelKey") ?? classicLabels[value], descriptionKey: metadata("descriptionKey"), family: metadata("family") ?? "classic", light: palette(light), dark: palette(dark) };
 });
 presets.push({ value: "default", label: "Default", labelKey: classicLabels.default, descriptionKey: undefined, family: "classic", light: palette(defaultLight), dark: palette(defaultDark) });
-const order = ["aptex-obsidian", "aptex-phosphor", "aptex-afterglow", "default", "brutalist", "soft-pop", "tangerine"];
+const order = ["aptex-obsidian", "aptex-phosphor", "aptex-afterglow", "afterglow-dreamsicle", "afterglow-odysseus", "afterglow-orangurple", "default", "brutalist", "soft-pop", "tangerine"];
 presets.sort((a, b) => {
   const ai = order.indexOf(a.value); const bi = order.indexOf(b.value);
   return (ai < 0 ? order.length : ai) - (bi < 0 ? order.length : bi) || a.value.localeCompare(b.value);

@@ -8,8 +8,8 @@ import (
 	"net/http/httptest"
 	"strconv"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
-	"github.com/afterglow-labs/afterglow-cybersecurity/intercept"
+	"github.com/afterglow-labs/APTEX/db"
+	"github.com/afterglow-labs/APTEX/intercept"
 	"github.com/Autumn-27/norma/llm"
 	"sync"
 	"testing"

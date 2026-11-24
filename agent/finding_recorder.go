@@ -3,7 +3,7 @@ package agent
 import (
 	"context"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
+	"github.com/afterglow-labs/APTEX/db"
 )
 
 // FindingRecorder is injected by the host; agents never synthesize or copy

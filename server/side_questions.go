@@ -15,12 +15,12 @@ import (
 	"sync"
 	"time"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/agent"
-	"github.com/afterglow-labs/afterglow-cybersecurity/chatstate"
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
-	"github.com/afterglow-labs/afterglow-cybersecurity/llmrec"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
-	"github.com/afterglow-labs/afterglow-cybersecurity/sidequestion"
+	"github.com/afterglow-labs/APTEX/agent"
+	"github.com/afterglow-labs/APTEX/chatstate"
+	"github.com/afterglow-labs/APTEX/db"
+	"github.com/afterglow-labs/APTEX/llmrec"
+	"github.com/afterglow-labs/APTEX/locale"
+	"github.com/afterglow-labs/APTEX/sidequestion"
 	"github.com/Autumn-27/norma/llm"
 	"github.com/Autumn-27/norma/transcript"
 )

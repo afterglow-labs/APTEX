@@ -7,7 +7,7 @@ model runtime, Python environment, or repository-path dependency.
 ## Connect
 
 1. Download `APTEX-macOS-universal.zip` from the
-   [Mac client release](https://github.com/afterglow-labs/afterglow-cybersecurity/releases/tag/aptex-macos-client-v1.0.0)
+   [Mac client release](https://github.com/afterglow-labs/APTEX/releases/tag/aptex-macos-client-v1.0.0)
    and move `APTEX.app` into Applications. CI also retains build artifacts.
 2. Open APTEX and enter your desktop server's HTTPS address or private LAN/VPN
    address, such as `http://desktop.local:8787`.

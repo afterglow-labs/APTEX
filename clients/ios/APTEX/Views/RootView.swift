@@ -88,7 +88,7 @@ struct SettingsView: View {
                 }
                 Section("Appearance") {
                     Picker("Theme", selection: $appearance.preset) {
-                        ForEach(["Obsidian", "Phosphor", "Afterglow"], id: \.self) { Text($0).tag($0) }
+                        ForEach(Appearance.presets, id: \.self) { Text($0).tag($0) }
                     }.accessibilityIdentifier("theme-picker")
                     Picker("Color scheme", selection: $appearance.mode) {
                         Text("Dark").tag("dark"); Text("Light").tag("light"); Text("System").tag("system")

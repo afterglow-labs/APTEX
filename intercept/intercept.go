@@ -21,8 +21,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/db"
+	"github.com/afterglow-labs/APTEX/locale"
 )
 
 // ctxKey is the unexported context key type to avoid collisions.

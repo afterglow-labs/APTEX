@@ -9,7 +9,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
+	"github.com/afterglow-labs/APTEX/db"
 )
 
 // LogLine is one captured backend log entry exposed by the /api/logs endpoints.

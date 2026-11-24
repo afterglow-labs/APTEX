@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/internal/dbtest"
+	"github.com/afterglow-labs/APTEX/internal/dbtest"
 )
 
 // TestTaskCategoryBatchRoute pins the contract of the batch move endpoint: it is

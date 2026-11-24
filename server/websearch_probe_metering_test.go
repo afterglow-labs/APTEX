@@ -10,8 +10,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
-	"github.com/afterglow-labs/afterglow-cybersecurity/internal/dbtest"
+	"github.com/afterglow-labs/APTEX/db"
+	"github.com/afterglow-labs/APTEX/internal/dbtest"
 	"github.com/google/uuid"
 )
 
@@ -31,7 +31,7 @@ func TestSliceCDeepSeekProbeMetered(t *testing.T) {
 			m.pg.SetActiveProfile(old.ID)
 		}
 	}()
-	t.Setenv("SCOPEWEAVER_LOCAL_LLM_ONLY", "false")
+	t.Setenv("APTEX_LOCAL_LLM_ONLY", "false")
 	saved, existed, err := m.pg.GetSetting(settingLocalLLMOnly)
 	if err != nil {
 		t.Fatal(err)

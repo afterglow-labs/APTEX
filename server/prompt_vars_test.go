@@ -3,7 +3,7 @@ package server
 import (
 	"testing"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
+	"github.com/afterglow-labs/APTEX/db"
 )
 
 // A stored catalog entry that collides with a global runtime var (e.g. a legacy

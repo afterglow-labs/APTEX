@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/traffic"
+	"github.com/afterglow-labs/APTEX/traffic"
 )
 
 // Ingest caps: a browser tab can produce a burst of entries, but the ingest

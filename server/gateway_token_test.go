@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
+	"github.com/afterglow-labs/APTEX/db"
 	"github.com/golang-jwt/jwt/v5"
 )
 

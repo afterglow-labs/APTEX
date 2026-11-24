@@ -13,9 +13,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
-	"github.com/afterglow-labs/afterglow-cybersecurity/internal/dbtest"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/db"
+	"github.com/afterglow-labs/APTEX/internal/dbtest"
+	"github.com/afterglow-labs/APTEX/locale"
 	"github.com/Autumn-27/norma/llm"
 	actool "github.com/Autumn-27/norma/tool"
 )
@@ -38,7 +38,7 @@ func TestPlannerTriggerEvidenceFirstRequest(t *testing.T) {
 			}
 			defer d.Close()
 			var databaseName string
-			if err := d.QueryRow("SELECT current_database()").Scan(&databaseName); err != nil || !strings.HasPrefix(databaseName, "scopeweaver_test_") {
+			if err := d.QueryRow("SELECT current_database()").Scan(&databaseName); err != nil || !strings.HasPrefix(databaseName, "aptex_test_") {
 				t.Fatalf("disposable database identity rejected: name=%q err=%v", databaseName, err)
 			}
 			row, err := d.CreateTask("R23 independent controlled evidence oracle", "Prove the single stored synthetic finding using full recorded observations", nil, 0, 600)

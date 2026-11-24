@@ -1,0 +1,78 @@
+/*
+Palette adapted from Terminally's TerminalThemes.json and Odysseus's static/js/theme.js.
+See docs/AFTERGLOW-MERGE.md for source revisions and attribution.
+label: Afterglow Odysseus
+descriptionKey: app.themeOdysseusDescription
+family: cyber
+value: afterglow-odysseus
+*/
+
+:root[data-theme-preset="afterglow-odysseus"] {
+  --radius: 0.375rem;
+  --background: #faf5ff;
+  --foreground: #28143a;
+  --card: #ffffff;
+  --card-foreground: #28143a;
+  --popover: #ffffff;
+  --popover-foreground: #28143a;
+  --primary: #a84400;
+  --primary-foreground: #ffffff;
+  --secondary: #f0e4f9;
+  --secondary-foreground: #28143a;
+  --muted: #f0e4f9;
+  --muted-foreground: #6a507a;
+  --accent: #f8e5d9;
+  --accent-foreground: #6e2b00;
+  --destructive: #b22958;
+  --border: #d3badf;
+  --input: #9b6fae;
+  --ring: #9b6fae;
+  --sidebar: #eedff8;
+  --sidebar-foreground: #331949;
+  --sidebar-primary: #a84400;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f8e5d9;
+  --sidebar-accent-foreground: #6e2b00;
+  --sidebar-border: #d3badf;
+  --sidebar-ring: #9b6fae;
+  --chart-1: #ff6d00;
+  --chart-2: #773cc2;
+  --chart-3: #fca169;
+  --chart-4: #b9a3fe;
+  --chart-5: #844c5d;
+}
+
+.dark:root[data-theme-preset="afterglow-odysseus"] {
+  --radius: 0.375rem;
+  --background: #19092d;
+  --foreground: #ffffff;
+  --card: #1c0831;
+  --card-foreground: #ffffff;
+  --popover: #1c0831;
+  --popover-foreground: #ffffff;
+  --primary: #ff6a00;
+  --primary-foreground: #19092d;
+  --secondary: #3b2148;
+  --secondary-foreground: #ffffff;
+  --muted: #3b2148;
+  --muted-foreground: #d4bfe2;
+  --accent: #522225;
+  --accent-foreground: #ffdaca;
+  --destructive: #ffa3a8;
+  --border: #ff6d00;
+  --input: #b56280;
+  --ring: #b56280;
+  --sidebar: #1a0a2e;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #ff6a00;
+  --sidebar-primary-foreground: #19092d;
+  --sidebar-accent: #522225;
+  --sidebar-accent-foreground: #ffdaca;
+  --sidebar-border: #ff6d00;
+  --sidebar-ring: #b56280;
+  --chart-1: #ff6d00;
+  --chart-2: #773cc2;
+  --chart-3: #fca169;
+  --chart-4: #b9a3fe;
+  --chart-5: #844c5d;
+}

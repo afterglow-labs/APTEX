@@ -73,6 +73,51 @@ export const THEME_PRESET_OPTIONS = [
   },
   {
     get label() {
+      return "Afterglow Dreamsicle";
+    },
+    get description() {
+      return swt("app.themeDreamsicleDescription");
+    },
+    value: "afterglow-dreamsicle",
+    family: "cyber",
+    primary: { light: "#c45100", dark: "#ff943d" },
+    preview: {
+      light: { primary: "#c45100", background: "#ffffff", surface: "#fffbf7", border: "#f5b486" },
+      dark: { primary: "#ff943d", background: "#25150e", surface: "#352016", border: "#8b512e" },
+    },
+  },
+  {
+    get label() {
+      return "Afterglow Odysseus";
+    },
+    get description() {
+      return swt("app.themeOdysseusDescription");
+    },
+    value: "afterglow-odysseus",
+    family: "cyber",
+    primary: { light: "#a84400", dark: "#ff6a00" },
+    preview: {
+      light: { primary: "#a84400", background: "#faf5ff", surface: "#ffffff", border: "#d3badf" },
+      dark: { primary: "#ff6a00", background: "#19092d", surface: "#1c0831", border: "#ff6d00" },
+    },
+  },
+  {
+    get label() {
+      return "Afterglow Orangurple";
+    },
+    get description() {
+      return swt("app.themeOrangurpleDescription");
+    },
+    value: "afterglow-orangurple",
+    family: "cyber",
+    primary: { light: "#7000ff", dark: "#ff8000" },
+    preview: {
+      light: { primary: "#7000ff", background: "#fff1dc", surface: "#fff9ef", border: "#dcb584" },
+      dark: { primary: "#ff8000", background: "#ff8000", surface: "#1a0334", border: "#ff8000" },
+    },
+  },
+  {
+    get label() {
       return swt("english.e188");
     },
     get description() {

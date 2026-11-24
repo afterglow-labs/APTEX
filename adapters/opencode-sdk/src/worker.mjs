@@ -11,7 +11,7 @@ const write=value=>process.stdout.write(JSON.stringify(value)+"\n");
 let root;
 try {
   const input=JSON.parse(await new Response(Bun.stdin.stream()).text());
-  root=input.root??await mkdtemp(join(tmpdir(),"scopeweaver-opencode-"));
+  root=input.root??await mkdtemp(join(tmpdir(),"aptex-opencode-"));
   const runtime=input.runtime??"native";let discover,complete;
   if(runtime==="native"){const backend=await import("./native.mjs");discover=backend.discoverModels;complete=backend.completeNative}
   else if(runtime==="legacy"){const backend=await import("./legacy.mjs");discover=backend.discoverLegacyModels;complete=backend.completeLegacy}

@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/afterglow-labs/afterglow-cybersecurity/chatstate"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/chatstate"
+	"github.com/afterglow-labs/APTEX/locale"
 	"github.com/Autumn-27/norma/transcript"
 	"log"
 	"net/http"
@@ -16,9 +16,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/agent"
-	pgdb "github.com/afterglow-labs/afterglow-cybersecurity/db"
-	"github.com/afterglow-labs/afterglow-cybersecurity/traffic"
+	"github.com/afterglow-labs/APTEX/agent"
+	pgdb "github.com/afterglow-labs/APTEX/db"
+	"github.com/afterglow-labs/APTEX/traffic"
 )
 
 const taskArchivePollInterval = 2 * time.Second

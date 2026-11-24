@@ -9,9 +9,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
-	"github.com/afterglow-labs/afterglow-cybersecurity/llmrec"
-	"github.com/afterglow-labs/afterglow-cybersecurity/sidequestion"
+	"github.com/afterglow-labs/APTEX/db"
+	"github.com/afterglow-labs/APTEX/llmrec"
+	"github.com/afterglow-labs/APTEX/sidequestion"
 	"github.com/Autumn-27/norma/compaction"
 	"github.com/Autumn-27/norma/llm"
 )

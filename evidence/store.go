@@ -7,7 +7,7 @@ import (
 	"database/sql"
 	"encoding/hex"
 	"errors"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/locale"
 	"io"
 	"io/fs"
 	"log"
@@ -16,8 +16,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
-	"github.com/afterglow-labs/afterglow-cybersecurity/traffic"
+	"github.com/afterglow-labs/APTEX/db"
+	"github.com/afterglow-labs/APTEX/traffic"
 )
 
 type Store struct {

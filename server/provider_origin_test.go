@@ -8,10 +8,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/agent"
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
-	"github.com/afterglow-labs/afterglow-cybersecurity/intercept"
-	"github.com/afterglow-labs/afterglow-cybersecurity/llmpool"
+	"github.com/afterglow-labs/APTEX/agent"
+	"github.com/afterglow-labs/APTEX/db"
+	"github.com/afterglow-labs/APTEX/intercept"
+	"github.com/afterglow-labs/APTEX/llmpool"
 	"github.com/Autumn-27/norma/llm"
 )
 

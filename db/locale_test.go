@@ -10,7 +10,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/locale"
 )
 
 func literalTemplate(expr ast.Expr) (string, bool) {

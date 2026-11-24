@@ -48,7 +48,7 @@ func TestConfigFromOpenCodeGo(t *testing.T) {
 // key is also present in the environment.
 func TestFromEnvOpenCodeGoCredential(t *testing.T) {
 	isolateLLMEnvironment(t)
-	t.Setenv("SCOPEWEAVER_LLM_PROVIDER", "opencode-go")
+	t.Setenv("APTEX_LLM_PROVIDER", "opencode-go")
 	t.Setenv("OPENCODE_API_KEY", "opencode-subscription-key")
 	cfg, ok := FromEnv()
 	if !ok {
@@ -79,14 +79,14 @@ func TestFromEnvOpenCodeGoInferred(t *testing.T) {
 }
 
 // TestFromEnvOpenCodeGoExplicitBlankKey verifies the API_KEY override contract:
-// an explicitly empty SCOPEWEAVER_LLM_API_KEY suppresses the OPENCODE_API_KEY
+// an explicitly empty APTEX_LLM_API_KEY suppresses the OPENCODE_API_KEY
 // fallback. A cloud endpoint with no key is then not ready (Ready=false), the
 // same contract as Anthropic/OpenAI; a keyless run needs a local endpoint.
 func TestFromEnvOpenCodeGoExplicitBlankKey(t *testing.T) {
 	isolateLLMEnvironment(t)
-	t.Setenv("SCOPEWEAVER_LLM_PROVIDER", "opencode-go")
+	t.Setenv("APTEX_LLM_PROVIDER", "opencode-go")
 	t.Setenv("OPENCODE_API_KEY", "opencode-subscription-key")
-	t.Setenv("SCOPEWEAVER_LLM_API_KEY", "")
+	t.Setenv("APTEX_LLM_API_KEY", "")
 	cfg, ok := FromEnv()
 	if ok {
 		t.Fatal("explicit blank API key must suppress the OPENCODE_API_KEY fallback and leave the cloud provider not ready")
@@ -119,14 +119,14 @@ func TestFromEnvOpenCodeGoFileCredentials(t *testing.T) {
 				t.Setenv("ARTEX_LLM_API_KEY", tc.legacyKey)
 			}
 			if tc.modern {
-				t.Setenv("SCOPEWEAVER_LLM_API_KEY", tc.modernKey)
+				t.Setenv("APTEX_LLM_API_KEY", tc.modernKey)
 			}
 			calls := 0
 			srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				calls++
 				key := tc.want
 				if key == "" {
-					key = "scopeweaver-local"
+					key = "aptex-local"
 				}
 				if r.Method != http.MethodPost || r.URL.Path != "/chat/completions" || r.Header.Get("Authorization") != "Bearer "+key {
 					t.Errorf("gateway received %s %s Authorization=%q, want POST /chat/completions with Bearer %s", r.Method, r.URL.Path, r.Header.Get("Authorization"), key)
@@ -143,7 +143,7 @@ func TestFromEnvOpenCodeGoFileCredentials(t *testing.T) {
 			if err := os.WriteFile(path, []byte(fmt.Sprintf(`{"llm":{"provider":%q,"api_key":%q,"base_url":%q}}`, provider, tc.fileKey, srv.URL)), 0600); err != nil {
 				t.Fatal(err)
 			}
-			t.Setenv("SCOPEWEAVER_CONFIG", path)
+			t.Setenv("APTEX_CONFIG", path)
 			cfg, ok := FromEnv()
 			if !ok {
 				t.Fatal("local gateway configuration is not ready")
@@ -167,7 +167,7 @@ func TestFromEnvWhitespaceFileProviderInference(t *testing.T) {
 	if err := os.WriteFile(path, []byte(`{"llm":{"provider":" \t\n "}}`), 0600); err != nil {
 		t.Fatal(err)
 	}
-	t.Setenv("SCOPEWEAVER_CONFIG", path)
+	t.Setenv("APTEX_CONFIG", path)
 	os.Unsetenv("ANTHROPIC_API_KEY")
 	os.Unsetenv("OPENAI_API_KEY")
 	t.Setenv("OPENCODE_API_KEY", "opencode-subscription-key")

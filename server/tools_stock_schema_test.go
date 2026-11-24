@@ -15,10 +15,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/agent"
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
-	"github.com/afterglow-labs/afterglow-cybersecurity/internal/dbtest"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/agent"
+	"github.com/afterglow-labs/APTEX/db"
+	"github.com/afterglow-labs/APTEX/internal/dbtest"
+	"github.com/afterglow-labs/APTEX/locale"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 )
@@ -29,8 +29,8 @@ import (
 func TestStockMetadataRuntimePostgres(t *testing.T) {
 	dsn := dbtest.DSN(t)
 	cfg, err := pgconn.ParseConfig(dsn)
-	if err != nil || !strings.HasPrefix(cfg.Database, "scopeweaver_test_") {
-		t.Fatal("ARTEX_TEST_DSN must select a disposable scopeweaver_test_* database")
+	if err != nil || !strings.HasPrefix(cfg.Database, "aptex_test_") {
+		t.Fatal("ARTEX_TEST_DSN must select a disposable aptex_test_* database")
 	}
 	childDSN, childSchema := proofCreateStockSchema(t, dsn)
 	pg, err := db.Open(childDSN)
@@ -220,8 +220,8 @@ func TestStockMetadataRuntimePostgres(t *testing.T) {
 func TestStockFixtureIsolationAndCleanup(t *testing.T) {
 	parentDSN := dbtest.DSN(t)
 	parentConfig, err := pgconn.ParseConfig(parentDSN)
-	if err != nil || !strings.HasPrefix(parentConfig.Database, "scopeweaver_test_") {
-		t.Fatal("ARTEX_TEST_DSN must select disposable scopeweaver_test_* database")
+	if err != nil || !strings.HasPrefix(parentConfig.Database, "aptex_test_") {
+		t.Fatal("ARTEX_TEST_DSN must select disposable aptex_test_* database")
 	}
 	ctx := context.Background()
 	parent, err := pgx.Connect(ctx, parentDSN)
@@ -289,8 +289,8 @@ func TestStockFixtureIsolationAndCleanup(t *testing.T) {
 func proofCreateStockSchema(t *testing.T, parentDSN string) (string, string) {
 	t.Helper()
 	parentConfig, err := pgconn.ParseConfig(parentDSN)
-	if err != nil || !strings.HasPrefix(parentConfig.Database, "scopeweaver_test_") {
-		t.Fatal("ARTEX_TEST_DSN must select disposable scopeweaver_test_* database")
+	if err != nil || !strings.HasPrefix(parentConfig.Database, "aptex_test_") {
+		t.Fatal("ARTEX_TEST_DSN must select disposable aptex_test_* database")
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()

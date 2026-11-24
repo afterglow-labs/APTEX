@@ -2,7 +2,7 @@ package server
 
 import (
 	"bytes"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/locale"
 	"io"
 	"mime/multipart"
 	"net/http"

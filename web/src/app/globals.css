@@ -9,6 +9,9 @@
 @import "../styles/presets/aptex-obsidian.css";
 @import "../styles/presets/aptex-phosphor.css";
 @import "../styles/presets/aptex-afterglow.css";
+@import "../styles/presets/afterglow-dreamsicle.css";
+@import "../styles/presets/afterglow-odysseus.css";
+@import "../styles/presets/afterglow-orangurple.css";
 @import "../styles/cyber-shell.css";
 
 @custom-variant dark (&:is(.dark *));

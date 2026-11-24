@@ -3,7 +3,7 @@ package server
 import (
 	"crypto/rand"
 	"errors"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/locale"
 	"io"
 	"log"
 	"math/big"

@@ -19,7 +19,7 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
+	"github.com/afterglow-labs/APTEX/db"
 )
 
 // cgNode is the minimal node view the cold-graph algorithms need.

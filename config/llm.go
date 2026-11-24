@@ -24,11 +24,19 @@ type LLM struct {
 
 // LLMEnv recognizes an explicitly empty modern value as an override too.
 func LLMEnv(suffix string) (string, bool) {
-	if v, ok := os.LookupEnv("SCOPEWEAVER_LLM_" + suffix); ok {
-		return v, true
-	}
-	return os.LookupEnv("ARTEX_LLM_" + suffix)
+	return LookupEnv("LLM_" + suffix)
 }
+
+// LookupEnv returns the APTEX setting or its legacy environment alias.
+func LookupEnv(suffix string) (string, bool) {
+	for _, prefix := range []string{"APTEX_", "SCOPEWEAVER_", "ARTEX_"} {
+		if value, ok := os.LookupEnv(prefix + suffix); ok {
+			return value, true
+		}
+	}
+	return "", false
+}
+
 func ResolveLLM() LLM {
 	c := Load().LLM
 	for suffix, dest := range map[string]*string{"PROVIDER": &c.Provider, "MODEL": &c.Model, "BASE_URL": &c.BaseURL, "API_KEY": &c.APIKey, "PROXY": &c.Proxy, "KEEP_ALIVE": &c.KeepAlive, "THINKING_TYPE": &c.ThinkingType, "REASONING_EFFORT": &c.ReasoningEffort} {
@@ -57,14 +65,14 @@ func LocalLLMPolicy() (bool, []string) {
 	c := Load()
 	strict := c.LocalLLMOnly
 	cidrs := c.LocalLLMAllowedCIDRs
-	for _, prefix := range []string{"SCOPEWEAVER_", "ARTEX_"} {
+	for _, prefix := range []string{"APTEX_", "SCOPEWEAVER_", "ARTEX_"} {
 		if value, ok := os.LookupEnv(prefix + "LOCAL_LLM_ONLY"); ok {
 			parsed, err := strconv.ParseBool(strings.TrimSpace(value))
 			strict = parsed || err != nil // Malformed explicit security settings fail closed.
 			break
 		}
 	}
-	for _, prefix := range []string{"SCOPEWEAVER_", "ARTEX_"} {
+	for _, prefix := range []string{"APTEX_", "SCOPEWEAVER_", "ARTEX_"} {
 		if value, ok := os.LookupEnv(prefix + "LOCAL_LLM_ALLOWED_CIDRS"); ok {
 			cidrs = nil
 			for _, part := range strings.Split(value, ",") {

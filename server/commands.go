@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
+	"github.com/afterglow-labs/APTEX/db"
 )
 
 // pgListCommands returns tool executions (any tool) from the activity table.

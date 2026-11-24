@@ -1,6 +1,6 @@
 // Native Ollama profile browser checks, called from smoke.mjs after login.
 // A local fixture stands in for Ollama, so no real model or provider is contacted.
-// The ScopeWeaver backend must reach the fixture; set E2E_OLLAMA_FIXTURE_HOST when
+// The APTEX backend must reach the fixture; set E2E_OLLAMA_FIXTURE_HOST when
 // the backend runs elsewhere (default 127.0.0.1, i.e. the binary runs on this host).
 import http from "node:http";
 import fs from "node:fs";

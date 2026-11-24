@@ -10,7 +10,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
+	"github.com/afterglow-labs/APTEX/db"
 )
 
 func nextClientEvent(t *testing.T, reader *bufio.Scanner, want string) (string, map[string]any) {

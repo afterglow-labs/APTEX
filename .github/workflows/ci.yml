@@ -16,12 +16,12 @@ jobs:
       postgres:
         image: postgres:16-alpine
         env:
-          POSTGRES_USER: scopeweaver_test
+          POSTGRES_USER: aptex_test
           POSTGRES_PASSWORD: test_only_password
-          POSTGRES_DB: scopeweaver_adapter_e2e
+          POSTGRES_DB: aptex_adapter_e2e
         ports: ["5432:5432"]
         options: >-
-          --health-cmd "pg_isready -U scopeweaver_test -d scopeweaver_adapter_e2e"
+          --health-cmd "pg_isready -U aptex_test -d aptex_adapter_e2e"
           --health-interval 5s --health-timeout 3s --health-retries 10
     steps:
       - uses: actions/checkout@v7
@@ -46,8 +46,8 @@ jobs:
         run: bun install --frozen-lockfile --ignore-scripts && bun run check && bun test --timeout 30000
       - name: Test adapter against real backend
         env:
-          SCOPEWEAVER_ADAPTER_E2E: "1"
-          ARTEX_TEST_DSN: postgres://scopeweaver_test:test_only_password@localhost:5432/scopeweaver_adapter_e2e?sslmode=disable
+          APTEX_ADAPTER_E2E: "1"
+          ARTEX_TEST_DSN: postgres://aptex_test:test_only_password@localhost:5432/aptex_adapter_e2e?sslmode=disable
         run: go test ./server -run '^TestAgentAdapterE2E$' -count=1 -v
   chat-browser:
     runs-on: ubuntu-latest
@@ -56,12 +56,12 @@ jobs:
       postgres:
         image: postgres:16-alpine
         env:
-          POSTGRES_USER: scopeweaver_test
+          POSTGRES_USER: aptex_test
           POSTGRES_PASSWORD: test_only_password
-          POSTGRES_DB: scopeweaver_test_chat_browser
+          POSTGRES_DB: aptex_test_chat_browser
         ports: ["5432:5432"]
         options: >-
-          --health-cmd "pg_isready -U scopeweaver_test -d scopeweaver_test_chat_browser"
+          --health-cmd "pg_isready -U aptex_test -d aptex_test_chat_browser"
           --health-interval 5s --health-timeout 3s --health-retries 10
     steps:
       - uses: actions/checkout@v7
@@ -90,18 +90,18 @@ jobs:
         env:
           PGHOST: localhost
           PGPORT: "5432"
-          PGUSER: scopeweaver_test
+          PGUSER: aptex_test
           PGPASSWORD: test_only_password
-          ARTEX_TEST_DSN: postgres://scopeweaver_test:test_only_password@localhost:5432/scopeweaver_test_chat_draft?sslmode=disable
-          SCOPEWEAVER_CHAT_E2E: "1"
+          ARTEX_TEST_DSN: postgres://aptex_test:test_only_password@localhost:5432/aptex_test_chat_draft?sslmode=disable
+          APTEX_CHAT_E2E: "1"
           CHAT_E2E_SUITE: draft
         run: |
-          createdb scopeweaver_test_chat_draft
+          createdb aptex_test_chat_draft
           go test ./server -run '^TestChatControlsE2E$' -count=1 -timeout 12m -v
       - name: Verify chat controls, recovery, context and document paste
         env:
-          ARTEX_TEST_DSN: postgres://scopeweaver_test:test_only_password@localhost:5432/scopeweaver_test_chat_browser?sslmode=disable
-          SCOPEWEAVER_CHAT_E2E: "1"
+          ARTEX_TEST_DSN: postgres://aptex_test:test_only_password@localhost:5432/aptex_test_chat_browser?sslmode=disable
+          APTEX_CHAT_E2E: "1"
           CHAT_E2E_SUITE: standard
         run: go test ./server -run '^TestChatControlsE2E$' -count=1 -timeout 21m -v
       - if: always()
@@ -166,12 +166,12 @@ jobs:
       postgres:
         image: postgres:16-alpine
         env:
-          POSTGRES_USER: scopeweaver_test
+          POSTGRES_USER: aptex_test
           POSTGRES_PASSWORD: test_only_password
           POSTGRES_DB: postgres
         ports: ["5432:5432"]
         options: >-
-          --health-cmd "pg_isready -U scopeweaver_test -d postgres"
+          --health-cmd "pg_isready -U aptex_test -d postgres"
           --health-interval 5s --health-timeout 3s --health-retries 10
     steps:
       - uses: actions/checkout@v7
@@ -201,7 +201,7 @@ jobs:
         env:
           PGHOST: localhost
           PGPORT: "5432"
-          PGUSER: scopeweaver_test
+          PGUSER: aptex_test
           PGPASSWORD: test_only_password
         run: |
           set -euo pipefail
@@ -212,7 +212,7 @@ jobs:
           import (
             "log"
             "os"
-            "github.com/afterglow-labs/afterglow-cybersecurity/db"
+            "github.com/afterglow-labs/APTEX/db"
           )
           func main() {
             store, err := db.Open(os.Getenv("ARTEX_PG_DSN"))
@@ -227,7 +227,7 @@ jobs:
           status=0
           while IFS= read -r package; do
             index=$((index + 1))
-            database="scopeweaver_test_${index}"
+            database="aptex_test_${index}"
             createdb "$database"
             ARTEX_PG_DSN="postgres://${PGUSER}:${PGPASSWORD}@localhost:5432/${database}?sslmode=disable" "$RUNNER_TEMP/init-test-db"
             if ! ARTEX_TEST_DSN="postgres://${PGUSER}:${PGPASSWORD}@localhost:5432/${database}?sslmode=disable" go test -p 1 "$package" -count=1 -v; then

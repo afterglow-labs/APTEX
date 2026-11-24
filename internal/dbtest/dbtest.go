@@ -23,7 +23,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/config"
+	"github.com/afterglow-labs/APTEX/config"
 	"github.com/jackc/pgx/v5/pgconn"
 
 	_ "github.com/jackc/pgx/v5/stdlib" // register the "pgx" database/sql driver

@@ -16,6 +16,9 @@ bench/.env
 bench/scheduler.py
 bench/entrypoint_v2.sh
 bench/seed_v2.sh
+/aptex
+/aptex.exe
+# Ignore artifacts from older local installations.
 /scopeweaver
 /scopeweaver.exe
 .env

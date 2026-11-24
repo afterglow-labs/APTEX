@@ -11,19 +11,19 @@ import (
 	"sync/atomic"
 	"testing"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/agent"
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
-	"github.com/afterglow-labs/afterglow-cybersecurity/llmrec"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
-	"github.com/afterglow-labs/afterglow-cybersecurity/opencodesdk"
+	"github.com/afterglow-labs/APTEX/agent"
+	"github.com/afterglow-labs/APTEX/db"
+	"github.com/afterglow-labs/APTEX/llmrec"
+	"github.com/afterglow-labs/APTEX/locale"
+	"github.com/afterglow-labs/APTEX/opencodesdk"
 	"github.com/Autumn-27/norma/llm"
 )
 
-const sdkCaps = `{"protocol":"scopeweaver-opencode-sdk","version":1,"runtime":"native","sdk_version":"2.1.4","tool_execution":"capture-only","streaming":true}`
+const sdkCaps = `{"protocol":"aptex-opencode-sdk","version":1,"runtime":"native","sdk_version":"2.1.4","tool_execution":"capture-only","streaming":true}`
 
 func TestSDKErrorAPILocalizesOwnedBridgeDiagnostics(t *testing.T) {
-	t.Setenv("SCOPEWEAVER_CONFIG", filepath.Join(t.TempDir(), "missing.json"))
-	t.Setenv("SCOPEWEAVER_LOCAL_LLM_ONLY", "false")
+	t.Setenv("APTEX_CONFIG", filepath.Join(t.TempDir(), "missing.json"))
+	t.Setenv("APTEX_LOCAL_LLM_ONLY", "false")
 	bridge := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusUnauthorized)
 		fmt.Fprint(w, `{"error":{"code":"unauthorized","message":"untrusted bridge-secret evidence"}}`)
@@ -92,8 +92,8 @@ func callSDKHandler(t *testing.T, h http.HandlerFunc, body map[string]any) map[s
 	return got
 }
 func TestSDKDiscoveryAndConnectionScopedCredentials(t *testing.T) {
-	t.Setenv("SCOPEWEAVER_CONFIG", filepath.Join(t.TempDir(), "missing.json"))
-	t.Setenv("SCOPEWEAVER_LOCAL_LLM_ONLY", "false")
+	t.Setenv("APTEX_CONFIG", filepath.Join(t.TempDir(), "missing.json"))
+	t.Setenv("APTEX_LOCAL_LLM_ONLY", "false")
 	for _, source := range []string{"explicit", "same active SDK", "different active SDK", "active cloud"} {
 		t.Run(source, func(t *testing.T) {
 			var calls atomic.Int32
@@ -126,8 +126,8 @@ func TestSDKDiscoveryAndConnectionScopedCredentials(t *testing.T) {
 	}
 }
 func TestSDKStoredTokenMatchesEndpointAndFormat(t *testing.T) {
-	t.Setenv("SCOPEWEAVER_CONFIG", filepath.Join(t.TempDir(), "missing.json"))
-	t.Setenv("SCOPEWEAVER_LOCAL_LLM_ONLY", "false")
+	t.Setenv("APTEX_CONFIG", filepath.Join(t.TempDir(), "missing.json"))
+	t.Setenv("APTEX_LOCAL_LLM_ONLY", "false")
 	m := backportTestManager(t)
 	s := &Server{m: m}
 	var calls atomic.Int32
@@ -163,8 +163,8 @@ func TestSDKStoredTokenMatchesEndpointAndFormat(t *testing.T) {
 }
 
 func TestSDKConnectionHTTPHonorsFormAndStoredTokenLimits(t *testing.T) {
-	t.Setenv("SCOPEWEAVER_CONFIG", filepath.Join(t.TempDir(), "missing.json"))
-	t.Setenv("SCOPEWEAVER_LOCAL_LLM_ONLY", "false")
+	t.Setenv("APTEX_CONFIG", filepath.Join(t.TempDir(), "missing.json"))
+	t.Setenv("APTEX_LOCAL_LLM_ONLY", "false")
 	m := backportTestManager(t)
 	for _, stream := range []bool{false, true} {
 		for _, tc := range []struct {
@@ -253,8 +253,8 @@ func TestSDKConnectionHTTPHonorsFormAndStoredTokenLimits(t *testing.T) {
 	}
 }
 func TestSDKMetadataLocalOnlyRejectedBeforeBridge(t *testing.T) {
-	t.Setenv("SCOPEWEAVER_CONFIG", filepath.Join(t.TempDir(), "missing.json"))
-	t.Setenv("SCOPEWEAVER_LOCAL_LLM_ONLY", "true")
+	t.Setenv("APTEX_CONFIG", filepath.Join(t.TempDir(), "missing.json"))
+	t.Setenv("APTEX_LOCAL_LLM_ONLY", "true")
 	var calls atomic.Int32
 	b := sdkServer(t, "token", &calls)
 	s := &Server{m: &Manager{}}
@@ -265,8 +265,8 @@ func TestSDKMetadataLocalOnlyRejectedBeforeBridge(t *testing.T) {
 }
 
 func TestSDKUsageCanonicalLedger(t *testing.T) {
-	t.Setenv("SCOPEWEAVER_CONFIG", filepath.Join(t.TempDir(), "missing.json"))
-	t.Setenv("SCOPEWEAVER_LOCAL_LLM_ONLY", "false")
+	t.Setenv("APTEX_CONFIG", filepath.Join(t.TempDir(), "missing.json"))
+	t.Setenv("APTEX_LOCAL_LLM_ONLY", "false")
 	m := backportTestManager(t)
 	var calls atomic.Int32
 	b := sdkServer(t, "token", &calls)
@@ -333,8 +333,8 @@ func TestSDKQuotaOnlyAdvancesTaskChain(t *testing.T) {
 	}
 }
 func TestSDKModelRequiredBeforeSaveAndActivation(t *testing.T) {
-	t.Setenv("SCOPEWEAVER_CONFIG", filepath.Join(t.TempDir(), "missing.json"))
-	t.Setenv("SCOPEWEAVER_LOCAL_LLM_ONLY", "false")
+	t.Setenv("APTEX_CONFIG", filepath.Join(t.TempDir(), "missing.json"))
+	t.Setenv("APTEX_LOCAL_LLM_ONLY", "false")
 	m := backportTestManager(t)
 	s := &Server{m: m}
 	before, err := m.pg.ListProfiles()
@@ -381,8 +381,8 @@ func TestSDKModelRequiredBeforeSaveAndActivation(t *testing.T) {
 }
 
 func TestSDKActiveTokenClearDisablesCachedFallback(t *testing.T) {
-	t.Setenv("SCOPEWEAVER_CONFIG", filepath.Join(t.TempDir(), "missing.json"))
-	t.Setenv("SCOPEWEAVER_LOCAL_LLM_ONLY", "false")
+	t.Setenv("APTEX_CONFIG", filepath.Join(t.TempDir(), "missing.json"))
+	t.Setenv("APTEX_LOCAL_LLM_ONLY", "false")
 	m := backportTestManager(t)
 	previous, err := m.pg.ActiveProfile()
 	if err != nil {
@@ -422,12 +422,12 @@ func TestSDKActiveTokenClearDisablesCachedFallback(t *testing.T) {
 }
 
 func TestSDKUnavailableProfileBlocksCloudEnvironmentFallback(t *testing.T) {
-	t.Setenv("SCOPEWEAVER_CONFIG", filepath.Join(t.TempDir(), "missing.json"))
-	t.Setenv("SCOPEWEAVER_LOCAL_LLM_ONLY", "false")
-	t.Setenv("SCOPEWEAVER_LLM_PROVIDER", "openai")
-	t.Setenv("SCOPEWEAVER_LLM_MODEL", "environment-model")
-	t.Setenv("SCOPEWEAVER_LLM_API_KEY", "unrelated-cloud-key")
-	t.Setenv("SCOPEWEAVER_LLM_BASE_URL", "http://127.0.0.1:1")
+	t.Setenv("APTEX_CONFIG", filepath.Join(t.TempDir(), "missing.json"))
+	t.Setenv("APTEX_LOCAL_LLM_ONLY", "false")
+	t.Setenv("APTEX_LLM_PROVIDER", "openai")
+	t.Setenv("APTEX_LLM_MODEL", "environment-model")
+	t.Setenv("APTEX_LLM_API_KEY", "unrelated-cloud-key")
+	t.Setenv("APTEX_LLM_BASE_URL", "http://127.0.0.1:1")
 	m := backportTestManager(t)
 	s := &Server{m: m}
 	previous, err := m.pg.ActiveProfile()

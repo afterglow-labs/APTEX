@@ -1,7 +1,7 @@
 package db
 
 import (
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/locale"
 	"net"
 	"net/url"
 	"strings"

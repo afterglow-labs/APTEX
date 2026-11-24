@@ -5,7 +5,7 @@ import (
 	"net"
 	"strings"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
+	"github.com/afterglow-labs/APTEX/db"
 )
 
 // Prior findings are scoped to the task's concrete declared hosts. Broad

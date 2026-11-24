@@ -19,7 +19,7 @@ RUN go mod download
 COPY . .
 COPY --from=frontend /src/web/out/ ./server/webui/dist/
 RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -tags embedui -trimpath \
-    -ldflags "-s -w -X main.version=${VERSION}" -o /scopeweaver ./cmd/artex
+    -ldflags "-s -w -X main.version=${VERSION}" -o /aptex ./cmd/aptex
 
 FROM python:3.12-slim-bookworm
 # Runtime tools and Node 20 for Playwright. Browser installation occurs at build time.
@@ -35,10 +35,10 @@ RUN npm install -g @playwright/mcp@latest @playwright/cli@latest playwright@late
     && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 ENV NODE_PATH=/usr/lib/node_modules
-COPY --from=backend /scopeweaver /app/scopeweaver
+COPY --from=backend /aptex /app/aptex
 # The supervisor forwards SIGTERM and restarts after a self-update.
 COPY start.sh /app/start.sh
-RUN chmod +x /app/scopeweaver /app/start.sh
+RUN chmod +x /app/aptex /app/start.sh
 COPY skills/ /app/skills/
 COPY detections/ /app/detections/
 COPY scripts/browser-mcp.cjs scripts/browser-session.cjs scripts/browser-runtime.cjs /app/scripts/

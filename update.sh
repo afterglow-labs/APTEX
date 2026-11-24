@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# ScopeWeaver update: rebuild the local Docker image or native binary.
+# APTEX update: rebuild the local Docker image or native binary.
 # Startup applies the idempotent database schema. Back up data before upgrading.
 set -euo pipefail
 cd "$(cd "$(dirname "$0")" && pwd)"
@@ -30,7 +30,7 @@ normalize_language() (
     *) printf en ;;
   esac
 )
-LANG_SEL=$(normalize_language "${SCOPEWEAVER_LANGUAGE:-${ARTEX_LANGUAGE:-en}}")
+LANG_SEL=$(normalize_language "${APTEX_LANGUAGE:-${SCOPEWEAVER_LANGUAGE:-${ARTEX_LANGUAGE:-en}}}")
 # msg EN KO HANS HANT JA ES; no runtime catalog or extra packaging dependency.
 msg() {
   case "$LANG_SEL" in
@@ -53,10 +53,10 @@ sync_repo(){
 update_docker(){
   command -v docker >/dev/null 2>&1 && docker compose version >/dev/null 2>&1 || die "$(msg 'Install Docker and Docker Compose first' 'Docker와 Docker Compose를 먼저 설치하세요' "请先安装 Docker 和 Docker Compose" "請先安裝 Docker 和 Docker Compose" "先に Docker と Docker Compose をインストールしてください" "Instala primero Docker y Docker Compose")"
   [ -f .env ] || die "$(msg 'Missing .env; run ./install.sh first' '.env가 없습니다. ./install.sh를 먼저 실행하세요' "缺少 .env；请先运行 ./install.sh" "缺少 .env；請先執行 ./install.sh" ".env がありません。先に ./install.sh を実行してください" "Falta .env; ejecuta primero ./install.sh")"
-  info "$(msg 'Building ScopeWeaver from this checkout…' '현재 소스로 ScopeWeaver를 빌드합니다…' "正在从当前工作副本构建 ScopeWeaver…" "正在從目前的工作副本建置 ScopeWeaver…" "このチェックアウトから ScopeWeaver をビルドしています…" "Compilando ScopeWeaver desde esta copia de trabajo…")"
-  docker compose build scopeweaver
-  docker compose up -d scopeweaver
-  info "$(msg 'Updated: http://localhost:8787. Logs: docker compose logs -f scopeweaver' '업데이트 완료: http://localhost:8787. 로그: docker compose logs -f scopeweaver' "更新完成：http://localhost:8787。日志：docker compose logs -f scopeweaver" "更新完成：http://localhost:8787。記錄：docker compose logs -f scopeweaver" "更新しました: http://localhost:8787。ログ: docker compose logs -f scopeweaver" "Actualizado: http://localhost:8787. Registros: docker compose logs -f scopeweaver")"
+  info "$(msg 'Building APTEX from this checkout…' '현재 소스로 APTEX를 빌드합니다…' "正在从当前工作副本构建 APTEX…" "正在從目前的工作副本建置 APTEX…" "このチェックアウトから APTEX をビルドしています…" "Compilando APTEX desde esta copia de trabajo…")"
+  docker compose build aptex
+  docker compose up -d aptex
+  info "$(msg 'Updated: http://localhost:8787. Logs: docker compose logs -f aptex' '업데이트 완료: http://localhost:8787. 로그: docker compose logs -f aptex' "更新完成：http://localhost:8787。日志：docker compose logs -f aptex" "更新完成：http://localhost:8787。記錄：docker compose logs -f aptex" "更新しました: http://localhost:8787。ログ: docker compose logs -f aptex" "Actualizado: http://localhost:8787. Registros: docker compose logs -f aptex")"
 }
 update_local(){
   command -v go >/dev/null 2>&1 || die "$(msg 'Go 1.26 or later required: https://go.dev/dl/' 'Go 1.26 이상 필요: https://go.dev/dl/' "需要 Go 1.26 或更高版本：https://go.dev/dl/" "需要 Go 1.26 或更新版本：https://go.dev/dl/" "Go 1.26 以降が必要です: https://go.dev/dl/" "Se requiere Go 1.26 o posterior: https://go.dev/dl/")"
@@ -64,14 +64,14 @@ update_local(){
     (cd web && npm ci && npm run build:static)
     mkdir -p server/webui/dist
     cp -R web/out/. server/webui/dist/
-    CGO_ENABLED=0 go build -tags embedui -trimpath -o scopeweaver ./cmd/artex
+    CGO_ENABLED=0 go build -tags embedui -trimpath -o aptex ./cmd/aptex
   else
     info "$(msg 'npm unavailable: building backend only; run the frontend separately' 'npm이 없어 백엔드만 빌드합니다. 프런트엔드는 별도로 실행하세요' "npm 不可用：仅构建后端；请单独运行前端" "npm 無法使用：僅建置後端；請另行執行前端" "npm が利用できないため、バックエンドのみビルドします。フロントエンドは別途実行してください" "npm no está disponible: se compila solo el backend; ejecuta el frontend por separado")"
-    CGO_ENABLED=0 go build -o scopeweaver ./cmd/artex
+    CGO_ENABLED=0 go build -o aptex ./cmd/aptex
   fi
-  info "$(msg 'Built ./scopeweaver. Restart the running process to apply the update.' './scopeweaver 빌드 완료. 실행 중인 프로세스를 재시작하여 적용하세요.' "已构建 ./scopeweaver。请重启运行中的进程以应用更新。" "已建置 ./scopeweaver。請重新啟動執行中的程序以套用更新。" "./scopeweaver をビルドしました。実行中のプロセスを再起動して更新を適用してください。" "Se ha compilado ./scopeweaver. Reinicia el proceso en ejecución para aplicar la actualización.")"
+  info "$(msg 'Built ./aptex. Restart the running process to apply the update.' './aptex 빌드 완료. 실행 중인 프로세스를 재시작하여 적용하세요.' "已构建 ./aptex。请重启运行中的进程以应用更新。" "已建置 ./aptex。請重新啟動執行中的程序以套用更新。" "./aptex をビルドしました。実行中のプロセスを再起動して更新を適用してください。" "Se ha compilado ./aptex. Reinicia el proceso en ejecución para aplicar la actualización.")"
 }
-echo "ScopeWeaver"
+echo "APTEX"
 echo "1) $(msg 'Rebuild Docker deployment' 'Docker 배포 다시 빌드' "重新构建 Docker 部署" "重新建置 Docker 部署" "Docker デプロイを再ビルド" "Volver a compilar el despliegue con Docker")"
 echo "2) $(msg 'Rebuild local binary' '로컬 바이너리 다시 빌드' "重新构建本地二进制文件" "重新建置本機執行檔" "ローカルバイナリを再ビルド" "Volver a compilar el binario local")"
 case "$(ask "$(msg 'Choose' '선택' "请选择" "請選擇" "選択" "Elige")" 1)" in

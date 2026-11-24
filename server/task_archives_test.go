@@ -10,7 +10,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/internal/dbtest"
+	"github.com/afterglow-labs/APTEX/internal/dbtest"
 )
 
 func TestTaskArchiveAPIQueueListAndLimits(t *testing.T) {

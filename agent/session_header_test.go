@@ -71,7 +71,7 @@ func TestHTTPClientUserAgent(t *testing.T) {
 		name, userAgent, want string
 		explicit              bool
 	}{
-		{name: "default", want: "scopeweaver"},
+		{name: "default", want: "aptex"},
 		{name: "custom", explicit: true, userAgent: "custom-client/1.0", want: "custom-client/1.0"},
 		{name: "explicit blank", explicit: true},
 	} {

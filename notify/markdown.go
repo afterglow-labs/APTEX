@@ -2,7 +2,7 @@ package notify
 
 import (
 	"fmt"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/locale"
 	"strings"
 )
 
@@ -84,7 +84,7 @@ func markdownBody(m Message, maxBytes int) (string, int) {
 
 	footer := ""
 	if m.HomeURL != "" {
-		footer = fmt.Sprintf(locale.Text(locale.Resolve(m.Language), "\n[View all in ScopeWeaver](%s)\n"), m.HomeURL)
+		footer = fmt.Sprintf(locale.Text(locale.Resolve(m.Language), "\n[View all in APTEX](%s)\n"), m.HomeURL)
 	}
 	kept := packItemCount(m.Items, maxBytes, markdownReservedBytes, footer, byteSize, func(it Item, idx int) string {
 		var b strings.Builder

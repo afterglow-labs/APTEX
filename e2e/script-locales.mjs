@@ -13,7 +13,7 @@ const scripts = ['install.sh', 'build.sh', 'start.sh', 'update.sh', 'reset-passw
 const languages = JSON.parse(readFileSync(join(repo, 'locale/definitions.json'))).locales;
 assert.deepEqual([...SUPPORTED_LANGUAGES], languages.map(language => language.id), 'standalone adapter must agree with the shipped registry');
 const vectors = JSON.parse(readFileSync(join(repo, 'locale/matching-vectors.json'))).vectors;
-const env = { ...process.env, SCOPEWEAVER_LANGUAGE: '', ARTEX_LANGUAGE: '' };
+const env = { ...process.env, APTEX_LANGUAGE: '', ARTEX_LANGUAGE: '' };
 const q = value => `'${value.replaceAll("'", "'\\''")}'`;
 const text = name => readFileSync(join(repo, name), 'utf8');
 const run = (shell, command, overrides = {}, options = {}) => spawnSync(shell, ['-c', command], {
@@ -32,7 +32,7 @@ for (const name of scripts) {
   const helper = source.slice(start, end);
   const shell = name === 'start.sh' ? 'sh' : 'bash';
   for (const { input, expected } of vectors) {
-    const result = run(shell, `${helper}\nprintf '%s' "$LANG_SEL"`, { SCOPEWEAVER_LANGUAGE: input });
+    const result = run(shell, `${helper}\nprintf '%s' "$LANG_SEL"`, { APTEX_LANGUAGE: input });
     success(result);
     assert.equal(result.stdout, expected || 'en', `${name}: ${input}`);
   }
@@ -42,7 +42,7 @@ for (const name of scripts) {
     assert.equal(result.stdout, language.id, `${name}: legacy variable ${alias}`);
   }
   for (const [modern, legacy, expected] of [['ja', 'ko', 'ja'], ['unsupported', 'ko', 'en'], ['', 'es-MX', 'es']]) {
-    const result = run(shell, `${helper}\nprintf '%s' "$LANG_SEL"`, { SCOPEWEAVER_LANGUAGE: modern, ARTEX_LANGUAGE: legacy });
+    const result = run(shell, `${helper}\nprintf '%s' "$LANG_SEL"`, { APTEX_LANGUAGE: modern, ARTEX_LANGUAGE: legacy });
     success(result);
     assert.equal(result.stdout, expected, `${name}: environment precedence`);
   }
@@ -61,7 +61,7 @@ for (const name of scripts) {
     // Exercise actual interpolation with harmless fixture values and no application commands.
     for (const language of languages) {
       const values = Object.fromEntries(['BIN','binary','before','after','archive','target','goos','goarch','ARTEX_BUILD_VERSION','output','checksum_file','ARTEX_PACKAGE_DIR','code','delay','MODE','cfg','CONTAINER','DUSER','DNAME','EXEC_KIND'].map(key => [key, `fixture_${key}`]));
-      const result = run(shell, `set -u\nset -- fixture_argument\n${helper}\nmsg ${match[1]}`, { ...values, SCOPEWEAVER_LANGUAGE: language.id });
+      const result = run(shell, `set -u\nset -- fixture_argument\n${helper}\nmsg ${match[1]}`, { ...values, APTEX_LANGUAGE: language.id });
       success(result);
       assert.ok(result.stdout.trim().length > 0, `${name}: empty message for ${language.id}`);
     }
@@ -70,7 +70,7 @@ for (const name of scripts) {
 }
 console.log(`PASS: six script helpers, matching vectors/aliases/precedence, ${messageCount} six-language messages and unchanged interpolation`);
 
-const fixture = mkdtempSync(join(tmpdir(), 'scopeweaver-script-locales-'));
+const fixture = mkdtempSync(join(tmpdir(), 'aptex-script-locales-'));
 const executable = (name, body) => writeFileSync(join(fixture, name), body, { mode: 0o755 });
 try {
   mkdirSync(join(fixture, 'bin'));
@@ -82,17 +82,17 @@ try {
   executable('bin/docker', '#!/bin/sh\nprintf "%s\\n" "$*" >> "$FIXTURE/docker"\n');
   const fixtureEnv = { ...env, FIXTURE: fixture, PATH: `${join(fixture, 'bin')}:${process.env.PATH}` };
   const execute = (name, args = [], input = '', language = 'en') => spawnSync(name === 'start.sh' ? 'sh' : 'bash', [join(fixture, name), ...args], {
-    cwd: fixture, env: { ...fixtureEnv, SCOPEWEAVER_LANGUAGE: language }, input, encoding: 'utf8', timeout: 10000,
+    cwd: fixture, env: { ...fixtureEnv, APTEX_LANGUAGE: language }, input, encoding: 'utf8', timeout: 10000,
   });
   const clean = (...names) => { for (const name of names) rmSync(join(fixture, name), { force: true }); };
   const contents = name => readFileSync(join(fixture, name), 'utf8');
   const expectedSleeps = '1\n2\n4\n8\n16\n32\n60\n60\n1\n';
   for (const language of languages) {
-    clean('scopeweaver', 'count', 'sleeps');
+    clean('aptex', 'count', 'sleeps');
     const missing = execute('start.sh', [], '', language.id);
     assert.equal(missing.status, 1, missing.stderr);
-    assert.ok(missing.stderr.includes('./scopeweaver'));
-    executable('scopeweaver', `#!/bin/sh\nn=0\n[ ! -f "$FIXTURE/count" ] || n=$(cat "$FIXTURE/count")\nn=$((n+1))\nprintf '%s' "$n" > "$FIXTURE/count"\nprintf '%s\\n' "$@" > "$FIXTURE/argv"\ncase "$n" in 1|10) exit 75 ;; 2|3|4|5|6|7|8|9|11) exit 7 ;; *) exit 0 ;; esac\n`);
+    assert.ok(missing.stderr.includes('./aptex'));
+    executable('aptex', `#!/bin/sh\nn=0\n[ ! -f "$FIXTURE/count" ] || n=$(cat "$FIXTURE/count")\nn=$((n+1))\nprintf '%s' "$n" > "$FIXTURE/count"\nprintf '%s\\n' "$@" > "$FIXTURE/argv"\ncase "$n" in 1|10) exit 75 ;; 2|3|4|5|6|7|8|9|11) exit 7 ;; *) exit 0 ;; esac\n`);
     const result = execute('start.sh', ['argument with spaces', '--literal=*'], '', language.id);
     success(result);
     assert.equal(contents('count'), '12');
@@ -124,22 +124,22 @@ try {
     clean('docker');
     const updated = execute('update.sh', [], '\n', language.id);
     success(updated);
-    assert.equal(contents('docker'), 'compose version\ncompose build scopeweaver\ncompose up -d scopeweaver\n');
+    assert.equal(contents('docker'), 'compose version\ncompose build aptex\ncompose up -d aptex\n');
     assert.equal(contents('.env'), 'POSTGRES_PASSWORD=fixture-existing\n');
     const invalid = execute('update.sh', [], 'invalid\n', language.id);
     assert.equal(invalid.status, 1, invalid.stderr);
     const help = execute('reset-password.sh', ['--help'], '', language.id);
     success(help);
     assert.ok(help.stdout.includes('-p/--new-password PASSWORD; -y/--yes; -h/--help'));
-    const buildHelp = spawnSync('bash', [join(repo, 'build.sh'), '--help'], { env: { ...env, SCOPEWEAVER_LANGUAGE: language.id }, encoding: 'utf8' });
+    const buildHelp = spawnSync('bash', [join(repo, 'build.sh'), '--help'], { env: { ...env, APTEX_LANGUAGE: language.id }, encoding: 'utf8' });
     success(buildHelp);
     for (const token of ['--target OS/ARCH', '--release', '--upx', '--no-compress', 'ARTEX_TARGETS=linux/amd64,windows/amd64 ./build.sh --release']) assert.ok(buildHelp.stdout.includes(token));
   }
   console.log('PASS: all-six supervisor exits/restarts/capped backoff/argument forwarding; stubbed reset confirmation/cancellation/password safety; update default/config preservation and help');
 
   clean('ready', 'forwarded');
-  executable('scopeweaver', `#!/bin/sh\ntrap 'printf forwarded > "$FIXTURE/forwarded"; exit 0' TERM\nprintf ready > "$FIXTURE/ready"\nwhile :; do /bin/sleep 0.05; done\n`);
-  const child = spawn('sh', [join(fixture, 'start.sh')], { cwd: fixture, env: { ...fixtureEnv, SCOPEWEAVER_LANGUAGE: 'en' }, stdio: ['ignore', 'pipe', 'pipe'] });
+  executable('aptex', `#!/bin/sh\ntrap 'printf forwarded > "$FIXTURE/forwarded"; exit 0' TERM\nprintf ready > "$FIXTURE/ready"\nwhile :; do /bin/sleep 0.05; done\n`);
+  const child = spawn('sh', [join(fixture, 'start.sh')], { cwd: fixture, env: { ...fixtureEnv, APTEX_LANGUAGE: 'en' }, stdio: ['ignore', 'pipe', 'pipe'] });
   let output = '';
   child.stdout.on('data', data => { output += data; });
   const completion = new Promise(resolve => child.on('exit', (code, signal) => resolve({ code, signal })));

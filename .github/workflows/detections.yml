@@ -21,7 +21,7 @@ name: detections
 # Run this workflow when detections/ changes or when indicator tests' pinned
 # sources change: User-Agent strings, markers, and destructive-command tokens
 # in enrich, selfupdate, guard, and db; default listener/proxy ports in
-# cmd/artex/main.go; the MITM CA filename in traffic/traffic.go; and the
+# cmd/aptex/main.go; the MITM CA filename in traffic/traffic.go; and the
 # exploration-graph schema fingerprint in db/schema.sql. These triggers catch
 # source changes that would silently stale rules or indicator lists. Pulling
 # public Docker images without authentication can rarely hit a Docker Hub
@@ -36,7 +36,7 @@ on:
       - "guard/guard.go"
       - "db/db.go"
       - "db/schema.sql"
-      - "cmd/artex/main.go"
+      - "cmd/aptex/main.go"
       - "traffic/traffic.go"
       # The defense-template gate reads both files; recheck when either changes.
       - "docs/defense-ko.md"
@@ -51,7 +51,7 @@ on:
       - "guard/guard.go"
       - "db/db.go"
       - "db/schema.sql"
-      - "cmd/artex/main.go"
+      - "cmd/aptex/main.go"
       - "traffic/traffic.go"
       - "docs/defense-ko.md"
       - "docs/defense-en.md"

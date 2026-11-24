@@ -10,12 +10,12 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/agent"
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
-	"github.com/afterglow-labs/afterglow-cybersecurity/guard"
-	"github.com/afterglow-labs/afterglow-cybersecurity/intercept"
-	"github.com/afterglow-labs/afterglow-cybersecurity/llmrec"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/agent"
+	"github.com/afterglow-labs/APTEX/db"
+	"github.com/afterglow-labs/APTEX/guard"
+	"github.com/afterglow-labs/APTEX/intercept"
+	"github.com/afterglow-labs/APTEX/llmrec"
+	"github.com/afterglow-labs/APTEX/locale"
 	"github.com/Autumn-27/norma/llm"
 )
 

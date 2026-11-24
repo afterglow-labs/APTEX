@@ -14,14 +14,14 @@ import (
 )
 
 func TestOllamaConfigAndEnvironment(t *testing.T) {
-	t.Setenv("SCOPEWEAVER_CONFIG", filepath.Join(t.TempDir(), "missing.json"))
+	t.Setenv("APTEX_CONFIG", filepath.Join(t.TempDir(), "missing.json"))
 	t.Setenv("OPENAI_API_KEY", "cloud-secret")
 	t.Setenv("OLLAMA_API_KEY", "")
 	t.Setenv("ARTEX_LLM_PROVIDER", "openai")
-	t.Setenv("SCOPEWEAVER_LLM_PROVIDER", "ollama")
-	t.Setenv("SCOPEWEAVER_LLM_MODEL", "")
-	t.Setenv("SCOPEWEAVER_LLM_BASE_URL", "")
-	t.Setenv("SCOPEWEAVER_LLM_API_KEY", "")
+	t.Setenv("APTEX_LLM_PROVIDER", "ollama")
+	t.Setenv("APTEX_LLM_MODEL", "")
+	t.Setenv("APTEX_LLM_BASE_URL", "")
+	t.Setenv("APTEX_LLM_API_KEY", "")
 	c, ok := FromEnv()
 	if !ok || !c.Ready() || c.APIKey != "" || c.Provider() != "ollama" || c.Model != "qwen2.5-coder:32b" || c.BaseURL != "http://127.0.0.1:11434" || c.MaxTokens != 4096 || c.KeepAlive != "30m" || c.CompactionWindow() != 32768 {
 		t.Fatalf("native config=%+v ok=%v", c, ok)

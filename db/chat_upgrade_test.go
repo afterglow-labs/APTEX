@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/chatstate"
+	"github.com/afterglow-labs/APTEX/chatstate"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/stdlib"
 )
@@ -20,8 +20,8 @@ func chatUpgradeFixture(t *testing.T) *DB {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !strings.HasPrefix(cfg.Database, "scopeweaver_test_") {
-		t.Fatal("chat upgrade requires a disposable scopeweaver_test_* database")
+	if !strings.HasPrefix(cfg.Database, "aptex_test_") {
+		t.Fatal("chat upgrade requires a disposable aptex_test_* database")
 	}
 	admin := stdlib.OpenDB(*cfg)
 	t.Cleanup(func() { admin.Close() })

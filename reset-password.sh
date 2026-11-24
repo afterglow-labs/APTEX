@@ -32,7 +32,7 @@ normalize_language() (
     *) printf en ;;
   esac
 )
-LANG_SEL=$(normalize_language "${SCOPEWEAVER_LANGUAGE:-${ARTEX_LANGUAGE:-en}}")
+LANG_SEL=$(normalize_language "${APTEX_LANGUAGE:-${SCOPEWEAVER_LANGUAGE:-${ARTEX_LANGUAGE:-en}}}")
 # msg EN KO HANS HANT JA ES; no runtime catalog or extra packaging dependency.
 msg() {
   case "$LANG_SEL" in

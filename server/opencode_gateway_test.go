@@ -10,13 +10,13 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/agent"
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
+	"github.com/afterglow-labs/APTEX/agent"
+	"github.com/afterglow-labs/APTEX/db"
 )
 
 func TestConnectionSessionHeaderPrecedence(t *testing.T) {
-	t.Setenv("SCOPEWEAVER_CONFIG", filepath.Join(t.TempDir(), "missing.json"))
-	t.Setenv("SCOPEWEAVER_LOCAL_LLM_ONLY", "false")
+	t.Setenv("APTEX_CONFIG", filepath.Join(t.TempDir(), "missing.json"))
+	t.Setenv("APTEX_LOCAL_LLM_ONLY", "false")
 	for _, stored := range []string{"no profile", "", "X-Stored-Session"} {
 		t.Run("stored="+stored, func(t *testing.T) {
 			s := &Server{m: &Manager{}}
@@ -97,8 +97,8 @@ func TestConnectionSessionHeaderPrecedence(t *testing.T) {
 }
 
 func TestLegacyConfigPersistsProviderSessionHeader(t *testing.T) {
-	t.Setenv("SCOPEWEAVER_CONFIG", filepath.Join(t.TempDir(), "missing.json"))
-	t.Setenv("SCOPEWEAVER_LOCAL_LLM_ONLY", "false")
+	t.Setenv("APTEX_CONFIG", filepath.Join(t.TempDir(), "missing.json"))
+	t.Setenv("APTEX_LOCAL_LLM_ONLY", "false")
 	m := backportTestManager(t)
 	s := &Server{m: m}
 	previous, err := m.pg.ActiveProfile()

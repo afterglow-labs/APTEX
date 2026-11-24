@@ -5,10 +5,10 @@ set -euo pipefail
 repo="$(cd "$(dirname "$0")/.." && pwd)"
 installer="${1:-$repo/install.sh}"
 temp_root="$(cd "${TMPDIR:-/tmp}" && pwd -P)"
-fixture="$(mktemp -d "$temp_root/scopeweaver-install.XXXXXX")"
+fixture="$(mktemp -d "$temp_root/aptex-install.XXXXXX")"
 cleanup() {
   case "$fixture" in
-    "$temp_root"/scopeweaver-install.*) rm -rf -- "$fixture" ;;
+    "$temp_root"/aptex-install.*) rm -rf -- "$fixture" ;;
     *) printf 'Refusing cleanup outside the installer fixture: %s\n' "$fixture" >&2 ;;
   esac
 }
@@ -37,7 +37,7 @@ set -euo pipefail
 printf 'go %s\n' "$*" >> calls.log
 case "$*" in
   version) printf 'go version fixture\n' ;;
-  'build -tags embedui -trimpath -o scopeweaver ./cmd/artex')
+  'build -tags embedui -trimpath -o aptex ./cmd/aptex')
     [[ "${CGO_ENABLED:-}" == 0 ]]
     [[ -f server/webui/dist/index.html ]]
     ;;
@@ -68,15 +68,15 @@ fail() {
 run_installer() {
   (
     cd "$fixture"
-    export PATH="$fixture/bin:$PATH" SCOPEWEAVER_LANGUAGE="${INSTALL_FIXTURE_LANGUAGE:-en}"
+    export PATH="$fixture/bin:$PATH" APTEX_LANGUAGE="${INSTALL_FIXTURE_LANGUAGE:-en}"
     # Local install, existing PostgreSQL, default connection values, disposable DB name.
-    printf '%b' "${INSTALL_FIXTURE_ANSWERS:-2\n1\n\n\n\n\nscopeweaver_test_install\n\n}" | bash ./install.sh
+    printf '%b' "${INSTALL_FIXTURE_ANSWERS:-2\n1\n\n\n\n\naptex_test_install\n\n}" | bash ./install.sh
   ) > "$fixture/output.log" 2>&1
 }
 assert_output() {
   [[ "$(cat "$fixture/server/webui/dist/index.html")" == "$INSTALL_FIXTURE_CONTENT" ]] || fail 'incorrect frontend output'
   [[ ! -e "$fixture/server/webui/dist/out" ]] || fail 'frontend output was nested under dist/out'
-  grep -Fxq 'go build -tags embedui -trimpath -o scopeweaver ./cmd/artex' "$fixture/calls.log" || fail 'embedded build did not run'
+  grep -Fxq 'go build -tags embedui -trimpath -o aptex ./cmd/aptex' "$fixture/calls.log" || fail 'embedded build did not run'
   grep -Fxq start "$fixture/calls.log" || fail 'startup did not run'
 }
 
@@ -107,7 +107,7 @@ export INSTALL_FIXTURE_FAIL=''
 for language in en ko zh-Hans zh-Hant ja es; do
   export INSTALL_FIXTURE_LANGUAGE="$language" INSTALL_FIXTURE_OLLAMA=1
   rm -f "$fixture/config.json"
-  export INSTALL_FIXTURE_ANSWERS='2\n1\n\n\n\n\nscopeweaver_test_install\n\ny\nqwen2.5-coder:7b\n'
+  export INSTALL_FIXTURE_ANSWERS='2\n1\n\n\n\n\naptex_test_install\n\ny\nqwen2.5-coder:7b\n'
   run_installer || fail "$language Ollama selection failed"
   python3 - "$fixture/config.json" <<'PYTEST'
 import json,sys
@@ -124,7 +124,7 @@ PYTEST
 done
 
 rm -f "$fixture/config.json"
-export INSTALL_FIXTURE_ANSWERS='2\n1\n\n\n\n\nscopeweaver_test_install\n\nn\n'
+export INSTALL_FIXTURE_ANSWERS='2\n1\n\n\n\n\naptex_test_install\n\nn\n'
 run_installer || fail 'declining host Ollama failed'
 if grep -q '"llm"' "$fixture/config.json"; then fail 'declined Ollama configured'; fi
 printf 'PASS: detected host Ollama remains opt-in\n'
@@ -132,8 +132,8 @@ printf 'PASS: detected host Ollama remains opt-in\n'
 rm -f "$fixture/.env"
 export INSTALL_FIXTURE_ANSWERS='1\nfixture-password\n\ny\nqwen2.5-coder:7b\n'
 run_installer || fail 'Docker Ollama selection failed'
-grep -Fxq 'SCOPEWEAVER_LLM_PROVIDER=ollama' "$fixture/.env" || fail 'Docker provider missing'
-grep -Fxq 'SCOPEWEAVER_LLM_BASE_URL=http://host.docker.internal:11434' "$fixture/.env" || fail 'Docker host endpoint incorrect'
+grep -Fxq 'APTEX_LLM_PROVIDER=ollama' "$fixture/.env" || fail 'Docker provider missing'
+grep -Fxq 'APTEX_LLM_BASE_URL=http://host.docker.internal:11434' "$fixture/.env" || fail 'Docker host endpoint incorrect'
 cp "$fixture/.env" "$fixture/env.saved"
 export INSTALL_FIXTURE_ANSWERS='1\n'
 run_installer || fail 'Docker reinstall failed'

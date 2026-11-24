@@ -19,7 +19,7 @@ import (
 	"testing"
 	"unicode"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/locale"
 )
 
 func localizedMessage(lang locale.Lang) Message {

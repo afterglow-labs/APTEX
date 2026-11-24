@@ -10,14 +10,14 @@ import { BridgeError, fail, safeJSON } from "./protocol.mjs";
 import { assertNoUnmanagedConfig } from "./native-cli.mjs";
 
 const require = createRequire(import.meta.url);
-const gateMarker = "SCOPEWEAVER_LEGACY_SECOND_REQUEST";
+const gateMarker = "APTEX_LEGACY_SECOND_REQUEST";
 const canceled = () => new BridgeError("canceled", 499);
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 function nativeError(error) {
   const data = error?.data;
-  if (data?.message === "SCOPEWEAVER_LEGACY_QUOTA") return new BridgeError("quota_exhausted", 402);
-  if (data?.message === "SCOPEWEAVER_LEGACY_CONTEXT_LENGTH") return new BridgeError("context_length_exceeded", 400);
-  if (data?.message === "SCOPEWEAVER_LEGACY_FREE_TIER") return new BridgeError("free_tier_restricted", 403);
+  if (data?.message === "APTEX_LEGACY_QUOTA") return new BridgeError("quota_exhausted", 402);
+  if (data?.message === "APTEX_LEGACY_CONTEXT_LENGTH") return new BridgeError("context_length_exceeded", 400);
+  if (data?.message === "APTEX_LEGACY_FREE_TIER") return new BridgeError("free_tier_restricted", 403);
   if (error?.name === "APIError" && data?.statusCode === 403 && typeof data.responseBody === "string" && data.responseBody.length < 100000) {
     try {
       const body = JSON.parse(data.responseBody);
@@ -87,9 +87,9 @@ function history(request, map, rawHistory) {
   const [providerID, ...modelParts] = request.model.split("/");
   const modelID = modelParts.join("/");
   return request.messages.map((message, index) => {
-    const id = `msg_scopeweaver_${index}`, parts = [];
+    const id = `msg_aptex_${index}`, parts = [];
     for (const block of message.content) {
-      const common = { id: `prt_scopeweaver_${index}_${parts.length}`, messageID: id };
+      const common = { id: `prt_aptex_${index}_${parts.length}`, messageID: id };
       if (block.type === "text") parts.push({ ...common, type: "text", text: block.text });
       else if (block.type === "thinking") {
         // The pinned OpenAI-compatible converter preserves unsigned text only;
@@ -109,7 +109,7 @@ function history(request, map, rawHistory) {
       } else if (block.type !== "tool_result") fail("unsupported_input");
     }
     const info = message.role === "assistant"
-      ? { id, role: "assistant", parentID: `msg_scopeweaver_${Math.max(0, index - 1)}`, modelID, providerID,
+      ? { id, role: "assistant", parentID: `msg_aptex_${Math.max(0, index - 1)}`, modelID, providerID,
           agent: "capture", mode: "capture", path: { cwd: "/", root: "/" }, cost: 0,
           tokens: { input: 0, output: 0, reasoning: 0, cache: { read: 0, write: 0 } }, time: { created: 0, completed: 0 }, finish: "stop" }
       : { id, role: "user", time: { created: 0 }, agent: "capture", model: { providerID, modelID } };
@@ -196,7 +196,7 @@ async function start({ root, providerConfig, request, map, rawHistory = {}, sign
       const statePath = `${runtime}/state.json`;
       await writeFile(statePath, JSON.stringify({ request, provider, allowed: request.tools.map(tool => map.forward.get(tool.name)), history: history(request, map, rawHistory) }), { mode: 0o600 });
       cfg.plugin = [[new URL("./legacy-plugin.mjs", import.meta.url).href, { state: statePath }]];
-      const token = randomUUID(), schemas = request.tools.map(tool => ({ name: map.forward.get(tool.name).slice("capture_".length), description: `ScopeWeaver host tool ${tool.name}. Invoke this advertised function when host instructions refer to ${tool.name}.\n${tool.description}`, inputSchema: tool.input_schema }));
+      const token = randomUUID(), schemas = request.tools.map(tool => ({ name: map.forward.get(tool.name).slice("capture_".length), description: `APTEX host tool ${tool.name}. Invoke this advertised function when host instructions refer to ${tool.name}.\n${tool.description}`, inputSchema: tool.input_schema }));
       captureServer = createServer(async (req, res) => {
         if (req.headers.authorization !== `Bearer ${token}`) { res.writeHead(401); res.end(); return; }
         if (req.method !== "POST") { res.writeHead(req.method === "DELETE" ? 200 : 405); res.end(); return; }
@@ -205,7 +205,7 @@ async function start({ root, providerConfig, request, map, rawHistory = {}, sign
           const call = safeJSON(text, "protocol_error");
           if (call.id === undefined) { res.writeHead(202); res.end(); return; }
           let result;
-          if (call.method === "initialize") result = { protocolVersion: call.params.protocolVersion, capabilities: { tools: {} }, serverInfo: { name: "scopeweaver-capture", version: "1" } };
+          if (call.method === "initialize") result = { protocolVersion: call.params.protocolVersion, capabilities: { tools: {} }, serverInfo: { name: "aptex-capture", version: "1" } };
           else if (call.method === "tools/list") result = { tools: schemas };
           else if (call.method === "tools/call") {
             if (!schemas.some(schema => schema.name === call.params.name)) throw Error();
@@ -341,10 +341,10 @@ export async function completeLegacy(request, { root, providerConfig, rawHistory
       } } catch (e) { if (!abortEvents.signal.aborted) { error = e instanceof BridgeError ? e : new BridgeError("sdk_failure", 502); notify(); } }
     })();
     const permissions = [{ permission: "*", pattern: "*", action: "deny" }, ...request.tools.map(tool => ({ permission: map.forward.get(tool.name), pattern: "*", action: "allow" }))];
-    session = (await client.session.create({ directory, title: "ScopeWeaver capture", permission: permissions })).data;
+    session = (await client.session.create({ directory, title: "APTEX capture", permission: permissions })).data;
     emit({ type: "message_start" });
     const split = request.model.indexOf("/");
-    await client.session.promptAsync({ sessionID: session.id, directory, model: { providerID: request.model.slice(0, split), modelID: request.model.slice(split + 1) }, agent: "capture", parts: [{ type: "text", text: "ScopeWeaver host turn" }] });
+    await client.session.promptAsync({ sessionID: session.id, directory, model: { providerID: request.model.slice(0, split), modelID: request.model.slice(split + 1) }, agent: "capture", parts: [{ type: "text", text: "APTEX host turn" }] });
     while (!ended && !error) await new Promise(resolve => { wake = resolve; if (ended || error || signal?.aborted) notify(); });
     if (error) throw error;
     if (!firstUsage || !content.length || [...calls.values()].some(value => !value.call.raw)) fail("protocol_error");

@@ -16,7 +16,7 @@ export function workerEnvironment(root,source=process.env) {
   return env;
 }
 export async function executeWorker(input,{signal,onEvent=()=>{},timeout=0}={}) {
-  const root=await mkdtemp(join(tmpdir(),"scopeweaver-opencode-worker-"));
+  const root=await mkdtemp(join(tmpdir(),"aptex-opencode-worker-"));
   const env=workerEnvironment(root);
   let child,timer,killTimer,canceled=false,timedOut=false;
   try {
@@ -90,7 +90,7 @@ async function readBody(req) {
   return new TextDecoder("utf-8",{fatal:true}).decode(Buffer.concat(chunks));
 }
 export function createBridge({token,providerConfig,timeout=0,runtime="native",worker=executeWorker}={}) {
-  if(typeof token!=="string"||token.length<32||/[\s\r\n]/.test(token))throw new Error("SCOPEWEAVER_OPENCODE_TOKEN must contain at least 32 non-whitespace characters");
+  if(typeof token!=="string"||token.length<32||/[\s\r\n]/.test(token))throw new Error("APTEX_OPENCODE_TOKEN must contain at least 32 non-whitespace characters");
   if(!Number.isSafeInteger(timeout)||timeout<0||timeout>86400000)throw new Error("Bridge timeout must be 0..86400000 milliseconds");
   providerConfig=validateProviderConfig(providerConfig);
   const active=new Map();let closed=false;
@@ -110,7 +110,7 @@ export function createBridge({token,providerConfig,timeout=0,runtime="native",wo
       try {
         authorize(req);if(closed)fail("canceled",503);
         const path=new URL(req.url).pathname;
-        if(req.method==="GET"&&path==="/v1/capabilities")return json({protocol:"scopeweaver-opencode-sdk",version:1,sdk_version:runtime==="native"?"2.1.4":"1.19.4",runtime,tool_execution:"capture-only",streaming:true});
+        if(req.method==="GET"&&path==="/v1/capabilities")return json({protocol:"aptex-opencode-sdk",version:1,sdk_version:runtime==="native"?"2.1.4":"1.19.4",runtime,tool_execution:"capture-only",streaming:true});
         if(req.method==="DELETE"&&/^\/v1\/requests\/[A-Za-z0-9_-]{1,128}$/.test(path)){active.get(path.slice("/v1/requests/".length))?.abort();return json({aborted:true})}
         if(req.method==="GET"&&path==="/v1/models"){
           const {controller,dispose}=controllerFor(req);const key=Symbol();active.set(key,controller);

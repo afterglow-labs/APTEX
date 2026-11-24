@@ -1,6 +1,6 @@
 package db
 
-import "github.com/afterglow-labs/afterglow-cybersecurity/locale"
+import "github.com/afterglow-labs/APTEX/locale"
 
 // RestoreReopenedIntent compensates failed rerun admission only while the reopened
 // intent is still open. Restore state and blocked_reason together so a concurrent

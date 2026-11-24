@@ -8,9 +8,9 @@ import (
 	"strings"
 	"testing"
 
-	pgdb "github.com/afterglow-labs/afterglow-cybersecurity/db"
-	"github.com/afterglow-labs/afterglow-cybersecurity/internal/dbtest"
-	"github.com/afterglow-labs/afterglow-cybersecurity/traffic"
+	pgdb "github.com/afterglow-labs/APTEX/db"
+	"github.com/afterglow-labs/APTEX/internal/dbtest"
+	"github.com/afterglow-labs/APTEX/traffic"
 )
 
 func TestSeedAssociatesTargetAssetWithTask(t *testing.T) {

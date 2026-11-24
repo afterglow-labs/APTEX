@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/agent"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
-	"github.com/afterglow-labs/afterglow-cybersecurity/opencodesdk"
+	"github.com/afterglow-labs/APTEX/agent"
+	"github.com/afterglow-labs/APTEX/locale"
+	"github.com/afterglow-labs/APTEX/opencodesdk"
 )
 
 // Bridge tokens cannot cross formats or normalized endpoint paths, including SDK-to-SDK edits.

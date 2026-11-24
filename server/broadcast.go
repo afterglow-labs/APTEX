@@ -3,7 +3,7 @@ package server
 import (
 	"sync"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
+	"github.com/afterglow-labs/APTEX/db"
 )
 
 // Broadcaster is a per-task in-process pub/sub for live activity events. The

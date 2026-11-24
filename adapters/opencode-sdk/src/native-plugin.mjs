@@ -6,10 +6,10 @@ const inputURL=new URL("./bridge-input.json",import.meta.url);
 const input=JSON.parse(await readFile(inputURL,"utf8"));
 const {request,history,tools,rawHistory,channel,egress}=input;
 const exposed=new Set(tools.map(t=>t.name));
-const notify=event=>process.stdout.write(JSON.stringify({_scopeweaver_native:channel,event})+"\n");
+const notify=event=>process.stdout.write(JSON.stringify({_aptex_native:channel,event})+"\n");
 let network=0;
 
-export default {id:"scopeweaver.host-capture",async setup(ctx){
+export default {id:"aptex.host-capture",async setup(ctx){
   await ctx.agent.transform(editor=>{
     for(const agent of editor.list())if(agent.id!=="capture")editor.remove(agent.id);
     editor.default("capture");
@@ -37,7 +37,7 @@ export default {id:"scopeweaver.host-capture",async setup(ctx){
     // Host instructions use the public custom-agent system setting. Keep the
     // runtime's generated initial context; replace only conversation history.
     event.messages=structuredClone(history);
-    event.system.push({type:"text",text:'ScopeWeaver tool policy: The host application owns tool execution. Use only direct function tools whose description starts with "Host tool:". All other OpenCode tools, including execute and native filesystem, shell, browser, and subagent tools, are disabled by policy. Do not call them. If no host tools are listed, respond without tools.'});
+    event.system.push({type:"text",text:'APTEX tool policy: The host application owns tool execution. Use only direct function tools whose description starts with "Host tool:". All other OpenCode tools, including execute and native filesystem, shell, browser, and subagent tools, are disabled by policy. Do not call them. If no host tools are listed, respond without tools.'});
     const current=JSON.parse(await readFile(inputURL,"utf8"));
     event.options.maxTokens=current.request.max_tokens;
     if(request.temperature!==undefined)event.options.temperature=request.temperature;
@@ -66,8 +66,8 @@ export default {id:"scopeweaver.host-capture",async setup(ctx){
     // The CLI's Effect transport drops Request.redirect. Route the unchanged
     // genuine request through the worker's one-use, redirect-blocking transport.
     const headers=new Headers(event.request.headers);
-    headers.set("x-scopeweaver-egress",egress.token);
-    headers.set("x-scopeweaver-upstream",event.request.url);
+    headers.set("x-aptex-egress",egress.token);
+    headers.set("x-aptex-upstream",event.request.url);
     event.request=new Request(egress.url,{method:"POST",headers,body:await event.request.clone().arrayBuffer(),redirect:"error"});
     notify({type:"request"});
   });

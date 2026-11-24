@@ -10,9 +10,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
-	"github.com/afterglow-labs/afterglow-cybersecurity/report"
+	"github.com/afterglow-labs/APTEX/db"
+	"github.com/afterglow-labs/APTEX/locale"
+	"github.com/afterglow-labs/APTEX/report"
 )
 
 // companyScopeInputs accepts both the new [{kind,value}] contract and the

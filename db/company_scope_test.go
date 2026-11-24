@@ -624,8 +624,8 @@ func TestHostScopeUpgrade(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !strings.HasPrefix(cfg.Database, "scopeweaver_test_") {
-		t.Fatal("upgrade requires a disposable scopeweaver_test_* database")
+	if !strings.HasPrefix(cfg.Database, "aptex_test_") {
+		t.Fatal("upgrade requires a disposable aptex_test_* database")
 	}
 	admin := stdlib.OpenDB(*cfg)
 	t.Cleanup(func() { admin.Close() })

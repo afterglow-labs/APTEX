@@ -2,7 +2,7 @@
 
 English · [한국어](../../../docs/ko/i18n.md) · [简体中文](../../../docs/zh-Hans/i18n.md) · [繁體中文](../../../docs/zh-Hant/i18n.md) · [日本語](../../../docs/ja/i18n.md) · [Español](../../../docs/es/i18n.md)
 
-English is the default. English, Korean, Simplified Chinese (`zh-Hans`), Traditional Chinese (`zh-Hant`), Japanese (`ja`) and Spanish (`es`) are shipped. The React provider restores an explicit preference after hydration, keeping the static English export and first client render consistent. Selection persists in `scopeweaver.locale` localStorage and the `scopeweaver_locale` cookie. API transport reads the stored preference even before hydration finishes; unavailable localStorage falls back to the cookie. No OS/browser language is selected automatically.
+English is the default. English, Korean, Simplified Chinese (`zh-Hans`), Traditional Chinese (`zh-Hant`), Japanese (`ja`) and Spanish (`es`) are shipped. The React provider restores an explicit preference after hydration, keeping the static English export and first client render consistent. Selection persists in `aptex.locale` localStorage and the `aptex_locale` cookie. API transport reads the stored preference even before hydration finishes; unavailable localStorage falls back to the cookie. No OS/browser language is selected automatically.
 
 ## Adding a language
 

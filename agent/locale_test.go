@@ -2,7 +2,7 @@ package agent
 
 import (
 	"encoding/json"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/locale"
 	actool "github.com/Autumn-27/norma/tool"
 	"strings"
 	"testing"

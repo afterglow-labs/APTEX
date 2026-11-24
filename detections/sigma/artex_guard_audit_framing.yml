@@ -21,6 +21,7 @@ logsource:
 detection:
     keywords:
         - '[ScopeWeaver platform control, not target defense]'
+        - '[APTEX platform control, not target defense]'
     condition: keywords
 falsepositives:
     - Logs that quote this defense guide or the ARTEX source code for documentation purposes.

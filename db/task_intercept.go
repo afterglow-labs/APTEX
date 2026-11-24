@@ -2,7 +2,7 @@ package db
 
 import (
 	"database/sql"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/locale"
 )
 
 // TaskInterceptRuleInput is one task-level rule supplied at task creation.

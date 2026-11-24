@@ -3,7 +3,7 @@ package llmpool
 import (
 	"context"
 	"errors"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/locale"
 	"iter"
 	"log"
 	"regexp"

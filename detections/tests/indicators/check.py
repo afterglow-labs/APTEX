@@ -74,13 +74,13 @@ INDICATORS = [
     },
     {
         "label": "self-update egress User-Agent",
-        "value": "scopeweaver-selfupdate",
+        "value": "aptex-selfupdate",
         "sources": ["selfupdate/github.go", "selfupdate/stage.go"],
         "rules": ["detections/sigma/artex_selfupdate_egress.yml"],
     },
     {
         "label": "platform-guard audit framing marker",
-        "value": "[ScopeWeaver platform control, not target defense]",
+        "value": "[APTEX platform control, not target defense]",
         "sources": ["guard/guard.go"],
         "rules": ["detections/sigma/artex_guard_audit_framing.yml"],
     },

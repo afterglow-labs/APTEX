@@ -15,13 +15,13 @@ import (
 	"sync"
 	"time"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/agent"
-	pgdb "github.com/afterglow-labs/afterglow-cybersecurity/db"
-	"github.com/afterglow-labs/afterglow-cybersecurity/enrich"
-	"github.com/afterglow-labs/afterglow-cybersecurity/guard"
-	"github.com/afterglow-labs/afterglow-cybersecurity/intercept"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
-	"github.com/afterglow-labs/afterglow-cybersecurity/traffic"
+	"github.com/afterglow-labs/APTEX/agent"
+	pgdb "github.com/afterglow-labs/APTEX/db"
+	"github.com/afterglow-labs/APTEX/enrich"
+	"github.com/afterglow-labs/APTEX/guard"
+	"github.com/afterglow-labs/APTEX/intercept"
+	"github.com/afterglow-labs/APTEX/locale"
+	"github.com/afterglow-labs/APTEX/traffic"
 	actool "github.com/Autumn-27/norma/tool"
 )
 

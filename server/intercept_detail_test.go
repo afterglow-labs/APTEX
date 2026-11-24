@@ -8,9 +8,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
-	"github.com/afterglow-labs/afterglow-cybersecurity/intercept"
-	"github.com/afterglow-labs/afterglow-cybersecurity/internal/dbtest"
+	"github.com/afterglow-labs/APTEX/db"
+	"github.com/afterglow-labs/APTEX/intercept"
+	"github.com/afterglow-labs/APTEX/internal/dbtest"
 )
 
 func TestInterceptDetailHTTP(t *testing.T) {

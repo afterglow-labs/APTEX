@@ -4,8 +4,8 @@ import (
 	"context"
 	"iter"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/agent"
-	"github.com/afterglow-labs/afterglow-cybersecurity/intercept"
+	"github.com/afterglow-labs/APTEX/agent"
+	"github.com/afterglow-labs/APTEX/intercept"
 	"github.com/Autumn-27/norma/llm"
 )
 

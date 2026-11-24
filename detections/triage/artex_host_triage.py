@@ -25,18 +25,18 @@
 # What it checks (each cites the source it is grounded in):
 #   1. Listening ports        :8787 (admin UI) and 127.0.0.1:8788 (recording proxy)
 #                             — defaults of the --addr / --proxy flags in
-#                               cmd/artex/main.go. Parsed from `ss`/`netstat`/`lsof`
+#                               cmd/aptex/main.go. Parsed from `ss`/`netstat`/`lsof`
 #                               on the live host, or from --ports-from FILE.
 #   2. Recording-proxy MITM    <data-dir>/traffic/_ca/mitmproxy-ca-cert.pem and the
 #      CA + stores             sibling _index/index.sqlite and _blobs/ the recorder
 #                             writes on first start (traffic/traffic.go; the data
 #                               dir default is data/ next to the binary — see
-#                               cmd/artex/main.go). The CA is the trust anchor of an
+#                               cmd/aptex/main.go). The CA is the trust anchor of an
 #                               adversary-in-the-middle traffic recorder (ATT&CK
 #                               T1557).
 #   3. Log markers            the enrichment prober UA `artex-enrich/1.0`
 #                               (enrich/enrich.go), the self-update egress UA
-#                               `scopeweaver-selfupdate` (selfupdate/github.go), and the
+#                               `aptex-selfupdate` (selfupdate/github.go), and the
 #                               platform-guard audit marker (guard/guard.go) in the
 #                               log file(s) you point it at. Rotated logs that
 #                               logrotate compressed as .gz/.bz2/.xz are read
@@ -94,7 +94,7 @@ import tempfile
 
 # --- grounded constants (every value is verified in this repository's source) ---
 
-# Default listen / recording-proxy ports (cmd/artex/main.go --addr / --proxy).
+# Default listen / recording-proxy ports (cmd/aptex/main.go --addr / --proxy).
 SERVER_PORT = 8787
 PROXY_HOST = "127.0.0.1"
 PROXY_PORT = 8788
@@ -119,14 +119,14 @@ LOG_MARKERS = [
         "caveat": "An operator can change the User-Agent; absence is not safety.",
     },
     {
-        "value": "scopeweaver-selfupdate",
+        "value": "aptex-selfupdate",
         "title": "self-update egress User-Agent",
         "source": "selfupdate/github.go",
         "severity": "medium",
         "caveat": "Seen in outbound logs from a host running ARTEX; the string is configurable.",
     },
     {
-        "value": "[ScopeWeaver platform control, not target defense]",
+        "value": "[APTEX platform control, not target defense]",
         "title": "platform-guard audit-log framing marker",
         "source": "guard/guard.go",
         "severity": "high",
@@ -161,7 +161,7 @@ CA_ENV_VARS = (
     "SSL_CERT_FILE", "CURL_CA_BUNDLE", "REQUESTS_CA_BUNDLE", "GIT_SSL_CAINFO", "NODE_EXTRA_CA_CERTS",
 )
 CA_BASENAME = "mitmproxy-ca-cert.pem"  # basename of CA_RELPATH; the value a CA var points at
-# The recording-proxy default endpoint (cmd/artex/main.go --proxy). An operator can
+# The recording-proxy default endpoint (cmd/aptex/main.go --proxy). An operator can
 # point --proxy elsewhere, so the CA var is the anchor and this is only the fallback.
 PROXY_DEFAULT_ENDPOINT = f"{PROXY_HOST}:{PROXY_PORT}"  # 127.0.0.1:8788
 
@@ -248,7 +248,7 @@ def check_listening_ports(listing):
                     "medium",
                     "ARTEX default admin-UI port is listening",
                     f"a process is listening on {host}:{port} (ARTEX --addr default :{SERVER_PORT})",
-                    "cmd/artex/main.go",
+                    "cmd/aptex/main.go",
                     "The port is configurable; confirm the process with `ss -ltnp` / `lsof`.",
                 )
             )
@@ -259,7 +259,7 @@ def check_listening_ports(listing):
                     "high",
                     "ARTEX recording-proxy loopback port is listening",
                     f"a process is listening on {host}:{port} (ARTEX --proxy default {PROXY_HOST}:{PROXY_PORT})",
-                    "cmd/artex/main.go",
+                    "cmd/aptex/main.go",
                     "Loopback-only and configurable; correlate with the MITM CA file under traffic/_ca/.",
                 )
             )
@@ -646,7 +646,7 @@ def run_checks(args):
     else:
         notes.append(
             "recording-proxy artifact check skipped (no --data-dir; "
-            "ARTEX's default is data/ next to the binary — cmd/artex/main.go)."
+            "ARTEX's default is data/ next to the binary — cmd/aptex/main.go)."
         )
 
     if args.log or args.log_dir:
@@ -764,7 +764,7 @@ def self_test():
         logpath = os.path.join(tmp, "app.log")
         with open(logpath, "w", encoding="utf-8") as f:
             f.write("GET / HTTP/1.1 artex-enrich/1.0\n")
-            f.write("outbound scopeweaver-selfupdate to release host\n")
+            f.write("outbound aptex-selfupdate to release host\n")
             f.write("blocked: " + LOG_MARKERS[2]["value"] + " this operation is denied\n")
             f.write("a normal line with no markers\n")
         lf, _ = scan_logs([logpath], [])
@@ -778,7 +778,7 @@ def self_test():
         rot = os.path.join(tmp, "rotated")
         os.makedirs(rot)
         with open(os.path.join(rot, "artex.log"), "w", encoding="utf-8") as f:
-            f.write("outbound scopeweaver-selfupdate to release host\n")
+            f.write("outbound aptex-selfupdate to release host\n")
         with gzip.open(os.path.join(rot, "artex.log.1.gz"), "wt", encoding="utf-8") as f:
             f.write("GET / HTTP/1.1 artex-enrich/1.0\n")
         with bz2.open(os.path.join(rot, "artex.log.2.bz2"), "wt", encoding="utf-8") as f:

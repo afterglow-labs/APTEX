@@ -11,7 +11,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/chatstate"
+	"github.com/afterglow-labs/APTEX/chatstate"
 )
 
 func TestChatInputPatchAttachmentManifest(t *testing.T) {

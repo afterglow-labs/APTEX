@@ -4,14 +4,14 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/locale"
 	"log"
 	"strconv"
 	"sync"
 	"time"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
-	"github.com/afterglow-labs/afterglow-cybersecurity/notify"
+	"github.com/afterglow-labs/APTEX/db"
+	"github.com/afterglow-labs/APTEX/notify"
 )
 
 // Global keys use the existing settings table; no new table is needed.
@@ -20,7 +20,7 @@ const (
 	// Configured channels, rather than this switch, determine whether notifications exist.
 	settingNotifyEnabled = "notify_enabled"
 	// settingNotifyPublicBaseURL supplies the externally accessible finding-detail URL,
-	// such as https://scopeweaver.example.com. Empty omits the return-link button.
+	// such as https://aptex.example.com. Empty omits the return-link button.
 	// No existing external-base setting can be reused, so notifications own this key.
 	settingNotifyPublicBaseURL = "notify_public_base_url"
 	// settingNotifyDigestMinutes controls the digest period in minutes.

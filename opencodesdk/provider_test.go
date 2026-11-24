@@ -13,7 +13,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/locale"
 	"github.com/Autumn-27/norma/compaction"
 	"github.com/Autumn-27/norma/llm"
 	"github.com/Autumn-27/norma/transcript"
@@ -115,7 +115,7 @@ func TestBridgeErrorDiagnosticCatalogAndUnknownEvidence(t *testing.T) {
 	}
 }
 
-const capabilities = `{"protocol":"scopeweaver-opencode-sdk","version":1,"runtime":"native","sdk_version":"2.1.4","tool_execution":"capture-only","streaming":true}`
+const capabilities = `{"protocol":"aptex-opencode-sdk","version":1,"runtime":"native","sdk_version":"2.1.4","tool_execution":"capture-only","streaming":true}`
 const completeFixture = `{"message":{"role":"assistant","content":[{"type":"text","text":"Ready"},{"type":"tool_use","id":"host-call","name":"host_read","input":{"id":9223372036854775807}}]},"stop_reason":"tool_use","usage":{"input_tokens":11,"output_tokens":7,"cache_read_tokens":3,"cache_write_tokens":2}}`
 const streamFixture = `{"type":"message_start"}
 {"type":"text_delta","text":"Ready"}

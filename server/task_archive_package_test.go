@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	pgdb "github.com/afterglow-labs/afterglow-cybersecurity/db"
+	pgdb "github.com/afterglow-labs/APTEX/db"
 	"github.com/klauspost/compress/zstd"
 )
 

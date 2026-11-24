@@ -10,7 +10,7 @@ import (
 	"time"
 	_ "time/tzdata" // schedules keep IANA zones in the minimal runtime image
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
+	"github.com/afterglow-labs/APTEX/db"
 )
 
 type workflowReq struct {

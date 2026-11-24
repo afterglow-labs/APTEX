@@ -9,7 +9,7 @@ import (
 	"testing"
 
 	"github.com/Autumn-27/norma/llm"
-	"github.com/afterglow-labs/afterglow-cybersecurity/chatgptllm"
+	"github.com/afterglow-labs/APTEX/chatgptllm"
 )
 
 func TestPlanLimitBlocksNewInferenceBeforeHTTPAndRecheckMakesOneRequest(t *testing.T) {

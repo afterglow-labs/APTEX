@@ -12,14 +12,14 @@
 # Override the defaults via environment variables to match your local PostgreSQL:
 #   TEST_DB_ROLE  (default sw_user_test)  role that owns the DB and runs the tests
 #   TEST_DB_HOST  (default /tmp)          unix socket directory (or a TCP host)
-#   TEST_DB_NAME  (default scopeweaver_test_$$)  must start with scopeweaver_test_
+#   TEST_DB_NAME  (default aptex_test_$$)  must start with aptex_test_
 #
 # Any extra arguments are forwarded to `go test` (e.g. -run, -v).
 set -euo pipefail
 
 TEST_DB_ROLE="${TEST_DB_ROLE:-sw_user_test}"
 TEST_DB_HOST="${TEST_DB_HOST:-/tmp}"
-DB="${TEST_DB_NAME:-scopeweaver_test_$$}"
+DB="${TEST_DB_NAME:-aptex_test_$$}"
 
 cleanup() { dropdb --if-exists "$DB" >/dev/null 2>&1 || true; }
 trap cleanup EXIT

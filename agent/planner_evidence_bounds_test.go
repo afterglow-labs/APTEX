@@ -4,9 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
-	"github.com/afterglow-labs/afterglow-cybersecurity/internal/dbtest"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/db"
+	"github.com/afterglow-labs/APTEX/internal/dbtest"
+	"github.com/afterglow-labs/APTEX/locale"
 	"github.com/Autumn-27/norma/llm"
 	actool "github.com/Autumn-27/norma/tool"
 	"iter"
@@ -35,7 +35,7 @@ func TestPlannerEvidenceVolumeIsolation(t *testing.T) {
 			}
 			defer d.Close()
 			var dbname string
-			if err := d.QueryRow("SELECT current_database()").Scan(&dbname); err != nil || !strings.HasPrefix(dbname, "scopeweaver_test_") {
+			if err := d.QueryRow("SELECT current_database()").Scan(&dbname); err != nil || !strings.HasPrefix(dbname, "aptex_test_") {
 				t.Fatal("disposable identity rejected")
 			}
 			row, err := d.CreateTask("QA independent "+mode, "Keep unproven objectives open", nil, 0, 600)
@@ -325,7 +325,7 @@ func TestPlannerEvidenceExplicitRecovery(t *testing.T) {
 			}
 			defer d.Close()
 			var dbname string
-			if e := d.QueryRow("SELECT current_database()").Scan(&dbname); e != nil || !strings.HasPrefix(dbname, "scopeweaver_test_") {
+			if e := d.QueryRow("SELECT current_database()").Scan(&dbname); e != nil || !strings.HasPrefix(dbname, "aptex_test_") {
 				t.Fatal("disposable identity rejected")
 			}
 			source, e := d.CreateTask("QA source", "Owned synthetic source", nil, 0, 600)

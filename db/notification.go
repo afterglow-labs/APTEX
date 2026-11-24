@@ -5,12 +5,12 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/locale"
 	"log"
 	"strings"
 	"time"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/notify"
+	"github.com/afterglow-labs/APTEX/notify"
 )
 
 // IM notification channel configuration and event layer. Delivery claiming and transitions are in

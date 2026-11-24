@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
+	"github.com/afterglow-labs/APTEX/db"
 )
 
 // S11 (API): existing response keys/values survive the additive reasoning field.

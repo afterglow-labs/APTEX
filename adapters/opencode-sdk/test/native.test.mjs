@@ -106,7 +106,7 @@ describe("actual native 2.1.4 runtime",()=>{
       expect(res.status).toBe(200);expect(body.stop_reason).toBe("end_turn");expect(body.usage).toEqual({input_tokens:93,output_tokens:23,cache_read_tokens:5,cache_write_tokens:3});
       expect(f.requests).toHaveLength(1);const wire=f.requests[0];expect(wire.max_tokens).toBe(64);expect(wire.max_completion_tokens).toBeUndefined();expect(wire.temperature).toBe(0.25);expect(wire.stop).toEqual(["STOP"]);expect(wire.thinking).toEqual({type:"disabled"});
       expect(wire.messages[0].role).toBe("system");expect(wire.messages[0].content.startsWith("Exact host system\n\nSecond segment\n")).toBe(true);expect(wire.messages[0].content).toContain("Here is some useful information about the environment");expect(wire.messages.slice(1)).toEqual([{role:"user",content:"host question"}]);expect(wire.tools.map(t=>t.function.name)).toContain("shell");expect(wire.tools.filter(t=>t.function.description?.startsWith("Host tool: "))).toEqual([]);
-      expect(f.headers[0]["x-opencode-session"]).toBeUndefined();expect(f.headers[0].authorization).toBe("Bearer explicit-fixture-only");expect(f.headers[0]["x-scopeweaver-egress"]).toBeUndefined();expect(f.headers[0]["x-scopeweaver-upstream"]).toBeUndefined();
+      expect(f.headers[0]["x-opencode-session"]).toBeUndefined();expect(f.headers[0].authorization).toBe("Bearer explicit-fixture-only");expect(f.headers[0]["x-aptex-egress"]).toBeUndefined();expect(f.headers[0]["x-aptex-upstream"]).toBeUndefined();
     }finally{await f.close()}
   });
   test("native egress forwards compressed SSE without a second content decoding",async()=>{

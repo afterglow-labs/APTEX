@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/internal/dbtest"
+	"github.com/afterglow-labs/APTEX/internal/dbtest"
 	"github.com/Autumn-27/norma/llm"
 )
 

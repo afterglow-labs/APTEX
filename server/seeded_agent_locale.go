@@ -1,8 +1,8 @@
 package server
 
 import (
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/db"
+	"github.com/afterglow-labs/APTEX/locale"
 )
 
 // Localize exact stock metadata on a response copy; edited values remain verbatim.

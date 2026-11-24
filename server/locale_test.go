@@ -2,7 +2,7 @@ package server
 
 import (
 	"encoding/json"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/locale"
 	"net/http"
 	"net/http/httptest"
 	"strings"

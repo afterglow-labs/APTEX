@@ -10,7 +10,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
-import { configFromEnv, ScopeWeaverClient } from "../src/client.js";
+import { configFromEnv, APTEXClient } from "../src/client.js";
 import { MESSAGES, SUPPORTED_LANGUAGES, translator } from "../src/messages.js";
 import { createTools, executeTool } from "../src/tools.js";
 import extension from "../pi-extension.js";
@@ -27,10 +27,10 @@ test("configuration rejects unsafe origins and invalid options without printing 
   assert.equal(configFromEnv({}).username, "Afterglow");
   assert.equal(configFromEnv({ AFTERGLOW_ADMIN_USERNAME: "Corey" }).username, "Corey");
   for (const url of ["http://example.com", "https://secret@example.com", "https://example.com/api/", "https://example.com?token=secret", "file:///tmp/x"]) {
-    assert.throws(() => configFromEnv({ SCOPEWEAVER_URL: url }), (error) => !error.message.includes("secret"));
+    assert.throws(() => configFromEnv({ APTEX_URL: url }), (error) => !error.message.includes("secret"));
   }
-  for (const options of [{ SCOPEWEAVER_TIMEOUT_MS: "NaN" }, { SCOPEWEAVER_TIMEOUT_MS: "0" },
-    { SCOPEWEAVER_LANGUAGE: "xx" }, { SCOPEWEAVER_ALLOW_WRITES: "yes" }, { SCOPEWEAVER_TOKEN: "x\ny" }]) {
+  for (const options of [{ APTEX_TIMEOUT_MS: "NaN" }, { APTEX_TIMEOUT_MS: "0" },
+    { APTEX_LANGUAGE: "xx" }, { APTEX_ALLOW_WRITES: "yes" }, { APTEX_TOKEN: "x\ny" }]) {
     assert.throws(() => configFromEnv(options));
   }
 });
@@ -46,32 +46,32 @@ test("all six canonical languages configure the adapter and reach Accept-Languag
   assert.equal(configFromEnv({}).language, "en");
   for (const language of ["en", "ko", "zh-Hans", "zh-Hant", "ja", "es"]) {
     expected = language;
-    const config = configFromEnv({ SCOPEWEAVER_URL: url, SCOPEWEAVER_TOKEN: "fixture-token", SCOPEWEAVER_LANGUAGE: language });
+    const config = configFromEnv({ APTEX_URL: url, APTEX_TOKEN: "fixture-token", APTEX_LANGUAGE: language });
     assert.equal(config.language, language);
-    assert.deepEqual(await new ScopeWeaverClient(config).request("/api/settings"), { language });
+    assert.deepEqual(await new APTEXClient(config).request("/api/settings"), { language });
   }
   for (const language of ["xx", "zh", "zh-CN", "zh-TW", "ja-JP", "es-MX", "EN", "en-US", "en\n"]) {
-    assert.throws(() => configFromEnv({ SCOPEWEAVER_LANGUAGE: language }), /SCOPEWEAVER_LANGUAGE/);
+    assert.throws(() => configFromEnv({ APTEX_LANGUAGE: language }), /APTEX_LANGUAGE/);
   }
 });
 
 test("Korean adapter metadata and configuration diagnostics are localized", () => {
-  const client = new ScopeWeaverClient(configFromEnv({ SCOPEWEAVER_LANGUAGE: "ko" }));
-  assert.equal(createTools(client)[0].title, "ScopeWeaver 상태");
-  assert.throws(() => configFromEnv({ SCOPEWEAVER_LANGUAGE: "ko", SCOPEWEAVER_TIMEOUT_MS: "0" }), /정수/);
+  const client = new APTEXClient(configFromEnv({ APTEX_LANGUAGE: "ko" }));
+  assert.equal(createTools(client)[0].title, "APTEX 상태");
+  assert.throws(() => configFromEnv({ APTEX_LANGUAGE: "ko", APTEX_TIMEOUT_MS: "0" }), /정수/);
 });
 
 test("writes are absent by default and unknown/path-injection arguments are rejected before HTTP", async () => {
-  const client = new ScopeWeaverClient(configFromEnv({}));
+  const client = new APTEXClient(configFromEnv({}));
   const reads = createTools(client);
   assert.equal(reads.length, 6);
   assert.ok(reads.every((tool) => tool.annotations.readOnlyHint));
-  const tool = reads.find((tool) => tool.name === "scopeweaver_get_task");
+  const tool = reads.find((tool) => tool.name === "aptex_get_task");
   await assert.rejects(executeTool(tool, { task_id: "../../settings" }));
   await assert.rejects(executeTool(tool, { task_id: "1", command: "ignored" }));
-  const writes = createTools(new ScopeWeaverClient(configFromEnv({ SCOPEWEAVER_ALLOW_WRITES: "true" })));
+  const writes = createTools(new APTEXClient(configFromEnv({ APTEX_ALLOW_WRITES: "true" })));
   assert.equal(writes.length, 8);
-  const create = writes.find((tool) => tool.name === "scopeweaver_create_task");
+  const create = writes.find((tool) => tool.name === "aptex_create_task");
   assert.equal(create.schema.parse({ description: "lab", goal: "test" }).timeout_seconds, 600);
   await assert.rejects(executeTool(create, { description: " ", goal: "test" }));
   await assert.rejects(executeTool(create, { description: "lab", goal: "test", timeout_seconds: 0 }));
@@ -92,8 +92,8 @@ test("concurrent calls share login, send authorization and Korean locale, and pa
     assert.equal(req.headers["accept-language"], "ko");
     res.end(JSON.stringify({ tasks: [{ id: "3" }, { id: "2" }, { id: "1" }], active: "3" }));
   });
-  const client = new ScopeWeaverClient(configFromEnv({ SCOPEWEAVER_URL: url, SCOPEWEAVER_PASSWORD: "fixture-password", SCOPEWEAVER_LANGUAGE: "ko" }));
-  const tool = createTools(client).find((tool) => tool.name === "scopeweaver_list_tasks");
+  const client = new APTEXClient(configFromEnv({ APTEX_URL: url, APTEX_PASSWORD: "fixture-password", APTEX_LANGUAGE: "ko" }));
+  const tool = createTools(client).find((tool) => tool.name === "aptex_list_tasks");
   const results = await Promise.all([executeTool(tool, { page: 2, limit: 1 }), executeTool(tool, {})]);
   assert.equal(logins, 1);
   assert.deepEqual(results[0].structuredContent.data.tasks, [{ id: "2" }]);
@@ -107,7 +107,7 @@ test("backend errors redact credentials and writes are never retried", async (t)
     res.writeHead(401, { "Content-Type": "application/json" });
     res.end(JSON.stringify({ error: "fixture-token fixture-password" }));
   });
-  const client = new ScopeWeaverClient(configFromEnv({ SCOPEWEAVER_URL: url, SCOPEWEAVER_TOKEN: "fixture-token", SCOPEWEAVER_PASSWORD: "fixture-password" }));
+  const client = new APTEXClient(configFromEnv({ APTEX_URL: url, APTEX_TOKEN: "fixture-token", APTEX_PASSWORD: "fixture-password" }));
   await assert.rejects(client.request("/api/tasks", { method: "POST", body: {} }), (error) => {
     assert.match(error.message, /HTTP 401.*redacted.*Sign in again/);
     assert.ok(!error.message.includes("fixture-token"));
@@ -121,7 +121,7 @@ test("redirects do not forward credentials to another server", async (t) => {
   let leaked = false;
   const destination = await fixture(t, (_, res) => { leaked = true; res.end("{}"); });
   const url = await fixture(t, (_, res) => { res.writeHead(302, { Location: destination }); res.end(); });
-  const client = new ScopeWeaverClient(configFromEnv({ SCOPEWEAVER_URL: url, SCOPEWEAVER_TOKEN: "fixture-token" }));
+  const client = new APTEXClient(configFromEnv({ APTEX_URL: url, APTEX_TOKEN: "fixture-token" }));
   await assert.rejects(client.request("/api/tasks"));
   assert.equal(leaked, false);
 });
@@ -132,7 +132,7 @@ test("timeouts, cancellation, malformed JSON and excessive responses fail explic
     if (req.url === "/api/large") return res.end("x".repeat(2 * 1024 * 1024 + 1));
     // /api/hang intentionally leaves the response open.
   });
-  const client = new ScopeWeaverClient(configFromEnv({ SCOPEWEAVER_URL: url, SCOPEWEAVER_TOKEN: "fixture-token", SCOPEWEAVER_TIMEOUT_MS: "100" }));
+  const client = new APTEXClient(configFromEnv({ APTEX_URL: url, APTEX_TOKEN: "fixture-token", APTEX_TIMEOUT_MS: "100" }));
   await assert.rejects(client.request("/api/invalid"), /non-JSON/);
   await assert.rejects(client.request("/api/large"), /exceeds 2 MiB/);
   await assert.rejects(client.request("/api/hang"), /timed out/);
@@ -144,8 +144,8 @@ test("timeouts, cancellation, malformed JSON and excessive responses fail explic
 test("Pi extension shares schemas and reports backend failures by throwing", async () => {
   const tools = [];
   extension({ registerTool: (tool) => tools.push(tool) });
-  assert.equal(tools.length, process.env.SCOPEWEAVER_ALLOW_WRITES === "true" ? 8 : 6);
-  const task = tools.find((tool) => tool.name === "scopeweaver_get_task");
+  assert.equal(tools.length, process.env.APTEX_ALLOW_WRITES === "true" ? 8 : 6);
+  const task = tools.find((tool) => tool.name === "aptex_get_task");
   assert.equal(task.parameters.type, "object");
   await assert.rejects(task.execute("id", { task_id: "../settings" }), /Invalid/);
 });
@@ -160,8 +160,8 @@ const withoutHumanMetadata = schema => {
   if (schema.items) machine.items = withoutHumanMetadata(schema.items);
   return machine;
 };
-const clientFor = (language, extra = {}) => new ScopeWeaverClient(configFromEnv({
-  SCOPEWEAVER_LANGUAGE: language, SCOPEWEAVER_ALLOW_WRITES: "true", SCOPEWEAVER_TOKEN: "fixture-token", ...extra,
+const clientFor = (language, extra = {}) => new APTEXClient(configFromEnv({
+  APTEX_LANGUAGE: language, APTEX_ALLOW_WRITES: "true", APTEX_TOKEN: "fixture-token", ...extra,
 }));
 
 test("schema comparison preserves description properties and literal const/default/enum data", () => {
@@ -223,7 +223,7 @@ test("adapter catalogs are complete with matching placeholders and literal techn
     for (const key of keys) {
       assert.ok(typeof MESSAGES[language][key] === "string" && MESSAGES[language][key].trim(), `${language}:${key}`);
       assert.deepEqual(placeholders(MESSAGES[language][key]), placeholders(MESSAGES.en[key]), `${language}:${key}`);
-      if (key.startsWith("config.")) for (const token of MESSAGES.en[key].match(/SCOPEWEAVER_[A-Z_]+/g) || []) assert.ok(MESSAGES[language][key].includes(token));
+      if (key.startsWith("config.")) for (const token of MESSAGES.en[key].match(/APTEX_[A-Z_]+/g) || []) assert.ok(MESSAGES[language][key].includes(token));
     }
     assert.ok(MESSAGES[language]["response.oversized"].includes("2 MiB"));
     assert.ok(MESSAGES[language]["config.timeout"].includes("120000"));
@@ -234,7 +234,7 @@ test("adapter catalogs are complete with matching placeholders and literal techn
 test("six language tool schemas preserve all machine contracts and localized validation is client-local", async (t) => {
   const before = z.config().localeError;
   const all = Object.fromEntries(SUPPORTED_LANGUAGES.map(language => [language, createTools(clientFor(language))]));
-  const byName = (tools, short) => tools.find(tool => tool.name === `scopeweaver_${short}`);
+  const byName = (tools, short) => tools.find(tool => tool.name === `aptex_${short}`);
   for (const language of SUPPORTED_LANGUAGES) {
     for (let i = 0; i < all.en.length; i++) {
       const tool = all[language][i], english = all.en[i];
@@ -255,7 +255,7 @@ test("six language tool schemas preserve all machine contracts and localized val
     }
   }
   const url = await fixture(t, (_, res) => { res.writeHead(500, { "Content-Type": "application/json" }); res.end("{}"); });
-  const isolated = Object.fromEntries(SUPPORTED_LANGUAGES.map(language => [language, clientFor(language, { SCOPEWEAVER_URL: url })]));
+  const isolated = Object.fromEntries(SUPPORTED_LANGUAGES.map(language => [language, clientFor(language, { APTEX_URL: url })]));
   for (const language of ["ja", "en", "ko", "ja", "es", "en"]) {
     const local = byName(all[language], "get_task").schema.safeParse({});
     assert.ok(local.error.message.includes(MESSAGES[language]["validation.invalid_type"].split("{")[0]));
@@ -270,7 +270,7 @@ test("MCP startup diagnostics use the selected language without stdout or creden
   for (const language of SUPPORTED_LANGUAGES) {
     const result = spawnSync(process.execPath, ["src/mcp.js"], {
       cwd: adapterRoot, encoding: "utf8", timeout: 10000,
-      env: { ...process.env, SCOPEWEAVER_LANGUAGE: language, SCOPEWEAVER_TIMEOUT_MS: "0", SCOPEWEAVER_URL: "http://127.0.0.1:8787", SCOPEWEAVER_TOKEN: "fixture-secret-token" },
+      env: { ...process.env, APTEX_LANGUAGE: language, APTEX_TIMEOUT_MS: "0", APTEX_URL: "http://127.0.0.1:8787", APTEX_TOKEN: "fixture-secret-token" },
     });
     assert.equal(result.status, 1, result.error?.message || result.stderr);
     assert.equal(result.stdout, "");
@@ -284,22 +284,22 @@ test("configuration and authentication diagnostics localize before and after cli
   for (const language of SUPPORTED_LANGUAGES) {
     const local = translator(language);
     for (const [extra, key] of [
-      [{ SCOPEWEAVER_URL: "https://secret@example.com" }, "config.url_origin"],
-      [{ SCOPEWEAVER_URL: "not a URL secret" }, "config.url_invalid"],
-      [{ SCOPEWEAVER_TIMEOUT_MS: "0" }, "config.timeout"],
-      [{ SCOPEWEAVER_TOKEN: "secret\nsecret" }, "config.token"],
-      [{ SCOPEWEAVER_ALLOW_WRITES: "secret" }, "config.writes"],
-    ]) assert.throws(() => configFromEnv({ SCOPEWEAVER_LANGUAGE: language, ...extra }), error => error.message === local(key) && !error.message.includes("secret"));
-    const unauthenticated = new ScopeWeaverClient(configFromEnv({ SCOPEWEAVER_LANGUAGE: language, SCOPEWEAVER_URL: url }));
+      [{ APTEX_URL: "https://secret@example.com" }, "config.url_origin"],
+      [{ APTEX_URL: "not a URL secret" }, "config.url_invalid"],
+      [{ APTEX_TIMEOUT_MS: "0" }, "config.timeout"],
+      [{ APTEX_TOKEN: "secret\nsecret" }, "config.token"],
+      [{ APTEX_ALLOW_WRITES: "secret" }, "config.writes"],
+    ]) assert.throws(() => configFromEnv({ APTEX_LANGUAGE: language, ...extra }), error => error.message === local(key) && !error.message.includes("secret"));
+    const unauthenticated = new APTEXClient(configFromEnv({ APTEX_LANGUAGE: language, APTEX_URL: url }));
     await assert.rejects(unauthenticated.request("/api/settings"), { message: local("auth.required") });
-    const login = clientFor(language, { SCOPEWEAVER_URL: url, SCOPEWEAVER_TOKEN: "", SCOPEWEAVER_PASSWORD: "fixture-password" });
+    const login = clientFor(language, { APTEX_URL: url, APTEX_TOKEN: "", APTEX_PASSWORD: "fixture-password" });
     await assert.rejects(login.request("/api/settings"), { message: local("auth.token_missing") });
     await assert.rejects(clientFor(language).request("/outside"), { message: local("request.path") });
     const invalidList = clientFor(language);
     invalidList.request = async () => ({ tasks: {} });
-    await assert.rejects(executeTool(createTools(invalidList).find(tool => tool.name === "scopeweaver_list_tasks"), {}), { message: local("response.task_list") });
+    await assert.rejects(executeTool(createTools(invalidList).find(tool => tool.name === "aptex_list_tasks"), {}), { message: local("response.task_list") });
   }
-  assert.throws(() => configFromEnv({ SCOPEWEAVER_LANGUAGE: "unknown secret" }), {
+  assert.throws(() => configFromEnv({ APTEX_LANGUAGE: "unknown secret" }), {
     message: translator("en")("config.language", { languages: SUPPORTED_LANGUAGES.join(", ") }),
   });
 });
@@ -318,7 +318,7 @@ test("six language transport diagnostics preserve raw backend data, secret redac
   });
   for (const language of SUPPORTED_LANGUAGES) {
     const local = translator(language);
-    const client = clientFor(language, { SCOPEWEAVER_URL: url, SCOPEWEAVER_PASSWORD: "fixture-password" });
+    const client = clientFor(language, { APTEX_URL: url, APTEX_PASSWORD: "fixture-password" });
     assert.deepEqual(await client.request("/api/raw"), raw);
     await assert.rejects(client.request("/api/non-json"), { message: local("response.non_json", { status: 502 }) });
     await assert.rejects(client.request("/api/large"), { message: local("response.oversized") });
@@ -326,7 +326,7 @@ test("six language transport diagnostics preserve raw backend data, secret redac
       await assert.rejects(client.request(path), { message: local("response.http", { status: 401, detail, hint: local("response.http_hint") }) });
     }
     await assert.rejects(client.request("/api/socket"), { message: "fetch failed" });
-    const short = clientFor(language, { SCOPEWEAVER_URL: url, SCOPEWEAVER_TIMEOUT_MS: "50" });
+    const short = clientFor(language, { APTEX_URL: url, APTEX_TIMEOUT_MS: "50" });
     await assert.rejects(short.request("/api/hang"), { message: local("request.timeout") });
     await assert.rejects(client.request("/api/hang", { signal: AbortSignal.abort() }), { message: local("request.cancelled") });
   }
@@ -335,7 +335,7 @@ test("six language transport diagnostics preserve raw backend data, secret redac
 test("registered MCP listTools and pre-callback schema errors use each client's language", async () => {
   for (const language of SUPPORTED_LANGUAGES) {
     const transport = new StdioClientTransport({ command: process.execPath, args: ["src/mcp.js"], cwd: adapterRoot,
-      env: { ...process.env, SCOPEWEAVER_LANGUAGE: language, SCOPEWEAVER_ALLOW_WRITES: "true", SCOPEWEAVER_TOKEN: "fixture-token", SCOPEWEAVER_PASSWORD: "fixture-password" }, stderr: "pipe" });
+      env: { ...process.env, APTEX_LANGUAGE: language, APTEX_ALLOW_WRITES: "true", APTEX_TOKEN: "fixture-token", APTEX_PASSWORD: "fixture-password" }, stderr: "pipe" });
     const client = new Client({ name: "adapter-language-test", version: "1.0.0" });
     try {
       await client.connect(transport);
@@ -345,15 +345,15 @@ test("registered MCP listTools and pre-callback schema errors use each client's 
         assert.equal(tool.title, MESSAGES[language][`tools.${tool.name.slice(12)}.title`]);
         assert.equal(tool.description, MESSAGES[language][`tools.${tool.name.slice(12)}.description`]);
       }
-      assert.equal(listed.tools.find(tool => tool.name === "scopeweaver_get_task").inputSchema.properties.task_id.description,
+      assert.equal(listed.tools.find(tool => tool.name === "aptex_get_task").inputSchema.properties.task_id.description,
         MESSAGES[language]["schema.id.description"]);
       const local = createTools(clientFor(language));
       for (const [short, args] of invalidArguments.slice(0, 9)) {
-        const result = await client.callTool({ name: `scopeweaver_${short}`, arguments: args });
+        const result = await client.callTool({ name: `aptex_${short}`, arguments: args });
         assert.equal(result.isError, true);
         const text = result.content.map(content => content.text || "").join("");
         assert.ok(text.includes("Input validation error"), "SDK-owned wrapper should remain library text");
-        const expected = local.find(tool => tool.name === `scopeweaver_${short}`).schema.safeParse(args).error.issues[0].message;
+        const expected = local.find(tool => tool.name === `aptex_${short}`).schema.safeParse(args).error.issues[0].message;
         assert.ok(text.includes(expected), `${language}:${short}: ${text}`);
         assert.ok(!text.includes("fixture-token") && !text.includes("fixture-password"));
       }
@@ -362,11 +362,11 @@ test("registered MCP listTools and pre-callback schema errors use each client's 
 });
 
 test("Pi registers translated labels, descriptions and schema errors without changing identifiers", async () => {
-  const names = ["SCOPEWEAVER_LANGUAGE", "SCOPEWEAVER_ALLOW_WRITES", "SCOPEWEAVER_TOKEN"];
+  const names = ["APTEX_LANGUAGE", "APTEX_ALLOW_WRITES", "APTEX_TOKEN"];
   const original = Object.fromEntries(names.map(name => [name, process.env[name]]));
   try {
     for (const language of SUPPORTED_LANGUAGES) {
-      Object.assign(process.env, { SCOPEWEAVER_LANGUAGE: language, SCOPEWEAVER_ALLOW_WRITES: "true", SCOPEWEAVER_TOKEN: "fixture-token" });
+      Object.assign(process.env, { APTEX_LANGUAGE: language, APTEX_ALLOW_WRITES: "true", APTEX_TOKEN: "fixture-token" });
       const registered = [];
       extension({ registerTool: tool => registered.push(tool) });
       assert.equal(registered.length, 8);
@@ -374,7 +374,7 @@ test("Pi registers translated labels, descriptions and schema errors without cha
         assert.equal(tool.label, MESSAGES[language][`tools.${tool.name.slice(12)}.title`]);
         assert.equal(tool.description, MESSAGES[language][`tools.${tool.name.slice(12)}.description`]);
       }
-      const task = registered.find(tool => tool.name === "scopeweaver_get_task");
+      const task = registered.find(tool => tool.name === "aptex_get_task");
       const local = createTools(clientFor(language)).find(tool => tool.name === task.name).schema.safeParse({}).error.issues[0].message;
       await assert.rejects(task.execute("literal-call-id", {}), error => error.message.includes(local));
     }
@@ -384,18 +384,18 @@ test("Pi registers translated labels, descriptions and schema errors without cha
 });
 
 test("copied standalone adapter includes all message resources without checkout locale files", () => {
-  const copied = mkdtempSync(join(tmpdir(), "scopeweaver-adapter-language-"));
+  const copied = mkdtempSync(join(tmpdir(), "aptex-adapter-language-"));
   try {
     for (const path of ["src", "package.json"]) cpSync(join(adapterRoot, path), join(copied, path), { recursive: true });
     // Reuse the locked dependencies already installed for this test, without downloads.
     symlinkSync(join(adapterRoot, "node_modules"), join(copied, "node_modules"), "junction");
     const result = spawnSync(process.execPath, ["--input-type=module", "-e", `
       import assert from 'node:assert/strict';
-      import { configFromEnv, ScopeWeaverClient } from './src/client.js';
+      import { configFromEnv, APTEXClient } from './src/client.js';
       import { createTools } from './src/tools.js';
       import { SUPPORTED_LANGUAGES, MESSAGES } from './src/messages.js';
       for (const language of SUPPORTED_LANGUAGES) {
-        const client = new ScopeWeaverClient(configFromEnv({SCOPEWEAVER_LANGUAGE:language}));
+        const client = new APTEXClient(configFromEnv({APTEX_LANGUAGE:language}));
         const tools = createTools(client);
         assert.equal(tools[0].title, MESSAGES[language]['tools.health.title']);
         assert.equal(client.t('response.failed'), MESSAGES[language]['response.failed']);

@@ -2,7 +2,7 @@ package db
 
 import (
 	"database/sql"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/locale"
 	"strings"
 	"time"
 	"unicode/utf8"

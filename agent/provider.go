@@ -12,9 +12,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/afterglow-labs/afterglow-cybersecurity/chatgptauth"
-	"github.com/afterglow-labs/afterglow-cybersecurity/chatgptllm"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/chatgptauth"
+	"github.com/afterglow-labs/APTEX/chatgptllm"
+	"github.com/afterglow-labs/APTEX/locale"
 	"io"
 	"log"
 	"net/http"
@@ -23,11 +23,11 @@ import (
 	"strings"
 	"time"
 
-	runtimeconfig "github.com/afterglow-labs/afterglow-cybersecurity/config"
-	"github.com/afterglow-labs/afterglow-cybersecurity/llmnet"
-	"github.com/afterglow-labs/afterglow-cybersecurity/llmrec"
-	"github.com/afterglow-labs/afterglow-cybersecurity/ollama"
-	"github.com/afterglow-labs/afterglow-cybersecurity/opencodesdk"
+	runtimeconfig "github.com/afterglow-labs/APTEX/config"
+	"github.com/afterglow-labs/APTEX/llmnet"
+	"github.com/afterglow-labs/APTEX/llmrec"
+	"github.com/afterglow-labs/APTEX/ollama"
+	"github.com/afterglow-labs/APTEX/opencodesdk"
 	"github.com/Autumn-27/norma/agentcore"
 	"github.com/Autumn-27/norma/compaction"
 	"github.com/Autumn-27/norma/llm"
@@ -194,7 +194,7 @@ func FromEnv() (Config, bool) {
 	_, explicitKey := runtimeconfig.LLMEnv("API_KEY")
 	if c.APIKey == "" && !explicitKey {
 		if prov == opencodesdk.Format {
-			c.APIKey = os.Getenv("SCOPEWEAVER_OPENCODE_TOKEN")
+			c.APIKey, _ = runtimeconfig.LookupEnv("OPENCODE_TOKEN")
 		} else if prov == "opencode-go" {
 			// The wire format resolved to "openai", but the credential is the
 			// OpenCode subscription key — never OPENAI_API_KEY.
@@ -400,7 +400,7 @@ func (c Config) NewProvider() (llm.Provider, error) {
 		if !llmnet.IsLocalEndpoint(c.BaseURL) {
 			return nil, locale.Errorf("llm: API key required for non-local compatible endpoint")
 		}
-		c.APIKey = "scopeweaver-local"
+		c.APIKey = "aptex-local"
 	}
 	lc := llm.Config{
 		Format:     c.Format,
@@ -511,7 +511,7 @@ type quotaAwareTransport struct {
 
 func (t quotaAwareTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	if _, explicit := req.Header["User-Agent"]; !explicit {
-		req.Header.Set("User-Agent", "scopeweaver")
+		req.Header.Set("User-Agent", "aptex")
 	}
 	if t.claude != nil {
 		if err := t.claude.rewrite(req); err != nil {

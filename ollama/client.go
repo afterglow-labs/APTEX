@@ -6,7 +6,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/locale"
 	"io"
 	"net"
 	"net/http"
@@ -255,7 +255,7 @@ func (c *Client) Test(ctx context.Context, model string, opts Options) (Diagnost
 	}
 	out.Capabilities = info.Capabilities
 	out.ToolsSupported = info.Supports("tools")
-	req := chatRequest{Model: model, Messages: []chatMessage{{Role: "user", Content: "Call the scopeweaver_ping tool with value OK to verify tool calling."}}, Tools: []chatTool{{Type: "function", Function: toolFunction{Name: "scopeweaver_ping", Description: "Connection test", Parameters: map[string]any{"type": "object", "properties": map[string]any{"value": map[string]any{"type": "string"}}, "required": []string{"value"}}}}}, KeepAlive: keepAlive(opts), Options: options(opts), Stream: false, Think: false}
+	req := chatRequest{Model: model, Messages: []chatMessage{{Role: "user", Content: "Call the aptex_ping tool with value OK to verify tool calling."}}, Tools: []chatTool{{Type: "function", Function: toolFunction{Name: "aptex_ping", Description: "Connection test", Parameters: map[string]any{"type": "object", "properties": map[string]any{"value": map[string]any{"type": "string"}}, "required": []string{"value"}}}}}, KeepAlive: keepAlive(opts), Options: options(opts), Stream: false, Think: false}
 	var resp chatResponse
 	if err := c.decode(ctx, "POST", "/api/chat", req, &resp); err != nil {
 		return out, err
@@ -268,7 +268,7 @@ func (c *Client) Test(ctx context.Context, model string, opts Options) (Diagnost
 		if err != nil {
 			return out, err
 		}
-		if call.Function.Name == "scopeweaver_ping" {
+		if call.Function.Name == "aptex_ping" {
 			var args struct {
 				Value string `json:"value"`
 			}

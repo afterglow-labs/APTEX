@@ -15,9 +15,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/agent"
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
-	"github.com/afterglow-labs/afterglow-cybersecurity/internal/dbtest"
+	"github.com/afterglow-labs/APTEX/agent"
+	"github.com/afterglow-labs/APTEX/db"
+	"github.com/afterglow-labs/APTEX/internal/dbtest"
 	"github.com/Autumn-27/norma/llm"
 )
 
@@ -36,7 +36,7 @@ func nativeFixture(t *testing.T) *httptest.Server {
 		case "/api/ps":
 			w.Write([]byte(`{"models":[{"name":"test:latest","context_length":32768}]}`))
 		case "/api/chat":
-			w.Write([]byte(`{"message":{"role":"assistant","content":"","tool_calls":[{"function":{"name":"scopeweaver_ping","arguments":{"value":"OK"}}}]},"done":true,"load_duration":250000000,"eval_count":10,"eval_duration":500000000}`))
+			w.Write([]byte(`{"message":{"role":"assistant","content":"","tool_calls":[{"function":{"name":"aptex_ping","arguments":{"value":"OK"}}}]},"done":true,"load_duration":250000000,"eval_count":10,"eval_duration":500000000}`))
 		default:
 			t.Errorf("unexpected path=%s", r.URL.Path)
 			http.NotFound(w, r)
@@ -255,7 +255,7 @@ func TestOllamaDiagnosticSharesWorkerAdmission(t *testing.T) {
 			for old := peak.Load(); n > old && !peak.CompareAndSwap(old, n); old = peak.Load() {
 			}
 			diagEntered <- struct{}{}
-			w.Write([]byte(`{"done":true,"message":{"tool_calls":[{"function":{"name":"scopeweaver_ping","arguments":{"value":"OK"}}}]}}`))
+			w.Write([]byte(`{"done":true,"message":{"tool_calls":[{"function":{"name":"aptex_ping","arguments":{"value":"OK"}}}]}}`))
 			active.Add(-1)
 		default:
 			http.NotFound(w, r)
@@ -325,8 +325,8 @@ func TestOllamaSettingsDoNotPersistEnvironmentCIDRs(t *testing.T) {
 		t.Fatal(err)
 	}
 	const envCIDR = "198.51.100.128/25"
-	t.Setenv("SCOPEWEAVER_LOCAL_LLM_ALLOWED_CIDRS", envCIDR)
-	t.Setenv("SCOPEWEAVER_LOCAL_LLM_ONLY", "true")
+	t.Setenv("APTEX_LOCAL_LLM_ALLOWED_CIDRS", envCIDR)
+	t.Setenv("APTEX_LOCAL_LLM_ONLY", "true")
 	w := httptest.NewRecorder()
 	s.getSettings(w, httptest.NewRequest("GET", "/api/settings", nil))
 	var settings struct {
@@ -350,7 +350,7 @@ func TestOllamaSettingsDoNotPersistEnvironmentCIDRs(t *testing.T) {
 	if w.Code != 200 {
 		t.Fatalf("save=%d %s", w.Code, w.Body)
 	}
-	if err = os.Unsetenv("SCOPEWEAVER_LOCAL_LLM_ALLOWED_CIDRS"); err != nil {
+	if err = os.Unsetenv("APTEX_LOCAL_LLM_ALLOWED_CIDRS"); err != nil {
 		t.Fatal(err)
 	}
 	_, effective := s.effectiveLLMPolicy()
@@ -390,7 +390,7 @@ func TestDeepSeekSearchProbeRespectsLiveLocalOnlyPolicy(t *testing.T) {
 			m.pg.Exec(`DELETE FROM settings WHERE key=$1`, settingLocalLLMOnly)
 		}
 	}()
-	t.Setenv("SCOPEWEAVER_LOCAL_LLM_ONLY", "false")
+	t.Setenv("APTEX_LOCAL_LLM_ONLY", "false")
 	s := &Server{m: m}
 	call := func(backend string) map[string]any {
 		t.Helper()

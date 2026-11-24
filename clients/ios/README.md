@@ -7,7 +7,7 @@ private network or Tailscale DNS endpoint. It installs independently of Odysseus
 ## Install and connect
 
 1. Download `APTEX-iOS-Feather.ipa` from the
-   [iOS client release](https://github.com/afterglow-labs/afterglow-cybersecurity/releases/tag/aptex-ios-client-v1.0.0).
+   [iOS client release](https://github.com/afterglow-labs/APTEX/releases/tag/aptex-ios-client-v1.0.0).
 2. Import the IPA into Feather and sign/install it using your existing signing
    setup. The packaged app is ad-hoc signed for this workflow; it is not an
    App Store or TestFlight installation.

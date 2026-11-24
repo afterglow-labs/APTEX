@@ -4,10 +4,10 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
-	"github.com/afterglow-labs/afterglow-cybersecurity/chatgptllm"
-	"github.com/afterglow-labs/afterglow-cybersecurity/llmnet"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
-	"github.com/afterglow-labs/afterglow-cybersecurity/opencodesdk"
+	"github.com/afterglow-labs/APTEX/chatgptllm"
+	"github.com/afterglow-labs/APTEX/llmnet"
+	"github.com/afterglow-labs/APTEX/locale"
+	"github.com/afterglow-labs/APTEX/opencodesdk"
 	"time"
 )
 

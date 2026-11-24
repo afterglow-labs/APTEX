@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# ScopeWeaver cross-platform release builder.
+# APTEX cross-platform release builder.
 #
 # The default mode builds one target and embeds the already-exported frontend.
 # `./build.sh --release` builds and packages all supported desktop/server targets.
@@ -9,7 +9,7 @@
 #   ARTEX_TARGET_ARCH=amd64           One target arch in single-target mode.
 #   ARTEX_TARGETS=linux/amd64,...     Comma-separated targets for multi-target mode.
 #   ARTEX_BUILD_VERSION=v0.3.3        Version embedded in the binary and archive name.
-#   ARTEX_OUTPUT=/path/to/scopeweaver       Explicit binary path in single-target mode.
+#   ARTEX_OUTPUT=/path/to/aptex       Explicit binary path in single-target mode.
 #   ARTEX_OUTPUT_DIR=dist             Directory for default binary paths.
 #   ARTEX_PACKAGE=1                   Create a zip archive for each target.
 #   ARTEX_PACKAGE_DIR=dist            Directory for release archives.
@@ -46,7 +46,7 @@ normalize_language() (
     *) printf en ;;
   esac
 )
-LANG_SEL=$(normalize_language "${SCOPEWEAVER_LANGUAGE:-${ARTEX_LANGUAGE:-en}}")
+LANG_SEL=$(normalize_language "${APTEX_LANGUAGE:-${SCOPEWEAVER_LANGUAGE:-${ARTEX_LANGUAGE:-en}}}")
 # msg EN KO HANS HANT JA ES; no runtime catalog or extra packaging dependency.
 msg() {
   case "$LANG_SEL" in
@@ -257,7 +257,7 @@ package_binary() {
   binary="$1"
   goos="$2"
   goarch="$3"
-  package_name="scopeweaver-${ARTEX_BUILD_VERSION}-${goos}-${goarch}"
+  package_name="aptex-${ARTEX_BUILD_VERSION}-${goos}-${goarch}"
   package_root="${ARTEX_PACKAGE_DIR}/${package_name}"
   archive="${ARTEX_PACKAGE_DIR}/${package_name}.zip"
 
@@ -306,12 +306,12 @@ build_target() {
     *) die "$(msg "Unsupported OS: $goos (use linux, darwin, windows)" "지원하지 않는 OS: $goos (linux, darwin, windows 지원)" "不支持的操作系统：${goos}（请使用 linux、darwin、windows）" "不支援的作業系統：${goos}（請使用 linux、darwin、windows）" "未対応の OS: ${goos}（linux、darwin、windows を使用してください）" "Sistema operativo no compatible: ${goos} (usa linux, darwin o windows)")" ;;
   esac
 
-  binary_name="scopeweaver"
-  [ "$goos" = "windows" ] && binary_name="scopeweaver.exe"
+  binary_name="aptex"
+  [ "$goos" = "windows" ] && binary_name="aptex.exe"
   if [ -n "${ARTEX_OUTPUT:-}" ] && [ "$ARTEX_RELEASE" != "1" ]; then
     output="$ARTEX_OUTPUT"
   else
-    output="${ARTEX_OUTPUT_DIR}/scopeweaver-${goos}-${goarch}/${binary_name}"
+    output="${ARTEX_OUTPUT_DIR}/aptex-${goos}-${goarch}/${binary_name}"
   fi
   mkdir -p "$(dirname "$output")"
 
@@ -325,7 +325,7 @@ build_target() {
     -trimpath \
     -ldflags "-s -w -buildid= -X main.version=${ARTEX_BUILD_VERSION}" \
     -o "$output" \
-    ./cmd/artex
+    ./cmd/aptex
 
   compress_binary "$output" "$goos"
   if command -v file >/dev/null 2>&1; then file "$output"; fi

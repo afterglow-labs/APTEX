@@ -2,7 +2,7 @@ package intercept
 
 import (
 	"encoding/json"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/locale"
 	"io"
 	"strings"
 )

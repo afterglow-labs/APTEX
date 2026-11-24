@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/chatstate"
+	"github.com/afterglow-labs/APTEX/chatstate"
 )
 
 // WithUnpublishedChatTranscript reconciles even an ambiguous publication error

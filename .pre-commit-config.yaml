@@ -6,4 +6,4 @@ repos:
         entry: detections/tests/run-all.sh
         language: script
         pass_filenames: false
-        files: '^(detections/|enrich/enrich\.go|selfupdate/(github|stage)\.go|guard/guard\.go|db/db\.go|db/schema\.sql|cmd/artex/main\.go|traffic/traffic\.go|docs/defense-(ko|en)\.md)'
+        files: '^(detections/|enrich/enrich\.go|selfupdate/(github|stage)\.go|guard/guard\.go|db/db\.go|db/schema\.sql|cmd/aptex/main\.go|traffic/traffic\.go|docs/defense-(ko|en)\.md)'

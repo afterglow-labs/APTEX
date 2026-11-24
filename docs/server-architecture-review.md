@@ -153,7 +153,7 @@ client protocol and has not been implemented.
 
 APTEX checkout: `afterglow-cybersecurity-gateway`, revision `6f7f659c0b13`:
 
-- [Process initialization](../cmd/artex/main.go), [server construction and provider setup](../server/server.go),
+- [Process initialization](../cmd/aptex/main.go), [server construction and provider setup](../server/server.go),
   [manager recovery](../server/manager.go), and [asynchronous MCP discovery](../server/mcpdiscover.go).
 - [Authentication](../server/auth.go), [chat controls](../server/chat_controls.go),
   [durable chat identities](../chatstate/types.go), and [native launcher](../scripts/aptex.py).

@@ -15,17 +15,17 @@ import (
 	"strings"
 	"time"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/internal/dbtest"
-	"github.com/afterglow-labs/afterglow-cybersecurity/selfupdate"
+	"github.com/afterglow-labs/APTEX/internal/dbtest"
+	"github.com/afterglow-labs/APTEX/selfupdate"
 	"testing"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/agent"
+	"github.com/afterglow-labs/APTEX/agent"
 )
 
 func TestMain(m *testing.M) {
 	// The serve-failure child runs while its parent holds the shared lock.
 	// Acquiring it again here would deadlock the parent waiting for that child.
-	if os.Getenv("SCOPEWEAVER_TEST_SERVE_FAILURE_CHILD") == "1" {
+	if os.Getenv("APTEX_TEST_SERVE_FAILURE_CHILD") == "1" {
 		os.Exit(m.Run())
 	}
 	os.Exit(dbtest.Main(m))
@@ -48,7 +48,7 @@ func TestDatabaseSuiteOwnsSharedLock(t *testing.T) {
 	}
 	if acquired {
 		_, _ = c.ExecContext(t.Context(), "SELECT pg_advisory_unlock($1)", int64(7337741002))
-		t.Fatal("cmd/artex suite does not hold the shared database advisory lock")
+		t.Fatal("cmd/aptex suite does not hold the shared database advisory lock")
 	}
 }
 
@@ -118,14 +118,14 @@ func TestShutdownServerHTTPTimeoutStillDrains(t *testing.T) {
 }
 
 func TestMainServeFailureRunsShutdown(t *testing.T) {
-	if os.Getenv("SCOPEWEAVER_TEST_SERVE_FAILURE_CHILD") == "1" {
+	if os.Getenv("APTEX_TEST_SERVE_FAILURE_CHILD") == "1" {
 		// The child starts with an empty config and validates the test DSN before
 		// making it the application's DSN, preserving dbtest's live-DB guard.
 		if err := os.Setenv("ARTEX_PG_DSN", dbtest.DSN(t)); err != nil {
 			t.Fatal(err)
 		}
 		flag.CommandLine = flag.NewFlagSet("artex", flag.ExitOnError)
-		os.Args = []string{"artex", "-addr", os.Getenv("SCOPEWEAVER_TEST_OCCUPIED_ADDR"), "-data", "data", "-proxy", ""}
+		os.Args = []string{"aptex", "-addr", os.Getenv("APTEX_TEST_OCCUPIED_ADDR"), "-data", "data", "-proxy", ""}
 		os.Exit(run())
 	}
 	dsn := dbtest.DSN(t)
@@ -145,12 +145,12 @@ func TestMainServeFailureRunsShutdown(t *testing.T) {
 	for _, entry := range os.Environ() {
 		key, _, _ := strings.Cut(entry, "=")
 		upper := strings.ToUpper(key)
-		if strings.HasPrefix(upper, "ARTEX_") || strings.HasPrefix(upper, "SCOPEWEAVER_") || strings.HasPrefix(upper, "PG") || strings.Contains(upper, "API_KEY") {
+		if strings.HasPrefix(upper, "ARTEX_") || strings.HasPrefix(upper, "APTEX_") || strings.HasPrefix(upper, "SCOPEWEAVER_") || strings.HasPrefix(upper, "PG") || strings.Contains(upper, "API_KEY") {
 			continue
 		}
 		cmd.Env = append(cmd.Env, entry)
 	}
-	cmd.Env = append(cmd.Env, "ARTEX_TEST_DSN="+dsn, "ARTEX_CONFIG="+filepath.Join(cmd.Dir, "config.json"), "ARTEX_SELFUPDATE_SMOKE=1", "SCOPEWEAVER_TEST_SERVE_FAILURE_CHILD=1", "SCOPEWEAVER_TEST_OCCUPIED_ADDR="+listener.Addr().String())
+	cmd.Env = append(cmd.Env, "ARTEX_TEST_DSN="+dsn, "ARTEX_CONFIG="+filepath.Join(cmd.Dir, "config.json"), "ARTEX_SELFUPDATE_SMOKE=1", "APTEX_TEST_SERVE_FAILURE_CHILD=1", "APTEX_TEST_OCCUPIED_ADDR="+listener.Addr().String())
 	out, err := cmd.CombinedOutput()
 	var exit *exec.ExitError
 	if !errors.As(err, &exit) || exit.ExitCode() != 1 {

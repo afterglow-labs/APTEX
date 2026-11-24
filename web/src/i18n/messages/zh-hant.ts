@@ -16,6 +16,9 @@ export const app: Record<keyof typeof appSource, string> = {
   themePhosphorDescription: "近黑色介面，搭配螢光綠色強調色",
   themeAfterglow: "Afterglow",
   themeAfterglowDescription: "暖炭色介面，搭配琥珀色強調色",
+  themeDreamsicleDescription: "白色和蜜桃色背景，搭配亮橙色",
+  themeOdysseusDescription: "深紫色介面，搭配鮮橙色",
+  themeOrangurpleDescription: "亮橙色背景和深紫色面板",
   metricValue: "{label} {value}",
   tokenSummary: "輸入 {input}（含快取 {cache}）· 輸出 {output}",
   reasoningInOutput: "推理（含在輸出中）",
@@ -1748,7 +1751,7 @@ const interfaceMessages: Record<keyof typeof interfaceSource, string> = {
   m1409: "流式輸出",
   m1410: "輸出上限 · max tokens",
   m1411:
-    "單次回覆最多生成多少 token，隨每次請求發出。0（預設）由 ScopeWeaver 決定：代理回合傳送 32768，直接呼叫 Anthropic 的單次請求使用 8192，原生 Ollama 使用其自身預設值。 這與上面的「上下文視窗」是兩回事：那是模型總容量，只在本地用來算壓縮閾值。 設太小會讓推理模型在思考階段就被截斷，一個字答案都出不來。",
+    "單次回覆最多生成多少 token，隨每次請求發出。0（預設）由 APTEX 決定：代理回合傳送 32768，直接呼叫 Anthropic 的單次請求使用 8192，原生 Ollama 使用其自身預設值。 這與上面的「上下文視窗」是兩回事：那是模型總容量，只在本地用來算壓縮閾值。 設太小會讓推理模型在思考階段就被截斷，一個字答案都出不來。",
   m1412: "上限欄位名",
   m1413: "思考開關 · thinking.type",
   m1414:
@@ -1932,7 +1935,7 @@ const interfaceMessages: Record<keyof typeof interfaceSource, string> = {
   m1590: "發現新版本 {p0}",
   m1591: "目前已是最新版本",
   m1592: "已更新到 {p0}，正在重新載入頁面",
-  m1593: "等待服務重啟超時。請檢查後端記錄，或確認 scopeweaver 是透過 start.sh / start.bat 啟動的。",
+  m1593: "等待服務重啟超時。請檢查後端記錄，或確認 aptex 是透過 start.sh / start.bat 啟動的。",
   m1594: "確定更新到 {p0}？\n\n",
   m1595: "更新會重啟程式，正在執行的任務會被中斷。\n",
   m1596: "\n注意：容器內更新只替換程式本身，不會更新映象裡的 playwright / nmap 等工具鏈；",
@@ -2769,7 +2772,7 @@ const interfaceMessages: Record<keyof typeof interfaceSource, string> = {
   m2412: "旁路資料解析失敗，請重新開啟面板",
   m2413: "未授權",
   m2414:
-    "# ScopeWeaver 滲透測試報告 — Acme Corp\n\n## 概覽\n- 範圍：acme.com（含 www / admin / api / shop / vpn 子域）\n- 已確認發現：6 項（高危 3 · 中危 3 · 低危 2）\n- 引擎模式：exploring\n\n## 關鍵發現\n1. **[高] 後臺預設口令** admin.acme.com admin/admin123 → 可完全接管後臺。\n2. **[高] SQL 注入** www.acme.com/search?q= → 可讀取 acme_prod 庫。\n3. **[高] IDOR** api.acme.com/v1/orders?id= → 可越權讀取他人訂單（含手機號/位址）。\n4. **[中] 反射型 XSS**、**暴露 .git 原始碼**、**登入無速率限制**。\n\n## 建議\n- 後臺強制改密 + 啟用 MFA、封禁預設口令。\n- search 介面參數化查詢、輸出編碼。\n- API 增加物件級授權校驗（IDOR）、更換強 JWT 金鑰。\n\n> （demo）本報告由 mock 資料生成，僅用於介面演示。",
+    "# APTEX 滲透測試報告 — Acme Corp\n\n## 概覽\n- 範圍：acme.com（含 www / admin / api / shop / vpn 子域）\n- 已確認發現：6 項（高危 3 · 中危 3 · 低危 2）\n- 引擎模式：exploring\n\n## 關鍵發現\n1. **[高] 後臺預設口令** admin.acme.com admin/admin123 → 可完全接管後臺。\n2. **[高] SQL 注入** www.acme.com/search?q= → 可讀取 acme_prod 庫。\n3. **[高] IDOR** api.acme.com/v1/orders?id= → 可越權讀取他人訂單（含手機號/位址）。\n4. **[中] 反射型 XSS**、**暴露 .git 原始碼**、**登入無速率限制**。\n\n## 建議\n- 後臺強制改密 + 啟用 MFA、封禁預設口令。\n- search 介面參數化查詢、輸出編碼。\n- API 增加物件級授權校驗（IDOR）、更換強 JWT 金鑰。\n\n> （demo）本報告由 mock 資料生成，僅用於介面演示。",
   m2415: "上傳失敗: {p0}",
   m2416: "（demo）{p0} 的下載內容示例。",
   m2417: "下載失敗: {p0}",
@@ -3073,11 +3076,11 @@ const interfaceMessages: Record<keyof typeof interfaceSource, string> = {
   m2682: "探索路線提示",
   m2683: "優先後臺與 API 越權面",
   m2684: "加強越權探測引導",
-  m2685: "你是 ScopeWeaver 的規劃者……",
+  m2685: "你是 APTEX 的規劃者……",
   m2686: "初版微調",
-  m2687: "你是 ScopeWeaver 的規劃者(v2)……",
+  m2687: "你是 APTEX 的規劃者(v2)……",
   m2688:
-    "你是 ScopeWeaver 的「{p0}」。\n目標：{{.Goal}}\n資產概覽：{{.AssetSummary}}\n路線提示：{{.RouteHint}}\n請基於以上資訊推進探索，並透過工具把結果寫回圖。",
+    "你是 APTEX 的「{p0}」。\n目標：{{.Goal}}\n資產概覽：{{.AssetSummary}}\n路線提示：{{.RouteHint}}\n請基於以上資訊推進探索，並透過工具把結果寫回圖。",
   m2689: "時間/步數將盡，請總結已確認發現並標記意圖終態。",
   m2690: "任務超時，請立即收尾並落庫目前結論。",
   m2691: "查詢某 IP 的 Shodan 主機資訊",
@@ -3307,9 +3310,9 @@ export const providers: Record<keyof typeof providersSource, string> = {
   generalHelp:
     "使用通用 API 端點並按 API 計費，與 Coding Plan 訂閱額度相互獨立。請確認 Z.ai 帳號的模型權限和計費方式。",
   codingHelp:
-    "僅供參考：Coding Plan 使用獨立端點和訂閱額度。Z.ai 限制其用於官方支援的工具，ScopeWeaver 不在名單中。將此端點用於 ScopeWeaver 前，請先取得 Z.ai 授權。",
+    "僅供參考：Coding Plan 使用獨立端點和訂閱額度。Z.ai 限制其用於官方支援的工具，APTEX 不在名單中。將此端點用於 APTEX 前，請先取得 Z.ai 授權。",
   modelHelp:
-    "GLM-5.3 僅支援文字，上下文為 100 萬token。必須保持推理開啟；支援 low、high、max 推理強度。此模板選擇 low 強度、16,384 token輸出上限和上下文視窗 0（預設 200K）。ScopeWeaver 對一個小任務的測量中，low 得到相同結果，所用token不到 max 的一半。較難的任務請提高強度；更換模型時請重新檢查這些設定。",
+    "GLM-5.3 僅支援文字，上下文為 100 萬token。必須保持推理開啟；支援 low、high、max 推理強度。此模板選擇 low 強度、16,384 token輸出上限和上下文視窗 0（預設 200K）。APTEX 對一個小任務的測量中，low 得到相同結果，所用token不到 max 的一半。較難的任務請提高強度；更換模型時請重新檢查這些設定。",
   deepseek: "DeepSeek · deepseek-flash（經濟型）",
   claude: "Anthropic Claude · Haiku 5.5（經濟型）",
   openai: "OpenAI Responses 介面",
@@ -3330,17 +3333,17 @@ export const providers: Record<keyof typeof providersSource, string> = {
   openrouterHelp:
     "透過 OpenRouter 使用 DeepSeek V4.1 Flash。強度 low，輸出上限 16,384 token（以 max_tokens 傳送），上下文視窗 0（預設 200K）。OpenRouter 會自動快取重複的字首。節省效果未經測量。",
   opencodeGoHelp:
-    "OpenCode Go 訂閱閘道器（https://opencode.ai/zen/go/v1，OpenAI 相容）。推理強度 max，輸出上限 16,384 token（以 max_tokens 傳送），上下文視窗 0（預設 200K）。閘道器會拒絕缺少 x-opencode-session 標頭的請求，因此該模板會自動填寫“工作階段標頭”欄位。使用你的 OpenCode 訂閱金鑰（opencode 中的 OPENCODE_API_KEY）。該金鑰受 opencode 訂閱條款約束，儲存前請確認允許在 ScopeWeaver 中使用。",
+    "OpenCode Go 訂閱閘道器（https://opencode.ai/zen/go/v1，OpenAI 相容）。推理強度 max，輸出上限 16,384 token（以 max_tokens 傳送），上下文視窗 0（預設 200K）。閘道器會拒絕缺少 x-opencode-session 標頭的請求，因此該模板會自動填寫“工作階段標頭”欄位。使用你的 OpenCode 訂閱金鑰（opencode 中的 OPENCODE_API_KEY）。該金鑰受 opencode 訂閱條款約束，儲存前請確認允許在 APTEX 中使用。",
   opencodeSdk: "OpenCode SDK · 橋接服務",
   sdkGroup: "SDK 橋接服務",
-  sdkHelp: "橋接執行階段：native CLI／用戶端 2.1.4（預設，保留原始工具引數）或 legacy SDK 1.19.4（安全的結構化 JSON，不保留原始位元組）。兩者均不支援 Windows。主機工具執行與核准仍由 ScopeWeaver 管理。",
+  sdkHelp: "橋接執行階段：native CLI／用戶端 2.1.4（預設，保留原始工具引數）或 legacy SDK 1.19.4（安全的結構化 JSON，不保留原始位元組）。兩者均不支援 Windows。主機工具執行與核准仍由 APTEX 管理。",
   sdkSecurity: "回環橋接服務仍可能呼叫雲端提供者，因此無法用於僅限本機 LLM 模式。免費模型 ID 僅表示目前可用，不代表訂閱使用權或無限使用額度。",
   sdkToken: "橋接權杖",
   sdkTokenPlaceholder: "必填橋接權杖",
-  sdkTokenHelp: "請輸入橋接服務設定的獨立 SCOPEWEAVER_OPENCODE_TOKEN，而非雲端 API 金鑰。留白僅保留同一 SDK 端點已儲存的權杖。修改 URL 會清除已輸入的權杖；變更端點或格式不會保留已儲存的權杖。不會匯入已儲存的提供者憑證。",
+  sdkTokenHelp: "請輸入橋接服務設定的獨立 APTEX_OPENCODE_TOKEN，而非雲端 API 金鑰。留白僅保留同一 SDK 端點已儲存的權杖。修改 URL 會清除已輸入的權杖；變更端點或格式不會保留已儲存的權杖。不會匯入已儲存的提供者憑證。",
   sdkModelHelp: "使用 providerID/modelID 格式。按下「載入模型」才會讀取橋接目錄，不執行推論。選擇模板不會載入模型、儲存或啟用設定。",
   sdkOptionsHelp: "輸出受原生模型宣告的上限約束。請使用所選模型支援的推理選項；不支援的設定可能在提供者端失敗。此輸出欄位選擇器不適用。",
-  sdkSessionHelp: "此橋接服務不支援自訂工作階段標頭。ScopeWeaver 會為每次請求提供對話歷程。",
+  sdkSessionHelp: "此橋接服務不支援自訂工作階段標頭。APTEX 會為每次請求提供對話歷程。",
   sdkEndpoint: "橋接 URL",
   sdkProxyHelp: "不支援橋接代理。請使用回環 URL，並在橋接服務上設定下游提供者連線。",
   officialModel: "GLM-5.3 模型指南",
@@ -3351,15 +3354,15 @@ export const providers: Record<keyof typeof providersSource, string> = {
   ollamaHost: "Ollama · 本機（127.0.0.1）",
   ollamaDockerHost: "Ollama · 從 Docker 訪問主機（host.docker.internal）",
   ollamaCompose: "Ollama · 內建 Compose 服務（ollama）",
-  ollamaHostHelp: "適用於 ScopeWeaver 與 Ollama 執行在同一臺機器上，且 Ollama 監聽預設位址的情況。",
+  ollamaHostHelp: "適用於 APTEX 與 Ollama 執行在同一臺機器上，且 Ollama 監聽預設位址的情況。",
   ollamaDockerHostHelp:
-    "適用於 Docker 中的 ScopeWeaver 訪問主機上安裝的 Ollama。在容器內，127.0.0.1 指向容器自身。內建 Compose 檔案將 host.docker.internal 對映到主機閘道器。在 Linux 上，主機 Ollama 還必須監聽迴環以外的位址（OLLAMA_HOST=0.0.0.0:11434），這會將其暴露到網路中；請用防火牆限制 11434 埠。",
+    "適用於 Docker 中的 APTEX 訪問主機上安裝的 Ollama。在容器內，127.0.0.1 指向容器自身。內建 Compose 檔案將 host.docker.internal 對映到主機閘道器。在 Linux 上，主機 Ollama 還必須監聽迴環以外的位址（OLLAMA_HOST=0.0.0.0:11434），這會將其暴露到網路中；請用防火牆限制 11434 埠。",
   ollamaComposeHelp:
     "適用於透過 docker compose --profile local-llm 啟動的可選 Ollama 容器。該服務設定了 OLLAMA_NO_CLOUD=1。在 macOS 上，容器無法使用 Apple GPU，只能用 CPU 執行，大模型會很慢；請改為在主機上直接執行 Ollama 並使用主機模板。",
   ollamaDefaultsHelp:
     "模板值：原生 Ollama API、無 API 金鑰、上下文視窗 32K（num_ctx 32,768）、每次 1 個請求、keep-alive 30m、輸出上限 4,096 個token，是否思考由模型決定。從此伺服器已安裝的模型中選擇，優先選擇宣告支援工具呼叫的模型。查詢失敗或清單為空時，模型欄位保持空白：請檢查伺服器並點選載入模型，或手動輸入模型標籤。不會自動下載或執行模型。",
   ollamaCloudWarning:
-    "Ollama 可以將請求轉發到 Ollama 雲端模型。ScopeWeaver 無法在你的伺服器上關閉此功能：凡是用於不得離開本地網路的工作的 Ollama 伺服器，都請設定 OLLAMA_NO_CLOUD=1。",
+    "Ollama 可以將請求轉發到 Ollama 雲端模型。APTEX 無法在你的伺服器上關閉此功能：凡是用於不得離開本地網路的工作的 Ollama 伺服器，都請設定 OLLAMA_NO_CLOUD=1。",
   officialOllama: "Ollama API 文件",
   keyOptional: "Ollama 可不填",
   ollamaKeyHelp:
@@ -3373,7 +3376,7 @@ export const providers: Record<keyof typeof providersSource, string> = {
   contextOllama:
     "Ollama：該值按二進位制 K 計算，並作為 options.num_ctx 傳送（32 = 32,768 個token）。0 表示使用 32。視窗越大，所需 GPU 記憶體越多。",
   maxTokensFieldOllama: "Ollama 將輸出上限作為 options.num_predict 傳送；0 表示使用 4,096。此選項不適用。",
-  noTools: "警告：此模型未宣告原生工具呼叫支援。ScopeWeaver 代理需要工具呼叫來更新資產圖和探索圖。",
+  noTools: "警告：此模型未宣告原生工具呼叫支援。APTEX 代理需要工具呼叫來更新資產圖和探索圖。",
   noToolsBadge: "不支援工具",
   capabilitiesUnknown: "無法獲取能力資訊：{error}",
   diagnostics: "Ollama 診斷",
@@ -3453,10 +3456,10 @@ export const settings: Record<keyof typeof settingsSource, string> = {
     "預設關閉，因此雲端服務商可照常使用。開啟後，所有 <b>LLM HTTP 連線</b>（對話、模型清單、連線測試、預熱和核准判定）只能訪問<b>迴環</b>位址和下方的受信任 CIDR。<b>區域網、Docker 和其他私有位址需要顯式新增 CIDR</b>；host.docker.internal 或 ollama 等名稱只有在其解析出的位址被允許時才能連線。鏈路本地、組播和未指定位址始終被拒絕，即使已列出也是如此。每次建立連線時都會檢查實際解析出的 IP，並且<b>重定向和 LLM 設定代理都會被拒絕</b>。<b>Agent 網頁搜尋（所有後端）以及更新檢查和下載也會被阻止</b>；目前版本和復原仍然可用。目標流量、目標工具和全域代理不受影響，因此這不會讓整臺主機離線。Ollama 仍可將請求轉發到其雲端模型：請同時在 Ollama 伺服器上設定 <code>OLLAMA_NO_CLOUD=1</code>。",
   localOnlyToggle: "強制僅本地 LLM 連線",
   localOnlyEnv:
-    "伺服器環境中的 SCOPEWEAVER_LOCAL_LLM_ONLY=true（或 APTEX_LOCAL_LLM_ONLY）無法在此關閉。SCOPEWEAVER_LOCAL_LLM_ALLOWED_CIDRS（或 APTEX_LOCAL_LLM_ALLOWED_CIDRS）中的 CIDR 也會額外生效，但無法在此編輯。",
+    "伺服器環境中的 APTEX_LOCAL_LLM_ONLY=true（或 APTEX_LOCAL_LLM_ONLY）無法在此關閉。APTEX_LOCAL_LLM_ALLOWED_CIDRS（或 APTEX_LOCAL_LLM_ALLOWED_CIDRS）中的 CIDR 也會額外生效，但無法在此編輯。",
   allowlistLabel: "其他受信任 CIDR",
   allowlistHelp:
-    "每行一個或用逗號分隔。只允許推理伺服器，例如區域網或 Docker 主機位址使用 192.168.1.20/32，IPv6 使用 fd00::20/128。請使用 ScopeWeaver 伺服器實際連線的位址（Docker 中為主機閘道器或 Ollama 容器的 IP）。受信任範圍內的每臺伺服器都會被視為本地 LLM 伺服器。",
+    "每行一個或用逗號分隔。只允許推理伺服器，例如區域網或 Docker 主機位址使用 192.168.1.20/32，IPv6 使用 fd00::20/128。請使用 APTEX 伺服器實際連線的位址（Docker 中為主機閘道器或 Ollama 容器的 IP）。受信任範圍內的每臺伺服器都會被視為本地 LLM 伺服器。",
   localOnlyOn: "已開啟僅本地 LLM 網路",
   localOnlyOff: "已關閉僅本地 LLM 網路",
   allowlistSaved: "已儲存受信任 CIDR",

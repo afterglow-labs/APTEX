@@ -2,7 +2,7 @@
 
 [English](README.md) · 한국어 · [简体中文](../../../docs/zh-Hans/i18n.md) · [繁體中文](../../../docs/zh-Hant/i18n.md) · [日本語](../../../docs/ja/i18n.md) · [Español](../../../docs/es/i18n.md)
 
-기본 언어는 영어이며 영어, 한국어, 간체 중국어(`zh-Hans`), 번체 중국어(`zh-Hant`), 일본어(`ja`), 스페인어(`es`)를 제공합니다. React 공급자는 hydration 후 명시적인 언어 설정을 복원해 정적 영어 출력과 첫 클라이언트 렌더를 일치시킵니다. 선택은 localStorage의 `scopeweaver.locale`과 `scopeweaver_locale` 쿠키에 저장됩니다. API는 hydration 완료 전에도 저장된 설정을 읽으며 localStorage가 차단되면 쿠키를 사용합니다. 운영체제나 브라우저의 언어를 자동으로 선택하지 않습니다.
+기본 언어는 영어이며 영어, 한국어, 간체 중국어(`zh-Hans`), 번체 중국어(`zh-Hant`), 일본어(`ja`), 스페인어(`es`)를 제공합니다. React 공급자는 hydration 후 명시적인 언어 설정을 복원해 정적 영어 출력과 첫 클라이언트 렌더를 일치시킵니다. 선택은 localStorage의 `aptex.locale`과 `aptex_locale` 쿠키에 저장됩니다. API는 hydration 완료 전에도 저장된 설정을 읽으며 localStorage가 차단되면 쿠키를 사용합니다. 운영체제나 브라우저의 언어를 자동으로 선택하지 않습니다.
 
 ## 언어 추가
 

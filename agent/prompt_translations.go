@@ -1,6 +1,6 @@
 package agent
 
-import "github.com/afterglow-labs/afterglow-cybersecurity/locale"
+import "github.com/afterglow-labs/APTEX/locale"
 
 // Built-in templates are translated before interpolation; saved user templates are preserved.
 func init() {

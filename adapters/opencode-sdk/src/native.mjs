@@ -136,9 +136,9 @@ export async function completeNative(request,{root,providerConfig,rawHistory={},
     const split=request.model.indexOf("/");
     consumer=(async()=>{try{for await(const e of host.event.subscribe({signal:eventAbort.signal})){if(e.type==="server.connected"){eventsReady=true;notify()}else consume(e)}}catch{if(!eventAbort.signal.aborted)reject("sdk_failure")}})();
     await wait(()=>eventsReady);
-    session=await host.session.create({location:{directory:host.directory},agent:"capture",model:{providerID:request.model.slice(0,split),id:request.model.slice(split+1)},permissions:rules,title:"ScopeWeaver model request"});
+    session=await host.session.create({location:{directory:host.directory},agent:"capture",model:{providerID:request.model.slice(0,split),id:request.model.slice(split+1)},permissions:rules,title:"APTEX model request"});
     emit({type:"message_start"});
-    await host.session.prompt({sessionID:session.id,text:"ScopeWeaver authoritative context is supplied by the host."});
+    await host.session.prompt({sessionID:session.id,text:"APTEX authoritative context is supplied by the host."});
     await wait(()=>streamed||terminal);
     if(calls.size) {
       await wait(()=>[...calls.entries()].every(([id,c])=>c.raw!==undefined&&captures.has(id))||terminal);

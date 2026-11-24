@@ -12,11 +12,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/agent"
-	runtimeconfig "github.com/afterglow-labs/afterglow-cybersecurity/config"
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
-	"github.com/afterglow-labs/afterglow-cybersecurity/ollama"
+	"github.com/afterglow-labs/APTEX/agent"
+	runtimeconfig "github.com/afterglow-labs/APTEX/config"
+	"github.com/afterglow-labs/APTEX/db"
+	"github.com/afterglow-labs/APTEX/locale"
+	"github.com/afterglow-labs/APTEX/ollama"
 	"github.com/Autumn-27/norma/llm"
 )
 

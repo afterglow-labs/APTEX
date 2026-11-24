@@ -14,7 +14,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
+	"github.com/afterglow-labs/APTEX/db"
 )
 
 func assessmentTestUUID(t *testing.T) string {
@@ -326,7 +326,7 @@ func TestRestoredWorkflowToolsCRUDAndUnavailableRun(t *testing.T) {
 }
 
 func TestWorkflowAgentProfileWithoutGlobalModel(t *testing.T) {
-	t.Setenv("SCOPEWEAVER_LLM_PROVIDER", "")
+	t.Setenv("APTEX_LLM_PROVIDER", "")
 	t.Setenv("ARTEX_LLM_PROVIDER", "")
 	m := backportTestManager(t)
 	_, file, _, _ := runtime.Caller(0)

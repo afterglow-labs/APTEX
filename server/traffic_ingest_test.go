@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/traffic"
+	"github.com/afterglow-labs/APTEX/traffic"
 )
 
 func TestBrowserCaptureIngestUsesTrafficStoreAndAuth(t *testing.T) {

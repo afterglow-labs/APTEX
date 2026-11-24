@@ -60,7 +60,7 @@ test("legacy refuses unmanaged configuration entries before launching the CLI", 
 });
 
 async function fixture(mode, callback) {
-  const root = await mkdtemp(`${tmpdir()}/scopeweaver-test-legacy-`), requests = [], events = [];
+  const root = await mkdtemp(`${tmpdir()}/aptex-test-legacy-`), requests = [], events = [];
   let markStarted; const started = new Promise(resolve => { markStarted = resolve; });
   const server = http.createServer(async (req, res) => {
     let text = ""; for await (const chunk of req) text += chunk;
@@ -141,7 +141,7 @@ test("legacy preserves host call/result IDs and safe JSON history while rejectin
 
 const safeHistoryEncodings = [
   // Exact input object captured from product QA's real Go encoding/json request.
-  ["Go HTML escaping", String.raw`{"command":"printf 'gh49-allow-proof\\n' \u003e\u003e /tmp/scopeweaver-gh49-product-qa/app-legacy/allow.txt"}`, "printf 'gh49-allow-proof\\n' >> /tmp/scopeweaver-gh49-product-qa/app-legacy/allow.txt"],
+  ["Go HTML escaping", String.raw`{"command":"printf 'gh49-allow-proof\\n' \u003e\u003e /tmp/aptex-gh49-product-qa/app-legacy/allow.txt"}`, "printf 'gh49-allow-proof\\n' >> /tmp/aptex-gh49-product-qa/app-legacy/allow.txt"],
   ["whitespace and escaped Unicode", String.raw`{
     "command" : "printf '\ud55c\uad6d\\n' \u003e\u003e /tmp/legacy-unicode.txt"
   }`, "printf '한국\\n' >> /tmp/legacy-unicode.txt"],
@@ -276,7 +276,7 @@ test("legacy does not classify generic 403 prose as a free tier restriction", as
 }, 30000);
 
 test("legacy retains redirect failure through both pre-network retry gates", async () => {
-  const root = await mkdtemp(`${tmpdir()}/scopeweaver-test-legacy-redirect-`), paths = [];
+  const root = await mkdtemp(`${tmpdir()}/aptex-test-legacy-redirect-`), paths = [];
   const server = http.createServer((req, res) => {
     paths.push(req.url);
     res.writeHead(307, { location: `http://127.0.0.1:${server.address().port}/escaped` }); res.end();
@@ -290,8 +290,8 @@ test("legacy retains redirect failure through both pre-network retry gates", asy
     await hooks["chat.params"]({ sessionID: "redirect" }, { options: {} });
     const fetch = config.provider.fixture.options.fetch;
     await expect(fetch(`http://127.0.0.1:${server.address().port}/model`)).rejects.toMatchObject({ code: "UnexpectedRedirect" });
-    await expect(hooks["chat.params"]({ sessionID: "redirect" }, { options: {} })).rejects.toThrow("SCOPEWEAVER_LEGACY_REDIRECT");
-    await expect(fetch(`http://127.0.0.1:${server.address().port}/model`)).rejects.toThrow("SCOPEWEAVER_LEGACY_REDIRECT");
+    await expect(hooks["chat.params"]({ sessionID: "redirect" }, { options: {} })).rejects.toThrow("APTEX_LEGACY_REDIRECT");
+    await expect(fetch(`http://127.0.0.1:${server.address().port}/model`)).rejects.toThrow("APTEX_LEGACY_REDIRECT");
     expect(paths).toEqual(["/model"]);
   } finally {
     server.closeAllConnections(); await new Promise(resolve => server.close(resolve));

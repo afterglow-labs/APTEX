@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/locale"
 	"github.com/Autumn-27/norma/agentcore"
 	"github.com/Autumn-27/norma/permission"
 	actool "github.com/Autumn-27/norma/tool"
@@ -105,7 +105,7 @@ func TestDeepSeekSearchDefaultPolicyReadsEnvironmentLive(t *testing.T) {
 	if len(opts.Tools) != 1 {
 		t.Fatal("normalized DeepSeek backend missing")
 	}
-	t.Setenv("SCOPEWEAVER_LOCAL_LLM_ONLY", "true")
+	t.Setenv("APTEX_LOCAL_LLM_ONLY", "true")
 	result, err := opts.Tools[0].Call(t.Context(), json.RawMessage(`{"query":"fixture"}`), nil)
 	if err != nil || !result.IsError || !strings.Contains(result.Flatten(), "local_llm_only") {
 		t.Fatalf("environment policy bypassed: %+v %v", result, err)

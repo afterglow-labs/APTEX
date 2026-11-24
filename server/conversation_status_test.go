@@ -2,8 +2,8 @@ package server
 
 import (
 	"encoding/json"
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/db"
+	"github.com/afterglow-labs/APTEX/locale"
 	"go/ast"
 	"go/parser"
 	"go/token"

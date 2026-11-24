@@ -17,11 +17,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/agent"
-	"github.com/afterglow-labs/afterglow-cybersecurity/chatstate"
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
-	"github.com/afterglow-labs/afterglow-cybersecurity/internal/dbtest"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/agent"
+	"github.com/afterglow-labs/APTEX/chatstate"
+	"github.com/afterglow-labs/APTEX/db"
+	"github.com/afterglow-labs/APTEX/internal/dbtest"
+	"github.com/afterglow-labs/APTEX/locale"
 	"github.com/Autumn-27/norma/llm"
 	actool "github.com/Autumn-27/norma/tool"
 	"github.com/Autumn-27/norma/transcript"
@@ -155,13 +155,13 @@ func (f *chatBrowserFixture) model(w http.ResponseWriter, r *http.Request) {
 // Opt-in browser gate: real API + static production UI, isolated database and
 // loopback-only model/tool fixtures. No production fixture routes are installed.
 func TestChatControlsE2E(t *testing.T) {
-	if os.Getenv("SCOPEWEAVER_CHAT_E2E") != "1" {
-		t.Skip("opt in with SCOPEWEAVER_CHAT_E2E=1, a fresh scopeweaver_test_* DB and the web/out build")
+	if os.Getenv("APTEX_CHAT_E2E") != "1" {
+		t.Skip("opt in with APTEX_CHAT_E2E=1, a fresh aptex_test_* DB and the web/out build")
 	}
 	dsn := dbtest.DSN(t)
 	parsed, err := pgx.ParseConfig(dsn)
-	if err != nil || !strings.HasPrefix(parsed.Database, "scopeweaver_test_") {
-		t.Fatal("a disposable scopeweaver_test_* database is required")
+	if err != nil || !strings.HasPrefix(parsed.Database, "aptex_test_") {
+		t.Fatal("a disposable aptex_test_* database is required")
 	}
 	for _, path := range []string{"../web/out/chat/index.html", "../e2e/node_modules/playwright/package.json"} {
 		if _, err = os.Stat(path); err != nil {
@@ -477,7 +477,7 @@ func TestChatControlsE2E(t *testing.T) {
 	if err = os.MkdirAll(artifacts, 0700); err != nil {
 		t.Fatal(err)
 	}
-	command.Env = append(os.Environ(), "SCOPEWEAVER_E2E_ARTIFACTS="+artifacts, "SCOPEWEAVER_E2E_URL="+listener.URL, "SCOPEWEAVER_E2E_FIXTURE="+fixtureToken)
+	command.Env = append(os.Environ(), "APTEX_E2E_ARTIFACTS="+artifacts, "APTEX_E2E_URL="+listener.URL, "APTEX_E2E_FIXTURE="+fixtureToken)
 	output, err := command.CombinedOutput()
 	t.Log(string(output))
 	if err != nil {

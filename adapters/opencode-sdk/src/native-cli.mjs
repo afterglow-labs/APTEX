@@ -45,7 +45,7 @@ export async function createNativeCLI({root,providerConfig,request,history,tools
   const paths=Object.fromEntries(["home","config","data","cache","state","tmp","work"].map(name=>[name,join(root,`cli-${name}`)]));
   for(const path of Object.values(paths))await mkdir(path,{recursive:true});
   const plugin=join(paths.config,"host-capture");await mkdir(plugin,{recursive:true});
-  await writeFile(join(plugin,"package.json"),JSON.stringify({name:"scopeweaver-host-capture",type:"module",main:"index.mjs"}));
+  await writeFile(join(plugin,"package.json"),JSON.stringify({name:"aptex-host-capture",type:"module",main:"index.mjs"}));
   await writeFile(join(plugin,"index.mjs"),await readFile(new URL("./native-plugin.mjs",import.meta.url)));
   const input={request,history,tools,rawHistory,channel},inputPath=join(plugin,"bridge-input.json");
   const setRequest=async next=>{input.request=next;await writeFile(inputPath,JSON.stringify(input),{mode:0o600})};
@@ -84,15 +84,15 @@ export async function createNativeCLI({root,providerConfig,request,history,tools
     // Raw tool history becomes JSON inside JSON; allow its encoded expansion
     // while the public bridge continues to enforce its 16 MiB input limit.
     egress=Bun.serve({hostname:"127.0.0.1",port:0,idleTimeout:0,maxRequestBodySize:64*1024*1024,async fetch(incoming){
-      if(incoming.method!=="POST"||new URL(incoming.url).pathname!=="/model"||incoming.headers.has("origin")||incoming.headers.get("x-scopeweaver-egress")!==token||sent)return new Response(null,{status:403});
+      if(incoming.method!=="POST"||new URL(incoming.url).pathname!=="/model"||incoming.headers.has("origin")||incoming.headers.get("x-aptex-egress")!==token||sent)return new Response(null,{status:403});
       sent=true;
       try{
-        const target=new URL(incoming.headers.get("x-scopeweaver-upstream")??"");
+        const target=new URL(incoming.headers.get("x-aptex-upstream")??"");
         if(target.username||target.password||target.hash||!["http:","https:"].includes(target.protocol))throw Error();
         const expected=providerConfig?new URL(providerConfig.providers[provider].settings.baseURL).origin:"https://opencode.ai";
         if(target.origin!==expected)throw Error();
         const headers=new Headers(incoming.headers);
-        for(const name of ["host","connection","content-length","x-scopeweaver-egress","x-scopeweaver-upstream"])headers.delete(name);
+        for(const name of ["host","connection","content-length","x-aptex-egress","x-aptex-upstream"])headers.delete(name);
         const response=await fetch(target,{method:"POST",headers,body:await incoming.arrayBuffer(),redirect:"error",signal:AbortSignal.any([signal,incoming.signal])});
         // Fetch exposes decoded bytes but retains the upstream encoding header.
         // The downstream CLI must not attempt to decode those bytes again.
@@ -110,7 +110,7 @@ export async function createNativeCLI({root,providerConfig,request,history,tools
         buffer+=chunk.toString();if(buffer.length>1000000){done(new BridgeError("protocol_error",502));server.kill("SIGTERM");return}
         let index;while((index=buffer.indexOf("\n"))>=0){
           const line=buffer.slice(0,index);buffer=buffer.slice(index+1);let value;try{value=JSON.parse(line)}catch{continue}
-          if(value._scopeweaver_native===channel){try{onControl(value.event)}catch{server.kill("SIGTERM")}}
+          if(value._aptex_native===channel){try{onControl(value.event)}catch{server.kill("SIGTERM")}}
           else if(typeof value.url==="string"){
             const parsed=new URL(value.url);if(parsed.protocol!=="http:"||parsed.hostname!=="127.0.0.1"||parsed.username||parsed.password||parsed.pathname!=="/")done(new BridgeError("protocol_error",502));else done(undefined,value.url);
           }
@@ -125,7 +125,7 @@ export async function createNativeCLI({root,providerConfig,request,history,tools
       runner=start(["run","--server",url,"--session",sessionID,"--model",request.model,"--agent","capture","--format","json"]);
       runnerExit=new Promise(resolve=>{runner.once("error",()=>resolve(-1));runner.once("exit",resolve)});
       let size=0;runner.stdout.on("data",chunk=>{size+=chunk.length;if(size>20000000){onControl({type:"failure",code:"protocol_error"});runner.kill("SIGTERM")}});
-      runner.stdin.end("ScopeWeaver authoritative conversation is supplied by the host plugin.");
+      runner.stdin.end("APTEX authoritative conversation is supplied by the host plugin.");
     }},async waitRunner(){if(runnerExit&&(await runnerExit)!==0)fail("sdk_failure",502)}};
   }catch(error){await close();throw error}
 }

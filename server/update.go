@@ -5,14 +5,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/locale"
 	"log"
 	"net/http"
 	"runtime"
 	"sync"
 	"time"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/selfupdate"
+	"github.com/afterglow-labs/APTEX/selfupdate"
 )
 
 // HTTP endpoints for one-click updates. Download, verification, and replacement
@@ -125,7 +125,7 @@ type updateProgress struct {
 // updateHub retains an upgrade's progress and broadcasts it to SSE subscribers.
 //
 // running also provides exclusion: concurrent update/apply requests receive 409,
-// preventing two goroutines from writing the same scopeweaver.new file.
+// preventing two goroutines from writing the same aptex.new file.
 type updateHub struct {
 	mu      sync.Mutex
 	running bool
@@ -337,7 +337,7 @@ func (s *Server) updateApply(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, 202, map[string]any{"ok": true, "target": rel.TagName})
 }
 
-// updateRollback restores the previous executable backed up as scopeweaver.old.
+// updateRollback restores the previous executable backed up as aptex.old.
 func (s *Server) updateRollback(w http.ResponseWriter, r *http.Request) {
 	if _, running := updHub.snapshot(); running {
 		writeErr(w, 409, "Cannot roll back while an update is in progress")

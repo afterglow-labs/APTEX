@@ -3,7 +3,7 @@ package agent
 import (
 	"testing"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
+	"github.com/afterglow-labs/APTEX/db"
 )
 
 // helper: intent/fact node

@@ -45,7 +45,7 @@ export function createTools(client) {
   const page = z.number({ error }).int({ error }).min(1, { error }).max(100000, { error }).default(1);
   const limit = z.number({ error }).int({ error }).min(1, { error }).max(100, { error }).default(20);
   function tool(name, title, description, shape, readOnly, run) {
-    return { name: `scopeweaver_${name}`, title, description,
+    return { name: `aptex_${name}`, title, description,
       schema: z.strictObject(shape, { error }), outputSchema, run,
       annotations: { readOnlyHint: readOnly, destructiveHint: !readOnly,
         idempotentHint: readOnly || name === "control_task", openWorldHint: true } };

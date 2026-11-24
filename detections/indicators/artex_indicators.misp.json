@@ -31,7 +31,7 @@
         "category": "Network activity",
         "to_ids": true,
         "disable_correlation": false,
-        "value": "scopeweaver-selfupdate",
+        "value": "aptex-selfupdate",
         "comment": "ARTEX self-update egress User-Agent to the release host (selfupdate/github.go, selfupdate/stage.go). Seen in outbound logs from an ARTEX host. Sigma: artex_selfupdate_egress.yml."
       },
       {
@@ -40,7 +40,7 @@
         "category": "Artifacts dropped",
         "to_ids": true,
         "disable_correlation": false,
-        "value": "[ScopeWeaver platform control, not target defense]",
+        "value": "[APTEX platform control, not target defense]",
         "comment": "Control-framing prefix ARTEX writes to its audit log on a blocked tool call (guard/guard.go). Its presence in audit records supports an ARTEX-execution finding. Sigma: artex_guard_audit_framing.yml."
       },
       {
@@ -50,7 +50,7 @@
         "to_ids": false,
         "disable_correlation": true,
         "value": "8787",
-        "comment": "Default ARTEX server HTTP listen port (cmd/artex/main.go --addr). Host-triage hint, not a blocking indicator; check with ss/netstat on a suspected host."
+        "comment": "Default ARTEX server HTTP listen port (cmd/aptex/main.go --addr). Host-triage hint, not a blocking indicator; check with ss/netstat on a suspected host."
       },
       {
         "uuid": "b575c98a-629d-42d4-bac0-3280f6c6c6b8",
@@ -59,7 +59,7 @@
         "to_ids": false,
         "disable_correlation": true,
         "value": "127.0.0.1|8788",
-        "comment": "Default loopback traffic-recording MITM proxy endpoint (cmd/artex/main.go --proxy). Loopback — a host-triage hint, not a network block; check with ss/netstat."
+        "comment": "Default loopback traffic-recording MITM proxy endpoint (cmd/aptex/main.go --proxy). Loopback — a host-triage hint, not a network block; check with ss/netstat."
       },
       {
         "uuid": "7628f0dc-d5f8-45ea-8aec-64843667658e",

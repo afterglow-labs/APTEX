@@ -12,9 +12,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/db"
-	"github.com/afterglow-labs/afterglow-cybersecurity/proxygraph"
-	"github.com/afterglow-labs/afterglow-cybersecurity/traffic"
+	"github.com/afterglow-labs/APTEX/db"
+	"github.com/afterglow-labs/APTEX/proxygraph"
+	"github.com/afterglow-labs/APTEX/traffic"
 )
 
 const proxyGraphSetting = "proxy_graph_config"

@@ -210,7 +210,7 @@ elif not extra:
 
 
 print("== 4/5  the non-ASCII guard marker is preserved verbatim ==")
-MARKER = "[ScopeWeaver platform control, not target defense]"
+MARKER = "[APTEX platform control, not target defense]"
 csv_has = any(r["value"] == MARKER for r in csv_rows)
 misp_has = MARKER in actual_values
 if csv_has and misp_has:

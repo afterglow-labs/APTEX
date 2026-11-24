@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/internal/dbtest"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/internal/dbtest"
+	"github.com/afterglow-labs/APTEX/locale"
 )
 
 func TestShippedSettingsPersistenceAndValidation(t *testing.T) {
@@ -64,7 +64,7 @@ func TestShippedSettingsPersistenceAndValidation(t *testing.T) {
 				}
 			}
 			locale.SetServerDefault(locale.En)
-			t.Setenv("SCOPEWEAVER_LANGUAGE", "ko")
+			t.Setenv("APTEX_LANGUAGE", "ko")
 			if err := loadLanguage(m.pg); err != nil {
 				t.Fatal(err)
 			}

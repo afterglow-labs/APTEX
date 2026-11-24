@@ -3,7 +3,7 @@ package notify
 import (
 	"context"
 	"encoding/json"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/locale"
 )
 
 // weComMarkdownLimit is the hard byte limit, not a character limit. It is the tightest of the six

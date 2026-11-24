@@ -1,4 +1,4 @@
-// Command artex runs the ScopeWeaver backend: the PostgreSQL graph stores,
+// Command aptex runs the APTEX backend: the PostgreSQL graph stores,
 // the event-driven exploration engine, and the JSON HTTP API consumed by the
 // shadcn/ui frontend.
 package main
@@ -8,7 +8,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"github.com/afterglow-labs/afterglow-cybersecurity/locale"
+	"github.com/afterglow-labs/APTEX/locale"
 	"log"
 	"net/http"
 	"os"
@@ -18,10 +18,10 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/afterglow-labs/afterglow-cybersecurity/agent"
-	"github.com/afterglow-labs/afterglow-cybersecurity/config"
-	"github.com/afterglow-labs/afterglow-cybersecurity/selfupdate"
-	"github.com/afterglow-labs/afterglow-cybersecurity/server"
+	"github.com/afterglow-labs/APTEX/agent"
+	"github.com/afterglow-labs/APTEX/config"
+	"github.com/afterglow-labs/APTEX/selfupdate"
+	"github.com/afterglow-labs/APTEX/server"
 )
 
 // version is the build version, injected at release time via
@@ -29,7 +29,7 @@ import (
 var version = "dev"
 
 const banner = `
-  ScopeWeaver
+  APTEX
 `
 
 // printBanner writes the startup banner + version/runtime info to stdout.
@@ -140,7 +140,7 @@ func run() (code int) {
 	}()
 	served := make(chan error, 1)
 	go func() {
-		log.Printf("ScopeWeaver %s backend listening on %s (data=%s, workers=%d)", version, *addr, *dataDir, mgr.Workers())
+		log.Printf("APTEX %s backend listening on %s (data=%s, workers=%d)", version, *addr, *dataDir, mgr.Workers())
 		served <- httpSrv.ListenAndServe()
 	}()
 

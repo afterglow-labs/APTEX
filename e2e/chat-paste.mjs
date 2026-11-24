@@ -146,7 +146,7 @@ export async function runChatPasteChecks({ base, token, step, check, openPage, m
           await p.goBack();
           await p.locator(`textarea[data-chat-draft="${key}"]`).waitFor();
           try { await p.getByRole("button", { name: /^delayed(?:-\d+)?\.pdf$/ }).waitFor({timeout:5000}); }
-          catch (error) { await p.screenshot({path:`${process.env.SCOPEWEAVER_E2E_ARTIFACTS || "dist/chat-e2e"}/paste-failure.png`}); console.error(await p.locator("textarea[data-chat-draft], [data-attachment-id]").evaluateAll(nodes=>nodes.map(n=>({key:n.dataset.chatDraft,text:n.textContent,value:n.value})))); throw error; }
+          catch (error) { await p.screenshot({path:`${process.env.APTEX_E2E_ARTIFACTS || "dist/chat-e2e"}/paste-failure.png`}); console.error(await p.locator("textarea[data-chat-draft], [data-attachment-id]").evaluateAll(nodes=>nodes.map(n=>({key:n.dataset.chatDraft,text:n.textContent,value:n.value})))); throw error; }
           await p.waitForFunction(() => !document.querySelector("[data-attachment-id] .animate-spin"));
           await p.waitForFunction(() => document.querySelector("textarea[data-chat-draft]")?.value === "origin draft").catch(async error => { console.error("restored draft", await input.inputValue()); throw error; });
           check(await input.inputValue() === "origin draft", "late upload changed originating draft");
@@ -163,9 +163,9 @@ export async function runChatPasteChecks({ base, token, step, check, openPage, m
 }
 
 if (process.argv[1]?.endsWith("chat-paste.mjs")) {
-  const base = process.env.SCOPEWEAVER_URL ?? "http://127.0.0.1:18787";
+  const base = process.env.APTEX_URL ?? "http://127.0.0.1:18787";
   const dsn = new URL((process.env.ARTEX_PG_DSN ?? "").replace("@/", "@localhost/"));
-  assert.ok(dsn.pathname.slice(1).startsWith("scopeweaver_test_"), "requires disposable database");
+  assert.ok(dsn.pathname.slice(1).startsWith("aptex_test_"), "requires disposable database");
   const api = await request.newContext({ baseURL: base });
   await api.post("/api/auth/init", { data: { password: "chat-test-pass-1234" } });
   const login = await api.post("/api/auth/login", { data: { username: "Afterglow", password: "chat-test-pass-1234" } });
@@ -176,7 +176,7 @@ if (process.argv[1]?.endsWith("chat-paste.mjs")) {
   try {
     await runChatPasteChecks({ base, token, mutation: process.env.PASTE_MUTATION === "1", check: assert.ok,
       step: async (name, fn) => { try { await fn(); console.log(`PASS ${name}`); } catch (error) { failures++; console.error(`FAIL ${name}: ${error.stack}`); if (process.env.PASTE_MUTATION === "1") throw error; } },
-      openPage: async (locale, jwt) => { const context = await browser.newContext(); await context.addInitScript(([l, t]) => { localStorage.setItem("scopeweaver.locale", l); localStorage.setItem("afterglow_token", t); }, [locale, jwt]); return context.newPage(); },
+      openPage: async (locale, jwt) => { const context = await browser.newContext(); await context.addInitScript(([l, t]) => { localStorage.setItem("aptex.locale", l); localStorage.setItem("afterglow_token", t); }, [locale, jwt]); return context.newPage(); },
     });
   } finally { await browser.close(); await api.dispose(); }
   if (failures) process.exitCode = 1;

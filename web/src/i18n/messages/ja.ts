@@ -16,6 +16,9 @@ export const app: Record<keyof typeof appSource, string> = {
   themePhosphorDescription: "黒に近い面に蛍光グリーンのアクセント",
   themeAfterglow: "Afterglow",
   themeAfterglowDescription: "温かみのあるチャコールにアンバーのアクセント",
+  themeDreamsicleDescription: "白とピーチに明るいオレンジのアクセント",
+  themeOdysseusDescription: "深い紫に鮮やかなオレンジのアクセント",
+  themeOrangurpleDescription: "鮮やかなオレンジに深い紫のパネル",
   metricValue: "{label} {value}",
   tokenSummary: "入力 {input}（キャッシュ {cache} を含む）· 出力 {output}",
   reasoningInOutput: "推論（出力に含む）",
@@ -1786,7 +1789,7 @@ const interfaceMessages: Record<keyof typeof interfaceSource, string> = {
   m1409: "ストリーミング出力",
   m1410: "出力上限 · 最大トークン",
   m1411:
-    "応答ごとに生成するトークンの上限で、各リクエストに送信します。0（既定）の場合は ScopeWeaver が選択し、エージェントのターンは 32768、Anthropic の単発直接呼び出しは 8192、ネイティブ Ollama は独自の既定値を使用します。これはコンテキストウィンドウとは異なります。コンテキストウィンドウはモデルの総容量であり、ローカルで圧縮の閾値を計算するために使います。上限が小さすぎると、回答が生成される前に推論が途切れる場合があります。",
+    "応答ごとに生成するトークンの上限で、各リクエストに送信します。0（既定）の場合は APTEX が選択し、エージェントのターンは 32768、Anthropic の単発直接呼び出しは 8192、ネイティブ Ollama は独自の既定値を使用します。これはコンテキストウィンドウとは異なります。コンテキストウィンドウはモデルの総容量であり、ローカルで圧縮の閾値を計算するために使います。上限が小さすぎると、回答が生成される前に推論が途切れる場合があります。",
   m1412: "上限フィールド名",
   m1413: "思考機能の切り替え · thinking.type",
   m1414:
@@ -2840,7 +2843,7 @@ const interfaceMessages: Record<keyof typeof interfaceSource, string> = {
   m2412: "補足の質問データを解析できませんでした。パネルを開き直してください",
   m2413: "認証されていません",
   m2414:
-    "# ScopeWeaver ペネトレーションテストレポート — Acme Corp\n\n## 概要\n- スコープ: acme.com（www / admin / api / shop / vpn サブドメインを含む）\n- 確認済みの検出事項: 6（高 3 · 中 3 · 低 2）\n- エンジンモード: exploring\n\n## 主な検出事項\n1. **[高] 管理者の既定パスワード** admin.acme.com の admin/admin123 → 管理者の全権限。\n2. **[高] SQL インジェクション** www.acme.com/search?q= → acme_prod の読み取り権限。\n3. **[高] IDOR** api.acme.com/v1/orders?id= → 電話番号や住所を含む他のユーザーの注文が公開。\n4. **[中] 反射型 XSS**、**.git ソースの公開**、**ログインのレート制限なし**。\n\n## 推奨事項\n- 管理者パスワードの変更と MFA を必須にし、既定の認証情報を禁止する。\n- 検索クエリのパラメーター化と出力のエンコードを行う。\n- API のオブジェクト単位の認可を徹底し、弱い JWT シークレットを置き換える。\n\n> 画面のデモンストレーション専用に、模擬データから生成したデモレポート。",
+    "# APTEX ペネトレーションテストレポート — Acme Corp\n\n## 概要\n- スコープ: acme.com（www / admin / api / shop / vpn サブドメインを含む）\n- 確認済みの検出事項: 6（高 3 · 中 3 · 低 2）\n- エンジンモード: exploring\n\n## 主な検出事項\n1. **[高] 管理者の既定パスワード** admin.acme.com の admin/admin123 → 管理者の全権限。\n2. **[高] SQL インジェクション** www.acme.com/search?q= → acme_prod の読み取り権限。\n3. **[高] IDOR** api.acme.com/v1/orders?id= → 電話番号や住所を含む他のユーザーの注文が公開。\n4. **[中] 反射型 XSS**、**.git ソースの公開**、**ログインのレート制限なし**。\n\n## 推奨事項\n- 管理者パスワードの変更と MFA を必須にし、既定の認証情報を禁止する。\n- 検索クエリのパラメーター化と出力のエンコードを行う。\n- API のオブジェクト単位の認可を徹底し、弱い JWT シークレットを置き換える。\n\n> 画面のデモンストレーション専用に、模擬データから生成したデモレポート。",
   m2415: "アップロードに失敗しました: {p0}",
   m2416: "（デモ）{p0} のサンプルダウンロード内容。",
   m2417: "ダウンロードに失敗しました: {p0}",
@@ -3164,11 +3167,11 @@ const interfaceMessages: Record<keyof typeof interfaceSource, string> = {
   m2682: "探索経路のヒント",
   m2683: "管理画面と API の認可を優先",
   m2684: "認可テストの指針を強化",
-  m2685: "あなたは ScopeWeaver のプランナーです…",
+  m2685: "あなたは APTEX のプランナーです…",
   m2686: "初期調整",
-  m2687: "あなたは ScopeWeaver のプランナーです（v2）…",
+  m2687: "あなたは APTEX のプランナーです（v2）…",
   m2688:
-    "あなたは ScopeWeaver の「{p0}」です。\n目標: {{.Goal}}\n資産の概要: {{.AssetSummary}}\n経路のヒント: {{.RouteHint}}\nこの情報を使って探索を続け、ツールで結果をグラフに書き込んでください。",
+    "あなたは APTEX の「{p0}」です。\n目標: {{.Goal}}\n資産の概要: {{.AssetSummary}}\n経路のヒント: {{.RouteHint}}\nこの情報を使って探索を続け、ツールで結果をグラフに書き込んでください。",
   m2689: "時間・ステップ数の予算が残りわずかです。確認済みの検出事項を要約し、探索方針の最終状態を記録してください。",
   m2690: "タスクがタイムアウトしました。即座に終了処理を行い、現在の結論を永続化してください。",
   m2691: "IP の Shodan ホスト情報を照会",
@@ -3404,9 +3407,9 @@ export const providers: Record<keyof typeof providersSource, string> = {
   generalHelp:
     "General API のエンドポイントと API 課金を使用します。Coding Plan のサブスクリプション枠とは別です。Z.ai アカウントのモデル利用権限と課金を確認してください。",
   codingHelp:
-    "参考情報のみです。Coding Plan は別のエンドポイントとサブスクリプション枠を使用します。Z.ai は公式対応ツールのみに利用を制限しており、ScopeWeaver は対象に含まれていません。このエンドポイントを ScopeWeaver で利用する前に、Z.ai の許可を得てください。",
+    "参考情報のみです。Coding Plan は別のエンドポイントとサブスクリプション枠を使用します。Z.ai は公式対応ツールのみに利用を制限しており、APTEX は対象に含まれていません。このエンドポイントを APTEX で利用する前に、Z.ai の許可を得てください。",
   modelHelp:
-    "GLM-5.3 はテキスト専用で、コンテキストは 1M トークンです。推論は有効のままにする必要があり、対応する推論強度は low、high、max です。このテンプレートは low、出力上限 16,384 トークン、コンテキストウィンドウ 0（既定 200K）を選択します。ScopeWeaver の小規模なタスク 1 件の測定では、同じ検出事項に到達した際に low が使ったトークンは max の半分未満でした。難しいタスクでは推論強度を上げ、モデルを変更する場合はこれらの設定も見直してください。",
+    "GLM-5.3 はテキスト専用で、コンテキストは 1M トークンです。推論は有効のままにする必要があり、対応する推論強度は low、high、max です。このテンプレートは low、出力上限 16,384 トークン、コンテキストウィンドウ 0（既定 200K）を選択します。APTEX の小規模なタスク 1 件の測定では、同じ検出事項に到達した際に low が使ったトークンは max の半分未満でした。難しいタスクでは推論強度を上げ、モデルを変更する場合はこれらの設定も見直してください。",
   deepseek: "DeepSeek · deepseek-flash（節約）",
   claude: "Anthropic Claude · Haiku 5.5（節約）",
   openai: "OpenAI · Responses API",
@@ -3427,17 +3430,17 @@ export const providers: Record<keyof typeof providersSource, string> = {
   openrouterHelp:
     "OpenRouter 経由の DeepSeek V4.1 Flash です。推論強度 low、max_tokens として送信する出力上限 16,384 トークン、コンテキストウィンドウ 0（既定 200K）を使用します。OpenRouter は繰り返されるプレフィックスを自動でキャッシュします。削減効果は未測定です。",
   opencodeGoHelp:
-    "OpenCode Go のサブスクリプションゲートウェイ（https://opencode.ai/zen/go/v1、OpenAI 互換）です。推論強度 max、max_tokens として送信する出力上限 16,384 トークン、コンテキストウィンドウ 0（既定 200K）を使用します。ゲートウェイは x-opencode-session ヘッダーのないリクエストを拒否するため、このテンプレートが「セッションヘッダー」欄を設定します。OpenCode のサブスクリプションキー（opencode の OPENCODE_API_KEY）を使用します。このキーは opencode 独自のサブスクリプション規約に従うため、保存前に ScopeWeaver からの利用が認められることを確認してください。",
+    "OpenCode Go のサブスクリプションゲートウェイ（https://opencode.ai/zen/go/v1、OpenAI 互換）です。推論強度 max、max_tokens として送信する出力上限 16,384 トークン、コンテキストウィンドウ 0（既定 200K）を使用します。ゲートウェイは x-opencode-session ヘッダーのないリクエストを拒否するため、このテンプレートが「セッションヘッダー」欄を設定します。OpenCode のサブスクリプションキー（opencode の OPENCODE_API_KEY）を使用します。このキーは opencode 独自のサブスクリプション規約に従うため、保存前に APTEX からの利用が認められることを確認してください。",
   opencodeSdk: "OpenCode SDK · ブリッジ",
   sdkGroup: "SDK ブリッジ",
-  sdkHelp: "ブリッジの実行環境は native CLI／クライアント 2.1.4（既定、ツール引数の原文を保持）または legacy SDK 1.19.4（安全な構造の JSON。元のバイト列は保持しません）です。どちらも Windows には対応していません。ホスト側のツール実行と承認は引き続き ScopeWeaver が管理します。",
+  sdkHelp: "ブリッジの実行環境は native CLI／クライアント 2.1.4（既定、ツール引数の原文を保持）または legacy SDK 1.19.4（安全な構造の JSON。元のバイト列は保持しません）です。どちらも Windows には対応していません。ホスト側のツール実行と承認は引き続き APTEX が管理します。",
   sdkSecurity: "ループバックのブリッジもクラウドプロバイダーを呼び出せるため、ローカル専用 LLM モードでは使用できません。無料モデルの ID は現在の利用可能性を示すもので、サブスクリプションの利用権や無制限の利用枠を保証しません。",
   sdkToken: "ブリッジトークン",
   sdkTokenPlaceholder: "ブリッジトークンは必須です",
-  sdkTokenHelp: "クラウド API キーではなく、ブリッジに設定した専用の SCOPEWEAVER_OPENCODE_TOKEN を入力してください。空欄では同じ SDK エンドポイントの保存済みトークンだけを保持します。URL の編集で入力済みトークンを消去し、エンドポイントや形式の変更では保存済みトークンも保持しません。保存済みのプロバイダー認証情報は取り込みません。",
+  sdkTokenHelp: "クラウド API キーではなく、ブリッジに設定した専用の APTEX_OPENCODE_TOKEN を入力してください。空欄では同じ SDK エンドポイントの保存済みトークンだけを保持します。URL の編集で入力済みトークンを消去し、エンドポイントや形式の変更では保存済みトークンも保持しません。保存済みのプロバイダー認証情報は取り込みません。",
   sdkModelHelp: "providerID/modelID 形式を使用してください。「モデルを読み込む」を押すと、推論を行わずにブリッジの一覧を取得します。テンプレートの選択だけではモデルの取得、プロファイルの保存や有効化は行いません。",
   sdkOptionsHelp: "出力はネイティブモデルが宣言する上限までに制限します。選択したモデルが対応する推論オプションを使用してください。未対応の設定はプロバイダー側で失敗する場合があります。この出力フィールドの選択は適用されません。",
-  sdkSessionHelp: "このブリッジはカスタムセッションヘッダーに対応していません。ScopeWeaver がリクエストごとに会話履歴を渡します。",
+  sdkSessionHelp: "このブリッジはカスタムセッションヘッダーに対応していません。APTEX がリクエストごとに会話履歴を渡します。",
   sdkEndpoint: "ブリッジ URL",
   sdkProxyHelp: "ブリッジ用のプロキシには対応していません。ループバック URL を使い、接続先プロバイダーへの接続はブリッジ側で設定してください。",
   officialModel: "GLM-5.3 モデルガイド",
@@ -3448,15 +3451,15 @@ export const providers: Record<keyof typeof providersSource, string> = {
   ollamaHost: "Ollama · 同じマシン（127.0.0.1）",
   ollamaDockerHost: "Ollama · Docker からホストへ接続（host.docker.internal）",
   ollamaCompose: "Ollama · 同梱の Compose サービス（ollama）",
-  ollamaHostHelp: "Ollama が既定のアドレスで待ち受けるマシン上で、ScopeWeaver を直接実行する場合に使用します。",
+  ollamaHostHelp: "Ollama が既定のアドレスで待ち受けるマシン上で、APTEX を直接実行する場合に使用します。",
   ollamaDockerHostHelp:
-    "Docker 内の ScopeWeaver から、ホストにインストールした Ollama に接続する場合に使用します。コンテナー内の 127.0.0.1 は、そのコンテナー自身を指します。同梱の Compose ファイルは host.docker.internal をホストゲートウェイに割り当てます。Linux では、ホストの Ollama がループバック以外でも待ち受ける必要があります（OLLAMA_HOST=0.0.0.0:11434）。これによりネットワークに公開されるため、ファイアウォールでポート 11434 を制限してください。",
+    "Docker 内の APTEX から、ホストにインストールした Ollama に接続する場合に使用します。コンテナー内の 127.0.0.1 は、そのコンテナー自身を指します。同梱の Compose ファイルは host.docker.internal をホストゲートウェイに割り当てます。Linux では、ホストの Ollama がループバック以外でも待ち受ける必要があります（OLLAMA_HOST=0.0.0.0:11434）。これによりネットワークに公開されるため、ファイアウォールでポート 11434 を制限してください。",
   ollamaComposeHelp:
     "docker compose --profile local-llm で起動する任意の Ollama コンテナー用です。このサービスは OLLAMA_NO_CLOUD=1 を設定します。macOS のコンテナーは Apple GPU を利用できないため、CPU のみで動作し、大きなモデルでは遅くなります。代わりに Ollama をネイティブで実行し、ホスト用テンプレートを使用してください。",
   ollamaDefaultsHelp:
     "テンプレートの値: ネイティブ Ollama API、API キーなし、コンテキストウィンドウ 32 K（num_ctx 32,768）、同時リクエスト 1 件、キープアライブ 30m、出力上限 4,096 トークン、思考機能はモデルに任せます。このサーバーにインストール済みのモデルから、ツール対応を宣言しているものを優先して選択します。検出に失敗した場合や一覧が空の場合、モデル欄は空欄のままです。サーバーを確認して「モデルを読み込む」を使用するか、モデルタグを入力してください。モデルのダウンロードや実行は自動では行いません。",
   ollamaCloudWarning:
-    "Ollama はリクエストを Ollama のクラウドモデルへ転送できます。ScopeWeaver からサーバー上のこの機能を無効にすることはできません。ネットワーク外に出してはならない作業に使うすべての Ollama サーバーで、OLLAMA_NO_CLOUD=1 を設定してください。",
+    "Ollama はリクエストを Ollama のクラウドモデルへ転送できます。APTEX からサーバー上のこの機能を無効にすることはできません。ネットワーク外に出してはならない作業に使うすべての Ollama サーバーで、OLLAMA_NO_CLOUD=1 を設定してください。",
   officialOllama: "Ollama API ドキュメント",
   keyOptional: "Ollama では任意",
   ollamaKeyHelp:
@@ -3473,7 +3476,7 @@ export const providers: Record<keyof typeof providersSource, string> = {
   maxTokensFieldOllama:
     "Ollama は出力上限を options.num_predict として送信します。0 の場合は 4,096 を使用します。この選択項目は適用されません。",
   noTools:
-    "警告: このモデルはネイティブのツール呼び出し対応を宣言していません。ScopeWeaver のエージェントは、資産グラフと探索グラフを更新するためにツール呼び出しを必要とします。",
+    "警告: このモデルはネイティブのツール呼び出し対応を宣言していません。APTEX のエージェントは、資産グラフと探索グラフを更新するためにツール呼び出しを必要とします。",
   noToolsBadge: "ツール非対応",
   capabilitiesUnknown: "機能情報を取得できません: {error}",
   diagnostics: "Ollama の診断",
@@ -3559,10 +3562,10 @@ export const settings: Record<keyof typeof settingsSource, string> = {
     "既定では無効で、クラウドのプロバイダーも引き続き動作します。有効にすると、すべての <b>LLM の HTTP 接続</b>（会話、モデル一覧、接続テスト、ウォームアップ、承認判定）は、<b>ループバック</b>アドレスと下記の信頼する CIDR にのみ接続できます。<b>LAN、Docker、その他のプライベートアドレスには、明示的な CIDR の指定が必要です</b>。host.docker.internal や ollama などの名前は、名前解決先のアドレスが許可される場合にのみ利用できます。リンクローカル、マルチキャスト、未指定アドレスは、一覧にあっても常に拒否されます。接続を開くたびに解決後の IP を検査し、<b>リダイレクトと LLM プロファイルのプロキシを拒否</b>します。<b>エージェントのウェブ検索（すべてのバックエンド）、更新確認、ダウンロードもブロック</b>します。現在のバージョンの表示とロールバックは引き続き利用できます。対象への通信、対象用ツール、全体のプロキシには影響しないため、ホスト全体がオフラインになるわけではありません。Ollama は引き続きクラウドモデルへリクエストを転送できるため、Ollama サーバーでも <code>OLLAMA_NO_CLOUD=1</code> を設定してください。",
   localOnlyToggle: "LLM の接続をローカルのみに制限",
   localOnlyEnv:
-    "サーバー環境の SCOPEWEAVER_LOCAL_LLM_ONLY=true（または APTEX_LOCAL_LLM_ONLY）は、ここでは解除できません。SCOPEWEAVER_LOCAL_LLM_ALLOWED_CIDRS（または APTEX_LOCAL_LLM_ALLOWED_CIDRS）の CIDR も適用されますが、ここでは編集できません。",
+    "サーバー環境の APTEX_LOCAL_LLM_ONLY=true（または APTEX_LOCAL_LLM_ONLY）は、ここでは解除できません。APTEX_LOCAL_LLM_ALLOWED_CIDRS（または APTEX_LOCAL_LLM_ALLOWED_CIDRS）の CIDR も適用されますが、ここでは編集できません。",
   allowlistLabel: "追加で信頼する CIDR",
   allowlistHelp:
-    "1 行に 1 件、またはカンマ区切りで入力してください。推論サーバーのみを許可してください。例として、LAN または Docker ホストのアドレスには 192.168.1.20/32、IPv6 には fd00::20/128 を指定します。ScopeWeaver サーバーが実際に接続するアドレス（Docker ではホストゲートウェイまたは Ollama コンテナーの IP）を使用してください。信頼する範囲内のすべてのサーバーは、ローカル LLM サーバーとして扱われます。",
+    "1 行に 1 件、またはカンマ区切りで入力してください。推論サーバーのみを許可してください。例として、LAN または Docker ホストのアドレスには 192.168.1.20/32、IPv6 には fd00::20/128 を指定します。APTEX サーバーが実際に接続するアドレス（Docker ではホストゲートウェイまたは Ollama コンテナーの IP）を使用してください。信頼する範囲内のすべてのサーバーは、ローカル LLM サーバーとして扱われます。",
   localOnlyOn: "LLM のローカル限定接続を有効にしました",
   localOnlyOff: "LLM のローカル限定接続を無効にしました",
   allowlistSaved: "信頼する CIDR を保存しました",
