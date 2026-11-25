@@ -53,6 +53,7 @@ from the script's own location; the finished app works after being moved to
 Applications. The build produces both architectures, validates the universal
 binary and code signature, and writes a ZIP and SHA-256 checksum to `dist/macos`.
 CI builds and renders the actual app on Apple Silicon and Intel runners.
+The build uses the same app icon artwork as the iOS client.
 
 The default build is ad-hoc signed, rather than Developer ID notarized. macOS may
 require approval in **System Settings → Privacy & Security** for a downloaded

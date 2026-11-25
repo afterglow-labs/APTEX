@@ -181,3 +181,11 @@ at `3dadac214102d3a3e3333afafd2c3e5b72c45647` and Odysseus's
 colors to its own light and dark interface roles, with text colors chosen
 for contrast. The web console, including the Mac client's web view, uses
 the full palettes. The iOS native picker uses the corresponding accent colors.
+
+## Shared APTEX app icon
+
+The Mac package uses the orange A artwork from the APTEX iOS 1.2.0 (build 3)
+delivery, `APTEX_1.2.0_3_20261113-011855_d65625fb.ipa`. Both builds use
+`clients/ios/APTEX/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon.png`.
+The Mac packager generates the required icon sizes from that PNG and retains
+the 1024-pixel original in the icon set.
